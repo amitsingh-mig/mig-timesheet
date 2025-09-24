@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom dashboard styles */
+.dashboard-calendar {
+    @apply bg-white rounded-lg shadow-sm;
+}
+
+.dashboard-calendar .calendar-day {
+    @apply aspect-square flex items-center justify-center text-sm font-medium transition-all duration-150;
+}
+
+.dashboard-calendar .calendar-day:hover {
+    @apply transform -translate-y-0.5 shadow-md;
+}
+
+.dashboard-calendar .today {
+    @apply bg-blue-500 text-white;
+}
+
+.dashboard-calendar .weekend {
+    @apply text-red-600 border-red-300;
+}
+
+.dashboard-calendar .work-day {
+    @apply bg-green-100 border-green-300;
+}

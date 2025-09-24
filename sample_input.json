@@ -1,0 +1,84 @@
+{
+  "dashboard_actions": [
+    {
+      "timestamp": "2025-01-15 08:45:00",
+      "action": "clock_in",
+      "employee_id": "EMP001",
+      "location": "Office Main"
+    },
+    {
+      "timestamp": "2025-01-15 12:00:00",
+      "action": "clock_out",
+      "employee_id": "EMP001",
+      "location": "Office Main"
+    },
+    {
+      "timestamp": "2025-01-15 13:00:00",
+      "action": "clock_in",
+      "employee_id": "EMP001",
+      "location": "Office Main"
+    },
+    {
+      "timestamp": "2025-01-15 17:30:00",
+      "action": "clock_out",
+      "employee_id": "EMP001",
+      "location": "Office Main"
+    }
+  ],
+  "timesheet_entries": [
+    {
+      "date": "2025-01-15",
+      "task_name": "Code Review - Frontend Components",
+      "hours": 2.5,
+      "project": "E-commerce Platform",
+      "description": "Reviewed React components for the new checkout flow"
+    },
+    {
+      "date": "2025-01-15",
+      "task_name": "Team Standup Meeting",
+      "hours": 0.5,
+      "description": "Daily standup with development team"
+    },
+    {
+      "date": "2025-01-15",
+      "task_name": "API Development",
+      "hours": 3.0,
+      "project": "E-commerce Platform",
+      "description": "Implemented payment processing endpoints"
+    },
+    {
+      "date": "2025-01-15",
+      "task_name": "Bug Fixes",
+      "hours": 1.5,
+      "project": "E-commerce Platform",
+      "description": "Fixed cart persistence issues"
+    },
+    {
+      "date": "2025-01-14",
+      "task_name": "Database Optimization",
+      "hours": 4.0,
+      "project": "E-commerce Platform",
+      "description": "Optimized queries for product search"
+    },
+    {
+      "date": "2025-01-14",
+      "task_name": "Client Meeting",
+      "hours": 1.0,
+      "description": "Requirements gathering session"
+    },
+    {
+      "date": "2025-01-13",
+      "task_name": "Unit Testing",
+      "hours": 2.5,
+      "project": "E-commerce Platform",
+      "description": "Added tests for payment processing"
+    }
+  ],
+  "work_summaries": [
+    "Spent 2 hours on documentation updates for the API endpoints",
+    "Worked on performance testing for 1.5 hours",
+    "Had a 30-minute call with the DevOps team about deployment",
+    "Reviewed security protocols for 45 minutes"
+  ],
+  "raw_text": "Clocked in at 8:45 AM\nCode review - 2.5h\nTeam meeting - 0.5h\nLunch break\nAPI work - 3h\nBug fixes - 1.5h\nClocked out at 5:30 PM\n\nYesterday:\nDatabase work - 4h\nClient call - 1h\n\nLast week:\nTesting: 2.5 hours\nDocumentation: 2 hours"
+}
