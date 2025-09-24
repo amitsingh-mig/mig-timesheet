@@ -330,15 +330,7 @@ body {
     box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
 }
 
-/* Add holiday icon */
-.calendar-cell.holiday::before {
-    content: '🏖️';
-    position: absolute;
-    top: 2px;
-    right: 2px;
-    font-size: 0.6rem;
-    opacity: 0.7;
-}
+
 
 /* Today - Blue (Always takes priority) */
 .calendar-cell.today {
@@ -388,15 +380,7 @@ body {
     opacity: 0.8;
 }
 
-/* Today that's also a holiday */
-.calendar-cell.today.holiday::after {
-    content: '🏖️';
-    position: absolute;
-    bottom: 2px;
-    left: 2px;
-    font-size: 0.6rem;
-    opacity: 0.8;
-}
+
 
 .calendar-legend-item {
     width: 16px;
