@@ -1,11 +1,13 @@
 /* ============================================= */
-/* General Layout & Typography          */
+/* General Layout & Typography          */
 /* ============================================= */
 
 body {
     background-color: #f6f7fb;
     font-family: "Inter", "Segoe UI", Arial, sans-serif;
     color: #2c3e50;
+    /* FIX: Added min-height to ensure full background coverage */
+    min-height: 100vh;
 }
 
 /* Page Background Gradients */
@@ -25,7 +27,7 @@ body {
 
 
 /* ============================================= */
-/* Core UI Components                */
+/* Core UI Components                */
 /* ============================================= */
 
 /* ----- Cards ----- */
@@ -83,7 +85,12 @@ body {
     border-radius: 0.375rem;
     transition: all 0.15s ease-in-out;
     word-wrap: break-word;
+    color: #fff; /* Ensure buttons have white text by default */
 }
+
+/* Specific color buttons need their own color definition */
+.btn-info { color: #0a2a3a; }
+.btn-warning { color: #533f03; }
 
 .btn-rounded {
     border-radius: 25px;
@@ -117,14 +124,16 @@ body {
 
 /* Button Colors */
 .btn-success { background-color: #28a745; border-color: #28a745; }
-.btn-info { background-color: #0dcaf0; border-color: #0dcaf0; color: #0a2a3a; }
-.btn-warning { background-color: #ffc107; border-color: #ffc107; color: #533f03; }
+.btn-info { background-color: #0dcaf0; border-color: #0dcaf0; }
+.btn-warning { background-color: #ffc107; border-color: #ffc107; }
 .btn-danger { background-color: #dc3545; border-color: #dc3545; }
 
 /* ----- Forms & Inputs ----- */
 input, textarea, select {
-    width: 100%;
-    max-width: 100%;
+    /* FIX: Removed unnecessary full width definitions */
+    /* width: 100%; */
+    /* max-width: 100%; */
+    box-sizing: border-box; /* Ensure padding doesn't affect overall width */
 }
 
 .rounded-input {
@@ -137,6 +146,7 @@ input, textarea, select {
 .rounded-input:focus {
     border-color: #0d6efd;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
+    outline: none; /* Good practice for accessibility */
 }
 
 .modern-input {
@@ -152,6 +162,7 @@ input, textarea, select {
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
     background: #fff;
+    outline: none; /* Good practice for accessibility */
 }
 
 .input-group-text {
@@ -235,6 +246,8 @@ input, textarea, select {
     white-space: nowrap;
     z-index: 1000;
     opacity: 0;
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: fadeInTooltip 0.3s forwards;
     animation: fadeInTooltip 0.3s forwards;
 }
 
@@ -248,6 +261,8 @@ input, textarea, select {
     border-top-color: rgba(0, 0, 0, 0.9);
     z-index: 1000;
     opacity: 0;
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: fadeInTooltip 0.3s forwards;
     animation: fadeInTooltip 0.3s forwards;
 }
 
@@ -296,11 +311,13 @@ input, textarea, select {
     border: 2px solid #f3f3f3;
     border-top: 2px solid #3498db;
     border-radius: 50%;
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: spin 1s linear infinite;
     animation: spin 1s linear infinite;
 }
 
 /* ============================================= */
-/* Navigation Elements               */
+/* Navigation Elements               */
 /* ============================================= */
 
 /* ----- Navbar ----- */
@@ -404,6 +421,8 @@ input, textarea, select {
 .dropdown-menu-dark {
     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
     border-radius: 12px;
+    /* FIX: -webkit-backdrop-filter for safari compatibility */
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
 }
 
@@ -429,11 +448,13 @@ input, textarea, select {
 .nav-item.dropdown:hover .dropdown-menu {
     display: block;
     opacity: 0;
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: fadeInDropdown 0.3s ease forwards;
     animation: fadeInDropdown 0.3s ease forwards;
 }
 
 /* ============================================= */
-/* Dashboard & Stats                 */
+/* Dashboard & Stats                 */
 /* ============================================= */
 
 .dashboard-toggle .btn.active {
@@ -594,6 +615,8 @@ input, textarea, select {
 .status-indicator.online {
     background: #10b981;
     box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: pulse-online 2s infinite;
     animation: pulse-online 2s infinite;
 }
 
@@ -614,6 +637,8 @@ input, textarea, select {
 .status-indicator-dot.working {
     background: #f59e0b;
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: pulse-working 1.5s infinite;
     animation: pulse-working 1.5s infinite;
 }
 
@@ -646,6 +671,8 @@ input, textarea, select {
     min-width: 130px;
     padding: 0.5rem 0.75rem !important;
     box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: subtle-glow 3s ease-in-out infinite alternate;
     animation: subtle-glow 3s ease-in-out infinite alternate;
     font-family: 'Courier New', monospace;
 }
@@ -677,6 +704,8 @@ input, textarea, select {
     border-radius: inherit;
     z-index: -1;
     opacity: 0.7;
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: pulse 2s infinite;
     animation: pulse 2s infinite;
 }
 
@@ -696,7 +725,7 @@ input, textarea, select {
 
 
 /* ============================================= */
-/* Calendar                    */
+/* Calendar                    */
 /* ============================================= */
 
 /* ----- Calendar Layout & Grid ----- */
@@ -780,6 +809,7 @@ input, textarea, select {
     border-color: #a7e3c5;
 }
 
+/* Combined .work-day and .has-work */
 .calendar-cell.work-day,
 .calendar-cell.has-work {
     background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
@@ -815,10 +845,12 @@ input, textarea, select {
     background: linear-gradient(135deg, #fef3c7, #fbbf24);
     border-color: #f59e0b;
     box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: pulse-orange 2s infinite;
     animation: pulse-orange 2s infinite;
 }
 
-.calendar-cell.today,
+/* Combined .today and .is-today */
 .calendar-cell.is-today {
     background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
     color: white !important;
@@ -826,14 +858,34 @@ input, textarea, select {
     transform: scale(1.05);
     z-index: 2; /* Ensure today is always on top */
     box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: pulse-today 2s infinite;
+    animation: pulse-today 2s infinite;
+    font-weight: 700;
+}
+/* Re-use .is-today for .today selector */
+.calendar-cell.today {
+    /* Redundant, but kept for compatibility with existing HTML */
+    /* See .calendar-cell.is-today rule above */
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
+    color: white !important;
+    border: 3px solid #2563eb !important;
+    transform: scale(1.05);
+    z-index: 2; 
+    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
+    -webkit-animation: pulse-today 2s infinite;
     animation: pulse-today 2s infinite;
     font-weight: 700;
 }
 
 .calendar-cell.is-today.has-work {
+    /* FIX: Re-coloring the 'today' state when it's also a work day */
     background: #a7f3d0 !important;
     border-color: #10b981 !important;
     color: #047857 !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5) !important; /* Adjusted shadow */
+    -webkit-animation: pulse-green 2s infinite;
+    animation: pulse-green 2s infinite;
 }
 
 /* ----- Calendar Cell Content ----- */
@@ -847,7 +899,9 @@ input, textarea, select {
 
 .calendar-cell.work-day .calendar-date { color: #065f46; font-weight: 700; }
 .calendar-cell.holiday .calendar-date { color: #991b1b; font-weight: 700; }
-.calendar-cell.today .calendar-date { color: white !important; font-weight: 700; }
+/* Using .is-today for consistency */
+.calendar-cell.is-today .calendar-date,
+.calendar-cell.today .calendar-date { color: white !important; font-weight: 700; } 
 
 .calendar-hours, .work-hours {
     margin-top: auto;
@@ -873,6 +927,8 @@ input, textarea, select {
     border: 1px solid rgba(16, 185, 129, 0.4);
 }
 
+/* Using .is-today for consistency */
+.calendar-cell.is-today .calendar-hours,
 .calendar-cell.today .calendar-hours {
     color: white !important;
     background: rgba(255, 255, 255, 0.2) !important;
@@ -892,6 +948,8 @@ input, textarea, select {
     height: 6px;
     background: #ef4444;
     border-radius: 50%;
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: pulse 2s infinite;
     animation: pulse 2s infinite;
 }
 
@@ -907,7 +965,13 @@ input, textarea, select {
 
 .calendar-legend-item.work-day { background: linear-gradient(135deg, #10b981, #059669); border-color: #10b981; }
 .calendar-legend-item.holiday { background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444; }
-.calendar-legend-item.today { background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-color: #3b82f6; animation: pulse-blue 2s infinite; }
+.calendar-legend-item.today { 
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8); 
+    border-color: #3b82f6; 
+    /* FIX: Added webkit prefix for compatibility */
+    -webkit-animation: pulse-blue 2s infinite;
+    animation: pulse-blue 2s infinite; 
+}
 
 .calendar-stats {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
@@ -921,7 +985,7 @@ input, textarea, select {
 }
 
 /* ============================================= */
-/* Utility Classes                */
+/* Utility Classes                */
 /* ============================================= */
 .transition-all { transition: all 0.3s ease; }
 .text-primary { color: #3b82f6 !important; }
@@ -932,55 +996,112 @@ input, textarea, select {
 .text-muted { color: #6b7280 !important; }
 
 /* ============================================= */
-/* Animations                  */
+/* Animations                  */
 /* ============================================= */
+/* FIX: Added webkit prefixes to all animations */
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+@-webkit-keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
 @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+@-webkit-keyframes spin { 0% { -webkit-transform: rotate(0deg); } 100% { -webkit-transform: rotate(360deg); } }
+
 @keyframes pulse-today {
     0% { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
     50% { box-shadow: 0 12px 35px rgba(59, 130, 246, 0.7); }
     100% { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
 }
+@-webkit-keyframes pulse-today {
+    0% { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
+    50% { box-shadow: 0 12px 35px rgba(59, 130, 246, 0.7); }
+    100% { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
+}
+
 @keyframes pulse-blue {
     0% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
     50% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1); }
     100% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
 }
+@-webkit-keyframes pulse-blue {
+    0% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+    50% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1); }
+    100% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+}
+
 @keyframes pulse-orange {
     0% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
     50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.1); }
     100% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
 }
+@-webkit-keyframes pulse-orange {
+    0% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
+    50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.1); }
+    100% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
+}
+
 @keyframes pulse-working {
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
 }
+@-webkit-keyframes pulse-working {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+}
+
 @keyframes pulse-green {
     0% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3); }
     50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1); }
     100% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3); }
 }
+@-webkit-keyframes pulse-green {
+    0% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3); }
+    50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1); }
+    100% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3); }
+}
+
 @keyframes pulse-online { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+@-webkit-keyframes pulse-online { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
+
 @keyframes subtle-glow {
     0% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
     100% { box-shadow: 0 4px 20px rgba(102, 126, 234, 0.6); }
 }
+@-webkit-keyframes subtle-glow {
+    0% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
+    100% { box-shadow: 0 4px 20px rgba(102, 126, 234, 0.6); }
+}
+
 @keyframes fadeInTooltip {
     0% { opacity: 0; transform: translateX(-50%) translateY(5px); }
     100% { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
+@-webkit-keyframes fadeInTooltip {
+    0% { opacity: 0; -webkit-transform: translateX(-50%) translateY(5px); }
+    100% { opacity: 1; -webkit-transform: translateX(-50%) translateY(0); }
+}
+
 @keyframes fadeInDropdown {
     0% { opacity: 0; transform: translateY(-10px); }
     100% { opacity: 1; transform: translateY(0); }
 }
+@-webkit-keyframes fadeInDropdown {
+    0% { opacity: 0; -webkit-transform: translateY(-10px); }
+    100% { opacity: 1; -webkit-transform: translateY(0); }
+}
+
 @keyframes slideInRight {
     0% { opacity: 0; transform: translateX(20px); }
     100% { opacity: 1; transform: translateX(0); }
 }
+@-webkit-keyframes slideInRight {
+    0% { opacity: 0; -webkit-transform: translateX(20px); }
+    100% { opacity: 1; -webkit-transform: translateX(0); }
+}
+
 
 /* ============================================= */
-/* Responsive Design               */
+/* Responsive Design               */
 /* ============================================= */
 
 /* ----- Medium Screens (Tablets) ----- */
