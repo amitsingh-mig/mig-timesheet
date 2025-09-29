@@ -23,11 +23,11 @@ try {
     $attendanceCount = DB::table('attendances')->count();
     echo "✓ Attendance records: $attendanceCount\n";
     
-    // If no users exist, create a test user
+    // If no users exist, create the provided admin user
     if ($userCount == 0) {
-        echo "\nNo users found. Creating test user...\n";
-        
-        // First create admin role if it doesn't exist
+        echo "\nNo users found. Creating initial admin user...\n";
+
+        // Ensure roles exist
         $adminRole = DB::table('roles')->where('name', 'admin')->first();
         if (!$adminRole) {
             $adminRoleId = DB::table('roles')->insertGetId([
@@ -40,20 +40,81 @@ try {
             $adminRoleId = $adminRole->id;
             echo "✓ Admin role already exists with ID: $adminRoleId\n";
         }
-        
-        // Create test user
-        $userId = DB::table('users')->insertGetId([
-            'name' => 'Test Admin',
-            'email' => 'admin@test.com',
+
+        $employeeRole = DB::table('roles')->where('name', 'employee')->first();
+        if (!$employeeRole) {
+            $employeeRoleId = DB::table('roles')->insertGetId([
+                'name' => 'employee',
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            echo "✓ Created employee role with ID: $employeeRoleId\n";
+        } else {
+            echo "✓ Employee role already exists with ID: {$employeeRole->id}\n";
+        }
+
+        // Create admin@example.com user
+        $adminUserId = DB::table('users')->insertGetId([
+            'name' => 'Admin',
+            'email' => 'admin@example.com',
             'email_verified_at' => now(),
-            'password' => Hash::make('password123'),
+            'password' => Hash::make('Admin@9711#31$'),
             'role_id' => $adminRoleId,
             'created_at' => now(),
             'updated_at' => now()
         ]);
-        
-        echo "✓ Created test user with ID: $userId\n";
-        echo "✓ Login credentials: admin@test.com / password123\n";
+
+        echo "✓ Created admin user with ID: $adminUserId\n";
+        echo "✓ Login credentials: admin@example.com / Admin@9711#31$\n";
+    }
+
+    // Ensure the specified admin user exists and is up to date
+    $adminRole = DB::table('roles')->where('name', 'admin')->first();
+    if ($adminRole) {
+        $existingAdmin = DB::table('users')->where('email', 'admin@example.com')->first();
+        if ($existingAdmin) {
+            DB::table('users')->where('id', $existingAdmin->id)->update([
+                'name' => 'Admin',
+                'password' => Hash::make('Admin@9711#31$'),
+                'role_id' => $adminRole->id,
+                'updated_at' => now(),
+                'email_verified_at' => $existingAdmin->email_verified_at ?: now(),
+            ]);
+            echo "✓ Updated existing admin user (admin@example.com)\n";
+        } else {
+            $newAdminId = DB::table('users')->insertGetId([
+                'name' => 'Admin',
+                'email' => 'admin@example.com',
+                'email_verified_at' => now(),
+                'password' => Hash::make('Admin@9711#31$'),
+                'role_id' => $adminRole->id,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            echo "✓ Created admin user with ID: $newAdminId\n";
+        }
+    }
+
+    // Optionally ensure the specified employee user exists (creates with a temporary password if missing)
+    $employeeRole = DB::table('roles')->where('name', 'employee')->first();
+    if ($employeeRole) {
+        $employeeEmail = 'amitrajput30205@gmail.com';
+        $existingEmployee = DB::table('users')->where('email', $employeeEmail)->first();
+        if (!$existingEmployee) {
+            $tmpPassword = 'User@12345!';
+            $empId = DB::table('users')->insertGetId([
+                'name' => 'Amit Rajput',
+                'email' => $employeeEmail,
+                'email_verified_at' => now(),
+                'password' => Hash::make($tmpPassword),
+                'role_id' => $employeeRole->id,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+            echo "✓ Created employee user with ID: $empId (temporary password: $tmpPassword)\n";
+        } else {
+            echo "✓ Employee user already exists: $employeeEmail\n";
+        }
     }
     
     echo "\n=== Connection Test Results ===\n";
