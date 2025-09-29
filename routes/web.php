@@ -13,240 +13,275 @@ use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Admin\TimesheetCalendarController;
 use App\Http\Controllers\Admin\SystemController;
 use App\Http\Controllers\Admin\LeaveController;
+use App\Models\Timesheet;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes (Blade views after login)
+| Public Routes
 |--------------------------------------------------------------------------
+| Routes accessible without authentication (e.g., login, login, password reset).
 */
 
 Route::get('/', function () {
     return view('auth.login');
 });
 
-// Backward compatibility: some auth scaffolds redirect to /home after login
 Route::get('/home', function () {
     return redirect()->route('dashboard');
-});
-
-// Protected routes (session auth)
-Route::middleware(['auth'])->group(function () {
-    // Dashboard routes
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
-    Route::get('/dashboard/worktime-data', [DashboardController::class, 'getWorktimeData'])->name('dashboard.worktime-data');
-
-    // Users (use web-returning methods)
-    Route::get('/users', [UserController::class, 'indexPage'])->name('users.index');
-    Route::get('/users/{id}', [UserController::class, 'showPage'])->name('users.show');
-    Route::get('/users/{id}/edit', [UserController::class, 'editPage'])->name('users.edit');
-    Route::post('/users/{id}', [UserController::class, 'updatePage'])->name('users.update');
-    Route::delete('/users/{id}', [UserController::class, 'destroyPage'])->name('users.destroy');
-    Route::post('/users/{id}/reset-password', [UserController::class, 'resetPassword'])
-        ->middleware('can:admin')
-        ->name('users.reset_password');
-
-    // Attendance (web views)
-    Route::get('/attendance', [AttendanceController::class, 'indexPage'])->name('attendance.index');
-    Route::get('/attendance/data', [AttendanceController::class, 'getData'])->name('attendance.data');
-    Route::get('/attendance/{id}', [AttendanceController::class, 'showPage'])->name('attendance.show');
-    Route::get('/attendance/status', [AttendanceController::class, 'status'])->name('attendance.status');
-    Route::get('/attendance/calendar', [AttendanceController::class, 'calendar'])->name('attendance.calendar');
-    Route::post('/attendance/clock-in', [AttendanceController::class, 'clock_in'])->name('attendance.clockin');
-    Route::post('/attendance/clock-out', [AttendanceController::class, 'clock_out'])->name('attendance.clockout');
-
-    // Timesheet (employee)
-    Route::get('/timesheet', [TimesheetController::class, 'index'])->name('timesheet.index');
-    Route::post('/timesheet', [TimesheetController::class, 'store'])->name('timesheet.store');
-    Route::post('/timesheet/store-or-update', [TimesheetController::class, 'storeOrUpdate'])->name('timesheet.storeOrUpdate');
-    Route::delete('/timesheet/{id}', [TimesheetController::class, 'destroy'])->name('timesheet.destroy');
-    Route::get('/timesheet/summary', [TimesheetController::class, 'getSummaryData'])->name('timesheet.summary');
-    Route::get('/timesheet/export', [TimesheetController::class, 'export'])->name('timesheet.export');
-    Route::get('/timesheet/load-more', [TimesheetController::class, 'loadMore'])->name('timesheet.loadMore');
-    Route::get('/timesheet/day-tasks', [TimesheetController::class, 'dayTasks'])->name('timesheet.dayTasks');
-    
-    // Debug route for timesheet data
-    Route::get('/debug/timesheet', function() {
-        $user = auth()->user();
-        $timesheets = App\Models\Timesheet::where('user_id', $user->id)->get();
-        
-        return response()->json([
-            'user' => $user->name,
-            'user_id' => $user->id,
-            'total_records' => $timesheets->count(),
-            'recent_records' => $timesheets->take(5)->toArray(),
-            'all_records' => $timesheets->toArray()
-        ], 200, [], JSON_PRETTY_PRINT);
-    })->name('debug.timesheet');
-    
-    // Debug route for admin data
-    Route::get('/debug/admin', function() {
-        $user = auth()->user();
-        $allUsers = App\Models\User::with('role')->get();
-        $allTimesheets = App\Models\Timesheet::with('user')->get();
-        
-        return response()->json([
-            'current_user' => [
-                'id' => $user->id,
-                'name' => $user->name,
-                'role' => $user->role ? $user->role->name : 'no role',
-                'is_admin' => $user->role && $user->role->name === 'admin'
-            ],
-            'all_users' => $allUsers->toArray(),
-            'timesheet_summary' => [
-                'total_records' => $allTimesheets->count(),
-                'by_user' => $allTimesheets->groupBy('user_id')->map(function($group) {
-                    return [
-                        'count' => $group->count(),
-                        'user' => $group->first()->user->name ?? 'Unknown'
-                    ];
-                })
-            ]
-        ], 200, [], JSON_PRETTY_PRINT);
-    })->name('debug.admin');
-
-    // Daily Update (employee)
-    Route::get('/daily-update', [DailyUpdateController::class, 'index'])->name('daily-update.index');
-    Route::post('/daily-update', [DailyUpdateController::class, 'store'])->name('daily-update.store');
-    Route::get('/daily-update/api', [DailyUpdateController::class, 'api'])->name('daily-update.api');
-    Route::post('/api/refresh-daily-update', [DailyUpdateController::class, 'refreshData'])->name('daily-update.refresh');
-
-    // Profile routes
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // DEBUG: Test attendance status authentication
-    Route::get('/debug/auth-status', function() {
-        $user = auth()->user();
-        $response = [
-            'authenticated' => auth()->check(),
-            'user_id' => auth()->id(),
-            'user_email' => $user->email ?? null,
-            'user_role' => $user && $user->role ? $user->role->name : 'No Role',
-            'session_id' => session()->getId(),
-            'csrf_token' => csrf_token(),
-            'current_time' => now()->toDateTimeString(),
-            'middleware_applied' => 'auth middleware working',
-        ];
-        
-        // Also test the attendance status directly
-        if (auth()->check()) {
-            try {
-                $attendanceController = new \App\Http\Controllers\AttendanceController();
-                $attendanceStatus = $attendanceController->status(request());
-                $response['attendance_status_test'] = json_decode($attendanceStatus->getContent(), true);
-                $response['attendance_status_code'] = $attendanceStatus->getStatusCode();
-            } catch (\Exception $e) {
-                $response['attendance_status_error'] = $e->getMessage();
-            }
-        }
-        
-        return response()->json($response);
-    })->name('debug.auth');
-    
-    // EMERGENCY DEBUG ROUTE - Remove after fixing leave issues
-    Route::get('/emergency-fix/{userId?}', function($userId = null) {
-        if (!$userId) $userId = Auth::id();
-        
-        $user = App\Models\User::findOrFail($userId);
-        
-        // Force refresh all user data
-        $user->refresh();
-        
-        // Clear user-specific caches if any exist
-        if (Cache::has("user_{$userId}_data")) {
-            Cache::forget("user_{$userId}_data");
-        }
-        
-        // Get fresh attendance data  
-        $recentAttendance = $user->attendances()
-            ->where('date', '>=', now()->subDays(30))
-            ->orderBy('date', 'desc')
-            ->get();
-        
-        // Get fresh timesheet data
-        $recentTimesheet = $user->timesheets()
-            ->where('date', '>=', now()->subDays(30)) 
-            ->orderBy('date', 'desc')
-            ->get();
-        
-        // Get fresh work summaries
-        $recentSummaries = $user->workSummaries()
-            ->where('date', '>=', now()->subDays(30))
-            ->orderBy('date', 'desc') 
-            ->get();
-        
-        $debug = [
-            'user_id' => $user->id,
-            'user_name' => $user->name,
-            'user_role' => $user->role->name ?? 'No Role',
-            'attendance_records' => $recentAttendance->count(),
-            'timesheet_records' => $recentTimesheet->count(), 
-            'work_summaries' => $recentSummaries->count(),
-            'latest_attendance' => $recentAttendance->first()?->date,
-            'latest_timesheet' => $recentTimesheet->first()?->date,
-            'system_time' => now()->toDateTimeString(),
-            'session_data' => array_keys(session()->all()),
-            'cache_status' => 'cleared',
-        ];
-        
-        return response()->json($debug, 200, [], JSON_PRETTY_PRINT);
-    })->middleware('auth')->name('emergency.debug');
-});
-
-// Admin-only routes with proper prefix and middleware
-Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
-    // Admin Dashboard
-    Route::get('/', function () { return view('admin.dashboard'); })->name('admin.dashboard');
-    
-    // Admin Dashboard Debug Test (temporary)
-    Route::get('/test', function () { return view('admin-dashboard-test'); })->name('admin.dashboard.test');
-    
-    // Admin User Management
-    Route::get('/users', [AdminUserController::class, 'index'])->name('admin.users.index');
-    Route::get('/users/data', [AdminUserController::class, 'getData'])->name('admin.users.data');
-    Route::post('/users', [AdminUserController::class, 'store'])->name('admin.users.store');
-    Route::put('/users/{id}', [AdminUserController::class, 'update'])->name('admin.users.update');
-    Route::post('/users/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('admin.users.reset_password');
-    Route::delete('/users/{id}', [AdminUserController::class, 'destroy'])->name('admin.users.destroy');
-    Route::get('/users/role-distribution', [AdminUserController::class, 'getRoleDistribution'])->name('admin.users.roleDistribution');
-    
-    // Employee Time Overview
-    Route::get('/employees/time', [AdminUserController::class, 'employeeTimeOverview'])->name('admin.employees.time');
-    Route::get('/employees/time/chart', [AdminUserController::class, 'getTimeChartData'])->name('admin.employees.time.chart');
-    Route::get('/employees/time/{id}/details', [AdminUserController::class, 'getTimeDetails'])->name('admin.employees.time.details');
-    Route::get('/employees/time/export', [AdminUserController::class, 'exportTimeCsv'])->name('admin.employees.time.export');
-    
-    // Employee Time Overview View
-    Route::get('/employees/time/view', function () { return view('admin.employees_time'); })->name('admin.employees.time.view');
-    
-    // Admin Timesheets
-    Route::get('/timesheets', [TimesheetController::class, 'adminIndex'])->name('timesheet.admin.index');
-    
-    // Admin Timesheet Calendar
-    Route::get('/timesheet-calendar', [TimesheetCalendarController::class, 'index'])->name('admin.timesheet.calendar');
-    Route::get('/timesheet-calendar/data', [TimesheetCalendarController::class, 'getCalendarData'])->name('admin.timesheet.calendar.data');
-    Route::get('/timesheet-calendar/day/{date}', [TimesheetCalendarController::class, 'getDayDetails'])->name('admin.timesheet.calendar.day');
-    Route::get('/timesheet-calendar/stats', [TimesheetCalendarController::class, 'getStatistics'])->name('admin.timesheet.calendar.stats');
-    Route::post('/timesheet-calendar/approve/{id}', [TimesheetCalendarController::class, 'approveTimesheet'])->name('admin.timesheet.calendar.approve');
-    Route::post('/timesheet-calendar/reject/{id}', [TimesheetCalendarController::class, 'rejectTimesheet'])->name('admin.timesheet.calendar.reject');
-    Route::post('/timesheet-calendar/bulk-approve', [TimesheetCalendarController::class, 'bulkApprove'])->name('admin.timesheet.calendar.bulkApprove');
-    Route::post('/timesheet-calendar/bulk-reject', [TimesheetCalendarController::class, 'bulkReject'])->name('admin.timesheet.calendar.bulkReject');
-    Route::get('/timesheet-calendar/export', [TimesheetCalendarController::class, 'export'])->name('admin.timesheet.calendar.export');
-
-    // System utilities (live data for sidebar buttons)
-    Route::get('/system-status', [SystemController::class, 'status'])->name('admin.system.status');
-    Route::get('/quick-reports', [SystemController::class, 'quickReports'])->name('admin.quick.reports');
-
-    // Leave Requests (Admin)
-    Route::get('/leave', [LeaveController::class, 'index'])->name('admin.leave.index');
-    Route::get('/leave/list', [LeaveController::class, 'list'])->name('admin.leave.list');
-    Route::post('/leave/{id}/approve', [LeaveController::class, 'approve'])->name('admin.leave.approve');
-    Route::post('/leave/{id}/reject', [LeaveController::class, 'reject'])->name('admin.leave.reject');
 });
 
 // Keep Breeze/Fortify auth routes (login, logout, etc.) if present
 if (file_exists(__DIR__.'/auth.php')) {
     require __DIR__.'/auth.php';
 }
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Employee Routes
+|--------------------------------------------------------------------------
+| Routes for general users requiring authentication. Grouped by feature.
+*/
+Route::middleware(['auth'])->group(function () {
+
+    // --- 1. DASHBOARD ---
+    // FIX: Intercept the main dashboard route to redirect admins to their specific area.
+    Route::get('/dashboard', function () {
+        if (Auth::user() && Auth::user()->role_id == 1) { // Assuming role_id 1 is 'admin'
+            return redirect()->route('admin.dashboard');
+        }
+        return (new DashboardController)->index(request());
+    })->name('dashboard');
+
+    Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
+    Route::get('/dashboard/worktime-data', [DashboardController::class, 'getWorktimeData'])->name('dashboard.worktime-data');
+
+    // --- 2. ATTENDANCE & CLOCKING ---
+    Route::prefix('attendance')->group(function () {
+        Route::get('/', [AttendanceController::class, 'indexPage'])->name('attendance.index');
+        Route::get('/data', [AttendanceController::class, 'getData'])->name('attendance.data');
+        Route::get('/{id}', [AttendanceController::class, 'showPage'])->name('attendance.show');
+
+        // Clocking Endpoints (Used by JS)
+        Route::get('/status', [AttendanceController::class, 'status'])->name('attendance.status');
+        Route::get('/calendar', [AttendanceController::class, 'calendar'])->name('attendance.calendar');
+        Route::post('/clock-in', [AttendanceController::class, 'clock_in'])->name('attendance.clockin');
+        Route::post('/clock-out', [AttendanceController::class, 'clock_out'])->name('attendance.clockout');
+    });
+
+    // --- 3. TIMESHEET (Employee CRUD & Summary) ---
+    Route::prefix('timesheet')->group(function () {
+        Route::get('/', [TimesheetController::class, 'index'])->name('timesheet.index');
+        Route::get('/summary', [TimesheetController::class, 'getSummaryData'])->name('timesheet.summary');
+        Route::get('/export', [TimesheetController::class, 'export'])->name('timesheet.export');
+        Route::get('/load-more', [TimesheetController::class, 'loadMore'])->name('timesheet.loadMore');
+        Route::get('/day-tasks', [TimesheetController::class, 'dayTasks'])->name('timesheet.dayTasks');
+        
+        // API/Action Routes
+        Route::post('/', [TimesheetController::class, 'store'])->name('timesheet.store');
+        Route::post('/store-or-update', [TimesheetController::class, 'storeOrUpdate'])->name('timesheet.storeOrUpdate');
+        Route::delete('/{id}', [TimesheetController::class, 'destroy'])->name('timesheet.destroy');
+    });
+    
+    // --- 4. DAILY UPDATE ---
+    Route::prefix('daily-update')->group(function () {
+        Route::get('/', [DailyUpdateController::class, 'index'])->name('daily-update.index');
+        Route::post('/', [DailyUpdateController::class, 'store'])->name('daily-update.store');
+        Route::get('/api', [DailyUpdateController::class, 'api'])->name('daily-update.api');
+        Route::post('/refresh', [DailyUpdateController::class, 'refreshData'])->name('daily-update.refresh');
+    });
+
+    // --- 5. PROFILE & SELF-MANAGEMENT ---
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
+
+    // --- 6. USER VIEWS & ACTIONS (General) ---
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'indexPage'])->name('users.index');
+        Route::get('/{id}', [UserController::class, 'showPage'])->name('users.show');
+        Route::get('/{id}/edit', [UserController::class, 'editPage'])->name('users.edit');
+
+        Route::post('/{id}', [UserController::class, 'updatePage'])->name('users.update');
+        Route::delete('/{id}', [UserController::class, 'destroyPage'])->name('users.destroy');
+        
+        // Admin-specific action defined under the user group but protected by 'can:admin'
+        Route::post('/{id}/reset-password', [UserController::class, 'resetPassword'])
+            ->middleware('can:admin')
+            ->name('users.reset_password');
+    });
+
+    // --- 7. DEBUG & EMERGENCY ROUTES (FOR DEVELOPMENT ONLY) ---
+    // These routes should be removed or commented out for production deployment.
+    Route::prefix('debug')->group(function () {
+        Route::get('/auth-status', function() {
+            $user = auth()->user();
+            $response = [
+                'authenticated' => auth()->check(),
+                'user_id' => auth()->id(),
+                'user_email' => $user->email ?? null,
+                'user_role' => $user && $user->role ? $user->role->name : 'No Role',
+                'session_id' => session()->getId(),
+                'csrf_token' => csrf_token(),
+                'current_time' => now()->toDateTimeString(),
+                'middleware_applied' => 'auth middleware working',
+            ];
+            
+            if (auth()->check()) {
+                try {
+                    $attendanceController = new \App\Http\Controllers\AttendanceController();
+                    $attendanceStatus = $attendanceController->status(request());
+                    $response['attendance_status_test'] = json_decode($attendanceStatus->getContent(), true);
+                    $response['attendance_status_code'] = $attendanceStatus->getStatusCode();
+                } catch (\Exception $e) {
+                    $response['attendance_status_error'] = $e->getMessage();
+                }
+            }
+            
+            return response()->json($response);
+        })->name('debug.auth');
+
+        Route::get('/timesheet', function() {
+            $user = auth()->user();
+            $timesheets = Timesheet::where('user_id', $user->id)->get();
+            
+            return response()->json([
+                'user' => $user->name,
+                'user_id' => $user->id,
+                'total_records' => $timesheets->count(),
+                'recent_records' => $timesheets->take(5)->toArray(),
+                'all_records' => $timesheets->toArray()
+            ], 200, [], JSON_PRETTY_PRINT);
+        })->name('debug.timesheet');
+        
+        Route::get('/admin', function() {
+            $user = auth()->user();
+            $allUsers = User::with('role')->get();
+            $allTimesheets = Timesheet::with('user')->get();
+            
+            return response()->json([
+                'current_user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role ? $user->role->name : 'no role',
+                    'is_admin' => $user->role && $user->role->name === 'admin'
+                ],
+                'all_users' => $allUsers->toArray(),
+                'timesheet_summary' => [
+                    'total_records' => $allTimesheets->count(),
+                    'by_user' => $allTimesheets->groupBy('user_id')->map(function($group) {
+                        return [
+                            'count' => $group->count(),
+                            'user' => $group->first()->user->name ?? 'Unknown'
+                        ];
+                    })
+                ]
+            ], 200, [], JSON_PRETTY_PRINT);
+        })->name('debug.admin');
+
+        // EMERGENCY DEBUG ROUTE - Useful for clearing user-specific caches
+        Route::get('/emergency-fix/{userId?}', function($userId = null) {
+            if (!$userId) $userId = Auth::id();
+            
+            $user = User::findOrFail($userId);
+            
+            $user->refresh();
+            
+            if (Cache::has("user_{$userId}_data")) {
+                Cache::forget("user_{$userId}_data");
+            }
+            
+            $recentAttendance = $user->attendances()
+                ->where('date', '>=', now()->subDays(30))
+                ->orderBy('date', 'desc')
+                ->get();
+            
+            $recentTimesheet = $user->timesheets()
+                ->where('date', '>=', now()->subDays(30)) 
+                ->orderBy('date', 'desc') 
+                ->get();
+            
+            $recentSummaries = $user->workSummaries()
+                ->where('date', '>=', now()->subDays(30))
+                ->orderBy('date', 'desc') 
+                ->get();
+            
+            $debug = [
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'user_role' => $user->role->name ?? 'No Role',
+                'attendance_records' => $recentAttendance->count(),
+                'timesheet_records' => $recentTimesheet->count(), 
+                'work_summaries' => $recentSummaries->count(),
+                'latest_attendance' => $recentAttendance->first()?->date,
+                'latest_timesheet' => $recentTimesheet->first()?->date,
+                'system_time' => now()->toDateTimeString(),
+                'session_data' => array_keys(session()->all()),
+                'cache_status' => 'cleared',
+            ];
+            
+            return response()->json($debug, 200, [], JSON_PRETTY_PRINT);
+        })->name('emergency.debug');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+| All routes under this group require 'auth' and 'can:admin' middleware.
+*/
+Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
+    
+    // Admin Dashboard & System Info
+    Route::get('/', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+    Route::get('/quick-reports', [SystemController::class, 'quickReports'])->name('admin.quick.reports');
+    Route::get('/system-status', [SystemController::class, 'status'])->name('admin.system.status');
+    Route::get('/test', function () { return view('admin-dashboard-test'); })->name('admin.dashboard.test');
+    
+    // Admin User Management
+    Route::prefix('users')->name('admin.users.')->group(function () {
+        Route::get('/', [AdminUserController::class, 'index'])->name('index');
+        Route::get('/data', [AdminUserController::class, 'getData'])->name('data');
+        Route::post('/', [AdminUserController::class, 'store'])->name('store');
+        Route::put('/{id}', [AdminUserController::class, 'update'])->name('update');
+        Route::post('/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('reset_password');
+        Route::delete('/{id}', [AdminUserController::class, 'destroy'])->name('destroy');
+        Route::get('/role-distribution', [AdminUserController::class, 'getRoleDistribution'])->name('roleDistribution');
+    });
+    
+    // Employee Time Overview
+    Route::prefix('employees/time')->name('admin.employees.time.')->group(function () {
+        Route::get('/', [AdminUserController::class, 'employeeTimeOverview'])->name('index');
+        Route::get('/view', function () { return view('admin.employees_time'); })->name('view');
+        Route::get('/chart', [AdminUserController::class, 'getTimeChartData'])->name('chart');
+        Route::get('/{id}/details', [AdminUserController::class, 'getTimeDetails'])->name('details');
+        Route::get('/export', [AdminUserController::class, 'exportTimeCsv'])->name('export');
+    });
+
+    // Admin Timesheets & Calendar Management
+    Route::get('/timesheets', [TimesheetController::class, 'adminIndex'])->name('timesheet.admin.index');
+
+    // FIX: Simplified the name() definition here.
+    Route::prefix('timesheet-calendar')->name('admin.timesheet.calendar')->group(function () { 
+        Route::get('/', [TimesheetCalendarController::class, 'index'])->name(''); // This will now be named 'admin.timesheet.calendar'
+        Route::get('/data', [TimesheetCalendarController::class, 'getCalendarData'])->name('.data');
+        Route::get('/day/{date}', [TimesheetCalendarController::class, 'getDayDetails'])->name('.day');
+        Route::get('/stats', [TimesheetCalendarController::class, 'getStatistics'])->name('.stats');
+        Route::post('/approve/{id}', [TimesheetCalendarController::class, 'approveTimesheet'])->name('.approve');
+        Route::post('/reject/{id}', [TimesheetCalendarController::class, 'rejectTimesheet'])->name('.reject');
+        Route::post('/bulk-approve', [TimesheetCalendarController::class, 'bulkApprove'])->name('.bulkApprove');
+        Route::post('/bulk-reject', [TimesheetCalendarController::class, 'bulkReject'])->name('.bulkReject');
+        Route::get('/export', [TimesheetCalendarController::class, 'export'])->name('.export');
+    });
+
+    // Leave Requests (Admin Approval)
+    Route::prefix('leave')->name('admin.leave.')->group(function () {
+        Route::get('/', [LeaveController::class, 'index'])->name('index');
+        Route::get('/list', [LeaveController::class, 'list'])->name('list');
+        Route::post('/{id}/approve', [LeaveController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [LeaveController::class, 'reject'])->name('reject');
+    });
+});
