@@ -39,9 +39,10 @@
                     <label class="form-label">Status Filter</label>
                     <select id="statusFilter" class="form-select">
                         <option value="">All Status</option>
-                        <option value="pending"><i class="bi bi-circle-fill text-warning me-1"></i>Pending</option>
-                        <option value="approved"><i class="bi bi-circle-fill text-success me-1"></i>Approved</option>
-                        <option value="rejected"><i class="bi bi-circle-fill text-danger me-1"></i>Rejected</option>
+                        <option value="pending"><i class="bi bi-circle-fill text-warning me-1"></i>Last Week</option>
+                        <option value="approved"><i class="bi bi-circle-fill text-success me-1"></i>Last Month</option>
+                        <option value="rejected"><i class="bi bi-circle-fill text-danger me-1"></i>Last 6 Month </option>
+                        <option value="rejected"><i class="bi bi-circle-fill text-danger me-1"></i>Last Year </option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -55,6 +56,9 @@
                         
                         <input type="radio" class="btn-check" name="viewMode" id="viewMonthly" value="month" checked>
                         <label class="btn btn-outline-primary" for="viewMonthly">Monthly</label>
+
+                        <input type="radio" class="btn-check" name="viewMode" id="viewMonthly" value="year" checked>
+                        <label class="btn btn-outline-primary" for="viewMonthly">Yarely</label>
                     </div>
                 </div>
                 <div class="col-md-2">
