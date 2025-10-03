@@ -50,6 +50,7 @@
         <div class="card border-0 shadow-sm h-100 bg-gradient-1 card-gradient">
             <div class="card-body text-white text-center p-4">
                 <i class="bi bi-check-circle-fill mb-3 text-2xl opacity-80"></i>
+                <div class="display-6 fw-bold mb-1" id="presentDays">0</div>
                 <p class="mb-0">Present Days</p>
             </div>
         </div>
@@ -58,6 +59,7 @@
         <div class="card border-0 shadow-sm h-100 bg-gradient-2 card-gradient">
             <div class="card-body text-white text-center p-4">
                 <i class="bi bi-x-circle-fill mb-3 text-2xl opacity-80"></i>
+                <div class="display-6 fw-bold mb-1" id="absentDays">0</div>
                 <p class="mb-0">Absent Days</p>
             </div>
         </div>
@@ -66,6 +68,7 @@
         <div class="card border-0 shadow-sm h-100 bg-gradient-3 card-gradient">
             <div class="card-body text-white text-center p-4">
                 <i class="bi bi-clock-fill mb-3 text-2xl opacity-80"></i>
+                <div class="display-6 fw-bold mb-1" id="totalHours">0h</div>
                 <p class="mb-0">Total Hours</p>
             </div>
         </div>
@@ -74,6 +77,7 @@
         <div class="card border-0 shadow-sm h-100 bg-gradient-5 card-gradient">
             <div class="card-body text-white text-center p-4">
                 <i class="bi bi-percent mb-3 text-2xl opacity-80"></i>
+                <div class="display-6 fw-bold mb-1" id="attendanceRate">0%</div>
                 <p class="mb-0">Attendance Rate</p>
             </div>
         </div>

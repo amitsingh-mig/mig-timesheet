@@ -1,1035 +1,287 @@
-/* ============================================= */
-/* General Layout & Typography          */
-/* ============================================= */
-
-body {
-    background-color: #f6f7fb;
-    font-family: "Inter", "Segoe UI", Arial, sans-serif;
-    color: #2c3e50;
-}
-
-/* Page Background Gradients */
-.app-bg {
-    min-height: auto;
-    background: radial-gradient(1200px 400px at -10% -10%, #e9f0ff, transparent),
-        radial-gradient(900px 300px at 110% 0%, #f3e9ff, transparent),
-        linear-gradient(180deg, #f8f9fb, #eef1f8);
-}
-
-.auth-bg {
-    min-height: auto;
-    background: radial-gradient(1000px 400px at 10% -10%, #e9f0ff, transparent),
-        radial-gradient(800px 300px at 100% 0%, #f3e9ff, transparent),
-        linear-gradient(180deg, #f8f9fb, #eef1f8);
-}
-
-
-/* ============================================= */
-/* Core UI Components                */
-/* ============================================= */
-
-/* ----- Cards ----- */
-.card {
-    border: none;
-    border-radius: 16px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    background: #fff;
-    transition: all 0.3s ease;
-    margin-bottom: 1rem;
-    overflow: hidden;
-    word-wrap: break-word;
-    display: flex;
-    flex-direction: column;
-}
-
-.card:hover {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-}
-
-.card-header {
-    border-bottom: 1px solid #f1f1f1;
-    font-weight: 600;
-    font-size: 1rem;
-    color: #2c3e50;
-    background: transparent;
-    padding: 1.25rem 1.5rem;
-}
-
-.card-body {
-    padding: 1rem;
-}
-
-.card-title {
-    margin-bottom: 0.5rem !important;
-    font-size: 1rem;
-}
-
-.auth-card {
-    border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-    background: #fff;
-}
-
-/* ----- Buttons ----- */
-.btn {
-    display: inline-block;
-    text-align: center;
-    vertical-align: middle;
-    cursor: pointer;
-    border: 1px solid transparent;
-    padding: 0.375rem 0.75rem;
-    font-size: 1rem;
-    line-height: 1.5;
-    border-radius: 0.375rem;
-    transition: all 0.15s ease-in-out;
-    word-wrap: break-word;
-}
-
-.btn-rounded {
-    border-radius: 25px;
-    padding: 0.5rem 1.2rem;
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-}
-
-.btn-rounded:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.modern-btn {
-    border-radius: 12px;
-    padding: 0.875rem 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-    transition: all 0.3s ease;
-    border: 2px solid transparent;
-}
-
-.modern-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-}
-
-.modern-btn:active {
-    transform: translateY(0);
-}
-
-/* Button Colors */
-.btn-success { background-color: #28a745; border-color: #28a745; }
-.btn-info { background-color: #0dcaf0; border-color: #0dcaf0; color: #0a2a3a; }
-.btn-warning { background-color: #ffc107; border-color: #ffc107; color: #533f03; }
-.btn-danger { background-color: #dc3545; border-color: #dc3545; }
-
-/* ----- Forms & Inputs ----- */
-input, textarea, select {
-    width: 100%;
-    max-width: 100%;
-}
-
-.rounded-input {
-    border-radius: 12px;
-    padding: 0.6rem 0.8rem;
-    border: 1px solid #dcdfe6;
-    transition: all 0.2s ease;
-}
-
-.rounded-input:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.2);
-}
-
-.modern-input {
-    border: 2px solid #e2e8f0;
-    border-radius: 12px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    transition: all 0.3s ease;
-    background: #fff;
-}
-
-.modern-input:focus {
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    background: #fff;
-}
-
-.input-group-text {
-    border: 2px solid #e2e8f0;
-    border-radius: 12px 0 0 12px;
-    background: #f8fafc;
-}
-
-/* ----- Tables ----- */
-.table {
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.table thead {
-    background: #2d3e50;
-    color: #fff;
-}
-
-.table-hover tbody tr:hover {
-    background-color: #f0f4ff;
-    cursor: pointer;
-}
-
-.table-responsive {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-}
-
-.modern-table {
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-.entry-row {
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.entry-row:hover {
-    background-color: #f8fafc;
-}
-
-/* ----- Badges & Brand ----- */
-.badge {
-    padding: 0.35em 0.65em;
-    font-size: 0.75em;
-    font-weight: 600;
-    letter-spacing: 0.025em;
-}
-
-.brand-badge {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #3b82f6, #9333ea);
-    color: #fff;
-    font-weight: 700;
-    letter-spacing: 1px;
-}
-
-/* ----- Tooltips ----- */
-[data-tooltip] {
-    position: relative;
-}
-
-[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.9);
-    color: white;
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    white-space: nowrap;
-    z-index: 1000;
-    opacity: 0;
-    animation: fadeInTooltip 0.3s forwards;
-}
-
-[data-tooltip]:hover::before {
-    content: '';
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%) translateY(2px);
-    border: 5px solid transparent;
-    border-top-color: rgba(0, 0, 0, 0.9);
-    z-index: 1000;
-    opacity: 0;
-    animation: fadeInTooltip 0.3s forwards;
-}
-
-.tooltip {
-    font-size: 0.875rem;
-    z-index: 1070;
-}
-
-.tooltip-inner {
-    max-width: 300px;
-    padding: 8px 12px;
-    background-color: #1f2937;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-/* ----- Miscellaneous ----- */
-.progress {
-    background-color: #f1f5f9;
-}
-
-.progress-thick {
-    height: 12px;
-    border-radius: 8px;
-}
-
-.spinner-border {
-    width: 2rem;
-    height: 2rem;
-}
-
-.loading {
-    opacity: 0.6;
-    pointer-events: none;
-    position: relative;
-}
-
-.loading::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    margin: -10px 0 0 -10px;
-    border: 2px solid #f3f3f3;
-    border-top: 2px solid #3498db;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-/* ============================================= */
-/* Navigation Elements               */
-/* ============================================= */
-
-/* ----- Navbar ----- */
-.navbar {
-    z-index: 1000;
-    min-height: 70px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.navbar .container-fluid {
-    display: flex;
-    align-items: center;
-    flex-wrap: nowrap;
-}
-
-.navbar-brand {
-    color: #ffffff !important;
-    text-decoration: none;
-    font-weight: 700;
-    transition: all 0.3s ease;
-}
-
-.navbar-brand:hover {
-    transform: translateY(-2px);
-}
-
-.brand-text {
-    color: #ffffff !important;
-    background: linear-gradient(135deg, #ffffff, #e2e8f0);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.navbar-nav .nav-link {
-    color: #ffffff !important;
-    padding: 0.5rem 1rem;
-    transition: all 0.3s ease;
-    border-radius: 6px;
-    margin: 0 2px;
-}
-
-.navbar-nav .nav-link:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.navbar-nav .nav-link.active {
-    background: rgba(255, 255, 255, 0.2);
-}
-
-.navbar-toggler {
-    border: none;
-    outline: none;
-    padding: 0.4rem 0.8rem;
-    transition: all 0.3s ease;
-}
-
-.navbar-toggler:focus {
-    box-shadow: none;
-}
-
-.navbar-toggler:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: scale(1.05);
-}
-
-.navbar-collapse {
-    flex-basis: 100%;
-    flex-grow: 1;
-    align-items: center;
-}
-
-/* ----- Sidebar ----- */
-.sidebar {
-    min-height: calc(100vh - 56px);
-    background: linear-gradient(180deg, #2d3e50, #1a2533);
-    color: #fff;
-    padding-top: 1rem;
-}
-
-.sidebar a {
-    color: #fff;
-    text-decoration: none;
-    padding: 10px 15px;
-    display: block;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-}
-
-.sidebar a:hover,
-.sidebar a.active {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-/* ----- Dropdowns ----- */
-.dropdown-menu {
-    z-index: 1000;
-}
-
-.dropdown-menu-dark {
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
-    border-radius: 12px;
-    backdrop-filter: blur(10px);
-}
-
-.dropdown-item {
-    color: rgba(255, 255, 255, 0.8) !important;
-    padding: 0.7rem 1rem;
-    transition: all 0.3s ease;
-    border-radius: 6px;
-    margin: 2px 8px;
-}
-
-.dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: #ffffff !important;
-    transform: translateX(5px);
-}
-
-.dropdown-item i {
-    width: 16px;
-    opacity: 0.7;
-}
-
-.nav-item.dropdown:hover .dropdown-menu {
-    display: block;
-    opacity: 0;
-    animation: fadeInDropdown 0.3s ease forwards;
-}
-
-/* ============================================= */
-/* Dashboard & Stats                 */
-/* ============================================= */
-
-.dashboard-toggle .btn.active {
-    background: #3b82f6;
-    color: #fff;
-    border-color: #3b82f6;
-}
-
-/* ----- Stat Cards ----- */
-.stat-card {
-    background: linear-gradient(135deg, #ffffff, #f8f9fa);
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    padding: 0.75rem !important;
-    margin-bottom: 0.5rem;
-}
-
-.stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    border-color: rgba(59, 130, 246, 0.3);
-}
-
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    transition: all 0.3s ease;
-}
-
-/* Stat card top border colors */
-.today-card::before { background: linear-gradient(90deg, #3b82f6, #1d4ed8); }
-.week-card::before { background: linear-gradient(90deg, #10b981, #047857); }
-.month-card::before { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
-.tasks-card::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
-
-.stat-value {
-    font-size: 1.25rem !important;
-    font-weight: 700;
-    color: #2d3e50;
-    line-height: 1.2;
-    margin-bottom: 0.25rem;
-}
-
-.stat-label {
-    font-size: 0.75rem !important;
-    font-weight: 500;
-    color: #6c757d;
-    line-height: 1.1;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.stat-icon {
-    font-size: 1.5rem;
-    opacity: 0.7;
-}
-
-/* ----- Action Buttons ----- */
-.action-btn {
-    background: linear-gradient(135deg, #28a745, #20c997);
-    color: white;
-    transition: all 0.3s ease;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    padding: 0.75rem !important;
-}
-
-.action-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(40, 167, 69, 0.3);
-    color: white;
-}
-
-.action-btn:active {
-    transform: translateY(-1px);
-}
-
-.clock-in-btn {
-    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
-}
-.clock-in-btn:hover {
-    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
-}
-
-.clock-out-btn {
-    background: linear-gradient(135deg, #dc3545, #fd7e14) !important;
-}
-.clock-out-btn:hover {
-    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.3) !important;
-}
-
-.action-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.25rem !important;
-    display: block;
-}
-
-.action-text {
-    font-size: 0.85rem;
-    font-weight: 600;
-    margin-bottom: 0.1rem;
-}
-
-.action-subtext {
-    font-size: 0.7rem;
-    opacity: 0.8;
-}
-
-.secondary-btn {
-    background: linear-gradient(135deg, #6c757d, #495057);
-    color: white;
-    transition: all 0.3s ease;
-    padding: 0.75rem !important;
-}
-
-.secondary-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(108, 117, 125, 0.3);
-    color: white;
-    text-decoration: none;
-}
-
-.secondary-icon {
-    font-size: 1.25rem;
-    margin-bottom: 0.25rem !important;
-}
-
-.secondary-text {
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-/* ----- Status Indicators & Time ----- */
-.avatar-wrapper {
-    position: relative;
-    display: inline-block;
-}
-
-.status-indicator {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    border: 2px solid #ffffff;
-}
-
-.status-indicator.online {
-    background: #10b981;
-    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
-    animation: pulse-online 2s infinite;
-}
-
-.status-indicator-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-    transition: all 0.3s ease;
-    background: #6b7280;
-}
-
-.status-indicator-dot.online {
-    background: #10b981;
-    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
-}
-
-.status-indicator-dot.working {
-    background: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.3);
-    animation: pulse-working 1.5s infinite;
-}
-
-.status-indicator-dot.offline {
-    background: #6b7280;
-    box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.3);
-}
-
-.status-container {
-    transition: all 0.3s ease;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 0.75rem !important;
-}
-
-.status-container:hover {
-    transform: scale(1.02);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-.status-label { font-size: 0.7rem; margin-bottom: 2px; }
-.status-text { font-size: 0.9rem; color: #1f2937; }
-.status-time { font-size: 0.8rem; color: #6b7280; font-weight: 500; }
-
-.current-time-display {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
-    color: white !important;
-    border: none;
-    text-align: center;
-    min-width: 130px;
-    padding: 0.5rem 0.75rem !important;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    animation: subtle-glow 3s ease-in-out infinite alternate;
-    font-family: 'Courier New', monospace;
-}
-
-.current-time-display h5,
-.current-time-display h6 {
-    margin-bottom: 0;
-    font-size: 0.9rem;
-    line-height: 1.1;
-}
-
-.current-time-display small {
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-size: 0.65rem;
-    line-height: 1;
-    font-weight: 400;
-}
-
-.attendance-status-active {
-    position: relative;
-    overflow: visible;
-}
-
-.attendance-status-active::before {
-    content: '';
-    position: absolute;
-    top: -2px; left: -2px; right: -2px; bottom: -2px;
-    background: linear-gradient(45deg, #10b981, #059669);
-    border-radius: inherit;
-    z-index: -1;
-    opacity: 0.7;
-    animation: pulse 2s infinite;
-}
-
-/* ----- Charts ----- */
-.chart-container {
-    position: relative;
-    height: 300px;
-    margin: 14px 0;
-    flex: 1;
-}
-
-.chart-container canvas {
-    height: 300px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-}
-
-
-/* ============================================= */
-/* Calendar                    */
-/* ============================================= */
-
-/* ----- Calendar Layout & Grid ----- */
-.calendar-grid {
-    display: grid !important;
-    grid-template-columns: repeat(7, 1fr) !important;
-    gap: 6px;
-    margin-top: 1rem;
-    padding: 0.75rem;
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    border-radius: 12px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.calendar-header {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    width: 100%;
-}
-
-.calendar-head, .calendar-day-header {
-    font-size: 0.75rem;
-    color: #374151;
-    text-align: center;
-    font-weight: 600;
-    padding: 6px 4px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 30px;
-}
-
-/* ----- Calendar Cells (Base) ----- */
-.calendar-cell {
-    background: white;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    min-height: 65px;
-    padding: 6px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    cursor: pointer;
-    position: relative;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    aspect-ratio: 1;
-}
-
-.calendar-cell:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    border-color: rgba(59, 130, 246, 0.3);
-}
-
-.calendar-cell.empty-cell {
-    border: none;
-    background: transparent;
-    cursor: default;
-    pointer-events: none;
-}
-.calendar-cell.empty-cell:hover {
-    transform: none;
-    box-shadow: none;
-}
-
-/* ----- Calendar Cell States ----- */
-.calendar-cell.muted {
-    background: #f8f9fa;
-    border: 1px dashed #e6e6e6;
-}
-
-.calendar-cell.present {
-    background: linear-gradient(180deg, #e7f7ee, #ffffff);
-    border-color: #a7e3c5;
-}
-
-.calendar-cell.work-day,
-.calendar-cell.has-work {
-    background: linear-gradient(135deg, #d1fae5, #a7f3d0) !important;
-    border: 2px solid #10b981 !important;
-    color: #065f46 !important;
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
-}
-.calendar-cell.work-day:hover,
-.calendar-cell.has-work:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-    background: #bfdbfe;
-}
-
-.calendar-cell.holiday {
-    background: linear-gradient(135deg, #fee2e2, #fecaca) !important;
-    border: 2px solid #ef4444 !important;
-    color: #991b1b !important;
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
-}
-.calendar-cell.holiday:hover {
-    transform: translateY(-2px) scale(1.02);
-    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
-}
-
-.calendar-cell.is-weekend {
-    background: #f9fafb;
-    border-color: #e5e7eb;
-    color: #9ca3af;
-}
-
-.calendar-cell.active-session {
-    background: linear-gradient(135deg, #fef3c7, #fbbf24);
-    border-color: #f59e0b;
-    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
-    animation: pulse-orange 2s infinite;
-}
-
-.calendar-cell.today,
-.calendar-cell.is-today {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8) !important;
-    color: white !important;
-    border: 3px solid #2563eb !important;
-    transform: scale(1.05);
-    z-index: 2; /* Ensure today is always on top */
-    box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5) !important;
-    animation: pulse-today 2s infinite;
-    font-weight: 700;
-}
-
-.calendar-cell.is-today.has-work {
-    background: #a7f3d0 !important;
-    border-color: #10b981 !important;
-    color: #047857 !important;
-}
-
-/* ----- Calendar Cell Content ----- */
-.calendar-date, .day-number {
-    font-size: 0.8rem;
-    color: #374151;
-    font-weight: 600;
-    line-height: 1.2;
-    margin-bottom: 2px;
-}
-
-.calendar-cell.work-day .calendar-date { color: #065f46; font-weight: 700; }
-.calendar-cell.holiday .calendar-date { color: #991b1b; font-weight: 700; }
-.calendar-cell.today .calendar-date { color: white !important; font-weight: 700; }
-
-.calendar-hours, .work-hours {
-    margin-top: auto;
-    font-weight: 600;
-    font-size: 0.7rem;
-    color: #065f46;
-    background: rgba(16, 185, 129, 0.1);
-    padding: 2px 4px;
-    border-radius: 4px;
-    text-align: center;
-    display: inline-block;
-}
-
-.calendar-hours.has-hours {
-    color: #065f46;
-    background: rgba(16, 185, 129, 0.15);
-}
-
-.calendar-cell.work-day .calendar-hours {
-    background: rgba(16, 185, 129, 0.2);
-    color: #065f46;
-    font-weight: 700;
-    border: 1px solid rgba(16, 185, 129, 0.4);
-}
-
-.calendar-cell.today .calendar-hours {
-    color: white !important;
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-}
-
-.calendar-cell.active-session .calendar-hours {
-    color: #92400e;
-    font-weight: 700;
-}
-
-.today-dot {
-    position: absolute;
-    bottom: 4px;
-    right: 4px;
-    width: 6px;
-    height: 6px;
-    background: #ef4444;
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
-
-/* ----- Calendar Legend & Stats ----- */
-.calendar-legend-item {
-    width: 16px;
-    height: 16px;
-    border-radius: 50%;
-    display: inline-block;
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-}
-
-.calendar-legend-item.work-day { background: linear-gradient(135deg, #10b981, #059669); border-color: #10b981; }
-.calendar-legend-item.holiday { background: linear-gradient(135deg, #ef4444, #dc2626); border-color: #ef4444; }
-.calendar-legend-item.today { background: linear-gradient(135deg, #3b82f6, #1d4ed8); border-color: #3b82f6; animation: pulse-blue 2s infinite; }
-
-.calendar-stats {
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 0.75rem;
-}
-
-.calendar-stats small {
-    font-size: 0.8rem;
-}
-
-/* ============================================= */
-/* Utility Classes                */
-/* ============================================= */
-.transition-all { transition: all 0.3s ease; }
-.text-primary { color: #3b82f6 !important; }
-.text-success { color: #10b981 !important; }
-.text-info { color: #06b6d4 !important; }
-.text-warning { color: #f59e0b !important; }
-.text-danger { color: #ef4444 !important; }
-.text-muted { color: #6b7280 !important; }
-
-/* ============================================= */
-/* Animations                  */
-/* ============================================= */
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-@keyframes pulse-today {
-    0% { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
-    50% { box-shadow: 0 12px 35px rgba(59, 130, 246, 0.7); }
-    100% { box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5); }
-}
-@keyframes pulse-blue {
-    0% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-    50% { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1); }
-    100% { box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-}
-@keyframes pulse-orange {
-    0% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
-    50% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0.1); }
-    100% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2); }
-}
-@keyframes pulse-working {
-    0% { opacity: 1; }
-    50% { opacity: 0.5; }
-    100% { opacity: 1; }
-}
-@keyframes pulse-green {
-    0% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3); }
-    50% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.1); }
-    100% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3); }
-}
-@keyframes pulse-online { 0% { opacity: 1; } 50% { opacity: 0.7; } 100% { opacity: 1; } }
-@keyframes subtle-glow {
-    0% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
-    100% { box-shadow: 0 4px 20px rgba(102, 126, 234, 0.6); }
-}
-@keyframes fadeInTooltip {
-    0% { opacity: 0; transform: translateX(-50%) translateY(5px); }
-    100% { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
-@keyframes fadeInDropdown {
-    0% { opacity: 0; transform: translateY(-10px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-@keyframes slideInRight {
-    0% { opacity: 0; transform: translateX(20px); }
-    100% { opacity: 1; transform: translateX(0); }
-}
-
-/* ============================================= */
-/* Responsive Design               */
-/* ============================================= */
-
-/* ----- Medium Screens (Tablets) ----- */
-@media (max-width: 991px) {
-    .chart-container {
-        height: 280px;
-    }
-    .col-lg-4 .calendar-cell {
-        min-height: 55px;
-    }
-}
-
-/* ----- Small Screens (Large Phones, Tablets) ----- */
-@media (max-width: 768px) {
-    .stat-card { margin-bottom: 1rem; }
-    .stat-value { font-size: 1.2rem; }
+<?php
+
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\AttendanceController;
+use App\Http\Controllers\TimesheetController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DailyUpdateController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
+use App\Http\Controllers\Admin\TimesheetCalendarController;
+use App\Http\Controllers\Admin\SystemController;
+use App\Http\Controllers\Admin\LeaveController;
+use App\Models\Timesheet;
+use App\Models\User;
+
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+| Routes accessible without authentication (e.g., login, login, password reset).
+*/
+
+Route::get('/', function () {
+    return view('auth.login');
+});
+
+Route::get('/home', function () {
+    return redirect()->route('dashboard');
+});
+
+// Keep Breeze/Fortify auth routes (login, logout, etc.) if present
+if (file_exists(__DIR__.'/auth.php')) {
+    require __DIR__.'/auth.php';
+}
+
+/*
+|--------------------------------------------------------------------------
+| Authenticated Employee Routes
+|--------------------------------------------------------------------------
+| Routes for general users requiring authentication. Grouped by feature.
+*/
+Route::middleware(['auth'])->group(function () {
+
+    // --- 1. DASHBOARD ---
+    // FIX: Intercept the main dashboard route to redirect admins to their specific area.
+    Route::get('/dashboard', function () {
+        if (Auth::user() && Auth::user()->role_id == 1) { // Assuming role_id 1 is 'admin'
+            return redirect()->route('admin.dashboard');
+        }
+        return (new DashboardController)->index(request());
+    })->name('dashboard');
+
+    Route::get('/dashboard/data', [DashboardController::class, 'getData'])->name('dashboard.data');
+    Route::get('/dashboard/worktime-data', [DashboardController::class, 'getWorktimeData'])->name('dashboard.worktime-data');
+
+    // --- 2. ATTENDANCE & CLOCKING ---
+    Route::prefix('attendance')->group(function () {
+        Route::get('/', [AttendanceController::class, 'indexPage'])->name('attendance.index');
+        Route::get('/data', [AttendanceController::class, 'getData'])->name('attendance.data');
+        Route::get('/{id}', [AttendanceController::class, 'showPage'])->name('attendance.show');
+
+        // Clocking Endpoints (Used by JS)
+        Route::get('/status', [AttendanceController::class, 'status'])->name('attendance.status');
+        Route::get('/calendar', [AttendanceController::class, 'calendar'])->name('attendance.calendar');
+        Route::post('/clock-in', [AttendanceController::class, 'clock_in'])->name('attendance.clockin');
+        Route::post('/clock-out', [AttendanceController::class, 'clock_out'])->name('attendance.clockout');
+    });
+
+    // --- 3. TIMESHEET (Employee CRUD & Summary) ---
+    Route::prefix('timesheet')->group(function () {
+        Route::get('/', [TimesheetController::class, 'index'])->name('timesheet.index');
+        Route::get('/summary', [TimesheetController::class, 'getSummaryData'])->name('timesheet.summary');
+        Route::get('/export', [TimesheetController::class, 'export'])->name('timesheet.export');
+        Route::get('/load-more', [TimesheetController::class, 'loadMore'])->name('timesheet.loadMore');
+        Route::get('/day-tasks', [TimesheetController::class, 'dayTasks'])->name('timesheet.dayTasks');
+        
+        // API/Action Routes
+        Route::post('/', [TimesheetController::class, 'store'])->name('timesheet.store');
+        Route::post('/store-or-update', [TimesheetController::class, 'storeOrUpdate'])->name('timesheet.storeOrUpdate');
+        Route::delete('/{id}', [TimesheetController::class, 'destroy'])->name('timesheet.destroy');
+    });
     
-    .action-icon { font-size: 1.5rem; }
-    .action-text { font-size: 0.8rem; }
-    
-    .secondary-icon { font-size: 1rem; }
-    .secondary-text { font-size: 0.7rem; }
-    
-    .chart-container { height: 300px; }
-    
-    .current-time-display { min-width: 100px; font-size: 0.8rem; }
-    .current-time-display small { font-size: 0.6rem; }
+    // --- 4. DAILY UPDATE ---
+    Route::prefix('daily-update')->group(function () {
+        Route::get('/', [DailyUpdateController::class, 'index'])->name('daily-update.index');
+        Route::post('/', [DailyUpdateController::class, 'store'])->name('daily-update.store');
+        Route::get('/api', [DailyUpdateController::class, 'api'])->name('daily-update.api');
+        Route::post('/refresh', [DailyUpdateController::class, 'refreshData'])->name('daily-update.refresh');
+    });
 
-    .navbar-brand { font-size: 1.1rem !important; }
-    .brand-badge { width: 35px; height: 35px; font-size: 0.9rem; }
-    .nav-link-enhanced { padding: 0.5rem 0.8rem !important; margin: 1px 0; }
-    .dropdown-menu { margin-top: 0.5rem; border-radius: 8px; }
-    .dropdown-item { padding: 0.6rem 1rem; font-size: 0.9rem; }
+    // --- 5. PROFILE & SELF-MANAGEMENT ---
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
+
+    // --- 6. USER VIEWS & ACTIONS (General) ---
+    Route::prefix('users')->group(function () {
+        Route::get('/', [UserController::class, 'indexPage'])->name('users.index');
+        Route::get('/{id}', [UserController::class, 'showPage'])->name('users.show');
+        Route::get('/{id}/edit', [UserController::class, 'editPage'])->name('users.edit');
+
+        Route::post('/{id}', [UserController::class, 'updatePage'])->name('users.update');
+        Route::delete('/{id}', [UserController::class, 'destroyPage'])->name('users.destroy');
+        
+        // Admin-specific action defined under the user group but protected by 'can:admin'
+        Route::post('/{id}/reset-password', [UserController::class, 'resetPassword'])
+            ->middleware('can:admin')
+            ->name('users.reset_password');
+    });
+
+    // --- 7. DEBUG & EMERGENCY ROUTES (FOR DEVELOPMENT ONLY) ---
+    // These routes should be removed or commented out for production deployment.
+    Route::prefix('debug')->group(function () {
+        Route::get('/auth-status', function() {
+            $user = auth()->user();
+            $response = [
+                'authenticated' => auth()->check(),
+                'user_id' => auth()->id(),
+                'user_email' => $user->email ?? null,
+                'user_role' => $user && $user->role ? $user->role->name : 'No Role',
+                'session_id' => session()->getId(),
+                'csrf_token' => csrf_token(),
+                'current_time' => now()->toDateTimeString(),
+                'middleware_applied' => 'auth middleware working',
+            ];
+            
+            if (auth()->check()) {
+                try {
+                    $attendanceController = new \App\Http\Controllers\AttendanceController();
+                    $attendanceStatus = $attendanceController->status(request());
+                    $response['attendance_status_test'] = json_decode($attendanceStatus->getContent(), true);
+                    $response['attendance_status_code'] = $attendanceStatus->getStatusCode();
+                } catch (\Exception $e) {
+                    $response['attendance_status_error'] = $e->getMessage();
+                }
+            }
+            
+            return response()->json($response);
+        })->name('debug.auth');
+
+        Route::get('/timesheet', function() {
+            $user = auth()->user();
+            $timesheets = Timesheet::where('user_id', $user->id)->get();
+            
+            return response()->json([
+                'user' => $user->name,
+                'user_id' => $user->id,
+                'total_records' => $timesheets->count(),
+                'recent_records' => $timesheets->take(5)->toArray(),
+                'all_records' => $timesheets->toArray()
+            ], 200, [], JSON_PRETTY_PRINT);
+        })->name('debug.timesheet');
+        
+        Route::get('/admin', function() {
+            $user = auth()->user();
+            $allUsers = User::with('role')->get();
+            $allTimesheets = Timesheet::with('user')->get();
+            
+            return response()->json([
+                'current_user' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role ? $user->role->name : 'no role',
+                    'is_admin' => $user->role && $user->role->name === 'admin'
+                ],
+                'all_users' => $allUsers->toArray(),
+                'timesheet_summary' => [
+                    'total_records' => $allTimesheets->count(),
+                    'by_user' => $allTimesheets->groupBy('user_id')->map(function($group) {
+                        return [
+                            'count' => $group->count(),
+                            'user' => $group->first()->user->name ?? 'Unknown'
+                        ];
+                    })
+                ]
+            ], 200, [], JSON_PRETTY_PRINT);
+        })->name('debug.admin');
+
+        // EMERGENCY DEBUG ROUTE - Useful for clearing user-specific caches
+        Route::get('/emergency-fix/{userId?}', function($userId = null) {
+            if (!$userId) $userId = Auth::id();
+            
+            $user = User::findOrFail($userId);
+            
+            $user->refresh();
+            
+            if (Cache::has("user_{$userId}_data")) {
+                Cache::forget("user_{$userId}_data");
+            }
+            
+            $recentAttendance = $user->attendances()
+                ->where('date', '>=', now()->subDays(30))
+                ->orderBy('date', 'desc')
+                ->get();
+            
+            $recentTimesheet = $user->timesheets()
+                ->where('date', '>=', now()->subDays(30)) 
+                ->orderBy('date', 'desc') 
+                ->get();
+            
+            $recentSummaries = $user->workSummaries()
+                ->where('date', '>=', now()->subDays(30))
+                ->orderBy('date', 'desc') 
+                ->get();
+            
+            $debug = [
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'user_role' => $user->role->name ?? 'No Role',
+                'attendance_records' => $recentAttendance->count(),
+                'timesheet_records' => $recentTimesheet->count(), 
+                'work_summaries' => $recentSummaries->count(),
+                'latest_attendance' => $recentAttendance->first()?->date,
+                'latest_timesheet' => $recentTimesheet->first()?->date,
+                'system_time' => now()->toDateTimeString(),
+                'session_data' => array_keys(session()->all()),
+                'cache_status' => 'cleared',
+            ];
+            
+            return response()->json($debug, 200, [], JSON_PRETTY_PRINT);
+        })->name('emergency.debug');
+    });
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes
+|--------------------------------------------------------------------------
+| All routes under this group require 'auth' and 'can:admin' middleware.
+*/
+Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
     
-    /* Compact Calendar for mobile */
-    .calendar-grid { gap: 4px; padding: 0.25rem; }
-    .calendar-cell { min-height: 50px; padding: 3px; }
-    .calendar-day-header { font-size: 0.75rem; padding: 0.375rem; }
-    .day-number, .calendar-date { font-size: 0.8rem; }
-    .work-hours, .calendar-hours { font-size: 0.65rem; margin-top: 2px; }
-    .task-badge { width: 14px; height: 14px; font-size: 0.55rem; }
+    // Admin Dashboard & System Info
+    Route::get('/', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+    Route::get('/quick-reports', [SystemController::class, 'quickReports'])->name('admin.quick.reports');
+    Route::get('/system-status', [SystemController::class, 'status'])->name('admin.system.status');
+    Route::get('/test', function () { return view('admin-dashboard-test'); })->name('admin.dashboard.test');
+    
+    // Admin User Management
+    Route::prefix('users')->name('admin.users.')->group(function () {
+        Route::get('/', [AdminUserController::class, 'index'])->name('index');
+        Route::get('/data', [AdminUserController::class, 'getData'])->name('data');
+        Route::post('/', [AdminUserController::class, 'store'])->name('store');
+        Route::put('/{id}', [AdminUserController::class, 'update'])->name('update');
+        Route::post('/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('reset_password');
+        Route::delete('/{id}', [AdminUserController::class, 'destroy'])->name('destroy');
+        Route::get('/role-distribution', [AdminUserController::class, 'getRoleDistribution'])->name('roleDistribution');
+    });
+    
+    // Employee Time Overview
+    Route::prefix('employees/time')->name('admin.employees.time.')->group(function () {
+        Route::get('/', [AdminUserController::class, 'employeeTimeOverview'])->name('index');
+        Route::get('/view', function () { return view('admin.employees_time'); })->name('view');
+        Route::get('/chart', [AdminUserController::class, 'getTimeChartData'])->name('chart');
+        Route::get('/{id}/details', [AdminUserController::class, 'getTimeDetails'])->name('details');
+        Route::get('/export', [AdminUserController::class, 'exportTimeCsv'])->name('export');
+    });
 
-    .summary-item { margin-bottom: 0.5rem; }
-    .calendar-stats { padding: 0.5rem; }
-    .calendar-stats small { font-size: 0.75rem; }
-}
+    // Admin Timesheets & Calendar Management
+    Route::get('/timesheets', [TimesheetController::class, 'adminIndex'])->name('timesheet.admin.index');
 
-/* ----- Extra Small Screens (Phones) ----- */
-@media (max-width: 576px) {
-    .btn { padding: 0.5rem 1rem; font-size: 0.9rem; }
-    .card { border-radius: 8px; }
-}
+    // FIX: Simplified the name() definition here.
+    Route::prefix('timesheet-calendar')->name('admin.timesheet.calendar')->group(function () { 
+        Route::get('/', [TimesheetCalendarController::class, 'index'])->name(''); // This will now be named 'admin.timesheet.calendar'
+        Route::get('/data', [TimesheetCalendarController::class, 'getCalendarData'])->name('.data');
+        Route::get('/day/{date}', [TimesheetCalendarController::class, 'getDayDetails'])->name('.day');
+        Route::get('/stats', [TimesheetCalendarController::class, 'getStatistics'])->name('.stats');
+        Route::post('/approve/{id}', [TimesheetCalendarController::class, 'approveTimesheet'])->name('.approve');
+        Route::post('/reject/{id}', [TimesheetCalendarController::class, 'rejectTimesheet'])->name('.reject');
+        Route::post('/bulk-approve', [TimesheetCalendarController::class, 'bulkApprove'])->name('.bulkApprove');
+        Route::post('/bulk-reject', [TimesheetCalendarController::class, 'bulkReject'])->name('.bulkReject');
+        Route::get('/export', [TimesheetCalendarController::class, 'export'])->name('.export');
+    });
+
+    // Leave Requests (Admin Approval)
+    Route::prefix('leave')->name('admin.leave.')->group(function () {
+        Route::get('/', [LeaveController::class, 'index'])->name('index');
+        Route::get('/list', [LeaveController::class, 'list'])->name('list');
+        Route::post('/{id}/approve', [LeaveController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [LeaveController::class, 'reject'])->name('reject');
+    });
+});

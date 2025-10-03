@@ -75,7 +75,7 @@
         <div class="col-12 mb-4">
             <div class="card h-100">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Team Work Hours (Weekly) 📊</h5>
+                    <h5 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>Team Work Hours (Weekly)</h5>
                     <a href="{{ route('admin.employees.time.view') }}" class="btn btn-sm btn-outline-primary">Open Overview</a>
                 </div>
                 <div class="card-body" style="height: 340px;">

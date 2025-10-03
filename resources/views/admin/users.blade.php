@@ -83,14 +83,14 @@
 </div>
 
 <!-- Role Distribution Chart -->
-<div class="card border-0 shadow-sm mt-4">
+{{-- <div class="card border-0 shadow-sm mt-4">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0">Role Distribution</h5>
+        <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Role Distribution</h5>
     </div>
     <div class="card-body">
         <canvas id="roleDistributionChart" height="100"></canvas>
     </div>
-</div>
+</div> --}}
 
 <!-- Create User Modal -->
 <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
@@ -388,16 +388,33 @@ function loadRoleDistribution() {
             const ctx = document.getElementById('roleDistributionChart');
             if (!ctx) return;
             if (window.roleChart) window.roleChart.destroy();
+            const labels = data.labels || ['Admin', 'User'];
+            const values = data.data || [0, 0];
             window.roleChart = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: data.labels || ['Admin', 'User'],
+                    labels,
                     datasets: [{
-                        data: data.data || [0, 0],
-                        backgroundColor: ['#4e54c8', '#8f94fb']
+                        data: values,
+                        backgroundColor: ['#dc3545', '#0d6efd'], // Admin red, User blue
+                        hoverOffset: 6,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
                     }]
                 },
-                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                options: {
+                    responsive: true,
+                    cutout: '60%',
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        tooltip: { callbacks: { label: function(ctx){
+                            const total = ctx.dataset.data.reduce((a,b)=>a+b,0) || 0;
+                            const val = ctx.parsed || 0;
+                            const pct = total ? ((val/total)*100).toFixed(1) : 0;
+                            return `${ctx.label}: ${val} (${pct}%)`;
+                        }}}
+                    }
+                }
             });
         })
         .catch(() => {
@@ -411,10 +428,13 @@ function loadRoleDistribution() {
                     labels: ['Admin', 'User'],
                     datasets: [{
                         data: [1, 2],
-                        backgroundColor: ['#4e54c8', '#8f94fb']
+                        backgroundColor: ['#dc3545', '#0d6efd'],
+                        hoverOffset: 6,
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
                     }]
                 },
-                options: { responsive: true, plugins: { legend: { position: 'bottom' } } }
+                options: { responsive: true, cutout: '60%', plugins: { legend: { position: 'bottom' } } }
             });
         });
 }

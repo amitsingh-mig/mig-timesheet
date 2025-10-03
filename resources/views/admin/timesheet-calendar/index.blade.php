@@ -9,7 +9,7 @@
         <div class="col-12">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <h1 class="h2 fw-bold text-dark mb-1">📅 Admin Timesheet Calendar</h1>
+                    <h1 class="h2 fw-bold text-dark mb-1"><i class="bi bi-calendar3 me-2"></i>Admin Timesheet Calendar</h1>
                     <p class="text-muted mb-0">Manage and monitor all employee timesheets</p>
                 </div>
                 <div class="d-flex gap-2">
@@ -39,9 +39,9 @@
                     <label class="form-label">Status Filter</label>
                     <select id="statusFilter" class="form-select">
                         <option value="">All Status</option>
-                        <option value="pending">🟡 Pending</option>
-                        <option value="approved">🟢 Approved</option>
-                        <option value="rejected">🔴 Rejected</option>
+                        <option value="pending"><i class="bi bi-circle-fill text-warning me-1"></i>Pending</option>
+                        <option value="approved"><i class="bi bi-circle-fill text-success me-1"></i>Approved</option>
+                        <option value="rejected"><i class="bi bi-circle-fill text-danger me-1"></i>Rejected</option>
                     </select>
                 </div>
                 <div class="col-md-3">
@@ -73,58 +73,6 @@
                     <button class="btn btn-primary w-100" onclick="applyFilters()">
                         <i class="bi bi-funnel"></i> Apply Filters
                     </button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Statistics Summary -->
-    <div class="row mb-4" id="statisticsSummary">
-        <div class="col-md-2">
-            <div class="card bg-primary text-white">
-                <div class="card-body text-center">
-                    <h3 class="mb-0" id="totalEntries">--</h3>
-                    <small>Total Entries</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card bg-warning text-white">
-                <div class="card-body text-center">
-                    <h3 class="mb-0" id="pendingCount">--</h3>
-                    <small>🟡 Pending</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card bg-success text-white">
-                <div class="card-body text-center">
-                    <h3 class="mb-0" id="approvedCount">--</h3>
-                    <small>🟢 Approved</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card bg-danger text-white">
-                <div class="card-body text-center">
-                    <h3 class="mb-0" id="rejectedCount">--</h3>
-                    <small>🔴 Rejected</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card bg-info text-white">
-                <div class="card-body text-center">
-                    <h3 class="mb-0" id="overtimeCount">--</h3>
-                    <small>⚠️ Overtime</small>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card bg-secondary text-white">
-                <div class="card-body text-center">
-                    <h3 class="mb-0" id="missingCount">--</h3>
-                    <small>⭕ Missing</small>
                 </div>
             </div>
         </div>
@@ -162,31 +110,6 @@
         </div>
     </div>
 
-    <!-- Status Legend -->
-    <div class="card border-0 shadow-sm mt-3">
-        <div class="card-body">
-            <div class="row text-center">
-                <div class="col-md-2">
-                    <span class="badge bg-success p-2">🟢 Approved</span>
-                </div>
-                <div class="col-md-2">
-                    <span class="badge bg-warning p-2">🟡 Pending</span>
-                </div>
-                <div class="col-md-2">
-                    <span class="badge bg-danger p-2">🔴 Rejected</span>
-                </div>
-                <div class="col-md-2">
-                    <span class="badge bg-info p-2">⚠️ Overtime</span>
-                </div>
-                <div class="col-md-2">
-                    <span class="badge bg-secondary p-2">⭕ Missing</span>
-                </div>
-                <div class="col-md-2">
-                    <span class="badge bg-light text-dark p-2">⚪ Normal</span>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
 
 <!-- Day Details Modal -->
@@ -307,6 +230,9 @@ function loadCalendarData() {
                 calendarData = data.calendar_data;
                 renderCalendar(data.calendar_data);
                 updatePeriodDisplay();
+                if (!data.calendar_data || data.calendar_data.length === 0) {
+                    showToast('No timesheets found for this period', 'info');
+                }
             } else {
                 showError('Failed to load calendar data: ' + data.message);
                 // Render an empty calendar to remove the loading state
@@ -604,7 +530,11 @@ function refreshCalendar() {
 }
 
 function showError(message) {
-    showToast(message, 'error');
+    showToast(message, 'danger');
+}
+
+function showSuccess(message) {
+    showToast(message, 'success');
 }
 
 function showSuccess(message) {

@@ -7,15 +7,27 @@
     <li class="nav-item-header mt-3 mb-2">
         <span class="nav-header-text">
             <i class="bi bi-person-workspace me-1"></i>
-            EMPLOYEE PANEL 🧑‍💼
-            <span class="employee-badge">EMPLOYEE</span>
+            EMPLOYEE PANEL
         </span>
     </li>
+
+    <!-- Clock Status Display -->
+    <li class="clock-status-container mb-3">
+        <div class="clock-status-display px-3 py-2">
+            <div class="current-status" id="currentClockStatus">
+                <i class="bi bi-clock text-info"></i>
+                <small class="text-white-75">Status: <span id="statusText">Not Clocked In</span></small>
+            </div>
+            <div class="current-time" id="currentTime">
+                <small class="text-white-50"></small>
+            </div>
+        </div>
+    </li>
+    
     
     {{-- Employee Dashboard --}}
     <li>
         <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : 'text-white' }}">
-            <span class="emoji">🏠</span>
             <i class="bi bi-speedometer2"></i>
             <span>Dashboard</span>
         </a>
@@ -24,7 +36,6 @@
     {{-- Timesheet Management --}}
     <li>
         <a href="{{ route('timesheet.index') }}" class="nav-link {{ request()->is('timesheet*') ? 'active' : 'text-white' }}">
-            <span class="emoji">🗂️</span>
             <i class="bi bi-card-checklist"></i>
             <span>My Timesheet</span>
         </a>
@@ -33,82 +44,35 @@
     {{-- Attendance Tracking --}}
     <li>
         <a href="{{ route('attendance.index') }}" class="nav-link {{ request()->is('attendance*') ? 'active' : 'text-white' }}">
-            <span class="emoji">⏰</span>
             <i class="bi bi-calendar-check"></i>
             <span>My Attendance</span>
         </a>
     </li>
     
-    {{-- Leave Requests --}}
+    {{-- Leave Requests (only show if route exists) --}}
+    @if(Route::has('leave.index'))
     <li>
-        <a href="{{ Route::has('leave.index') ? route('leave.index') : '#' }}" class="nav-link {{ Route::has('leave.index') && request()->routeIs('leave.*') ? 'active' : 'text-white' }}" @if(!Route::has('leave.index')) onclick="showToast('Leave Requests coming soon', 'info')" @endif>
-            <span class="emoji">🌴</span>
+        <a href="{{ route('leave.index') }}" class="nav-link {{ request()->routeIs('leave.*') ? 'active' : 'text-white' }}">
             <i class="bi bi-briefcase"></i>
             <span>Leave Requests</span>
         </a>
     </li>
+    @endif
 
     {{-- Daily Updates --}}
     <li>
         <a href="{{ route('daily-update.index') }}" class="nav-link {{ request()->is('daily-update*') ? 'active' : 'text-white' }}">
-            <span class="emoji">📝</span>
             <i class="bi bi-journal-text"></i>
             <span>Daily Updates</span>
         </a>
     </li>
     
-    {{-- Profile Management --}}
-    <li>
-        <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->is('profile*') ? 'active' : 'text-white' }}">
-            <span class="emoji">🙍</span>
-            <i class="bi bi-person-gear"></i>
-            <span>Profile</span>
-        </a>
-    </li>
     
-    {{-- Quick Time Tracking Actions --}}
-    <li class="nav-item-header mt-4 mb-2">
-        <span class="nav-header-text">
-            <i class="bi bi-stopwatch me-1"></i>
-            QUICK ACTIONS
-        </span>
-    </li>
     
-    {{-- Time Tracking Shortcuts --}}
-    <li class="nav-item dropdown-nav">
-        <a href="#" class="nav-link text-white dropdown-toggle-nav" 
-           data-bs-toggle="collapse" 
-           data-bs-target="#quickActionsCollapse{{ $idSuffix }}" 
-           aria-expanded="false">
-            <i class="bi bi-lightning me-2"></i>
-            <span>Quick Add</span>
-            <i class="bi bi-chevron-down ms-auto collapse-icon"></i>
-        </a>
-        <div class="collapse" id="quickActionsCollapse{{ $idSuffix }}">
-            <ul class="nav flex-column ms-3">
-                <li>
-                    <a href="#" class="nav-link sub-nav-link text-white" onclick="quickAddTimesheet()">
-                        <i class="bi bi-plus-circle me-2"></i>
-                        <span>Add Timesheet Entry</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-link sub-nav-link text-white" onclick="quickViewSummary()">
-                        <i class="bi bi-bar-chart me-2"></i>
-                        <span>View Summary</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="#" class="nav-link sub-nav-link text-white" onclick="exportMyData()">
-                        <i class="bi bi-download me-2"></i>
-                        <span>Export My Data</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </li>
-    
-@else
+      
+@endif
+
+{{-- @else
     <!-- Non-authenticated or other user types -->
     <li class="nav-item-header mt-3 mb-2">
         <span class="nav-header-text">
@@ -123,29 +87,11 @@
             <span>Login Required</span>
         </div>
     </li>
-@endif
+@endif --}}
 
 {{-- Employee Clock In/Out Actions --}}
 @if(Auth::check() && (!Auth::user()->role || Auth::user()->role->name !== 'admin'))
-    <li class="nav-item-header mt-4 mb-2">
-        <span class="nav-header-text">
-            <i class="bi bi-clock me-1"></i>
-            TIME TRACKING
-        </span>
-    </li>
     
-    <!-- Clock Status Display -->
-    <li class="clock-status-container mb-3">
-        <div class="clock-status-display px-3 py-2">
-            <div class="current-status" id="currentClockStatus">
-                <i class="bi bi-clock text-info"></i>
-                <small class="text-white-75">Status: <span id="statusText">Not Clocked In</span></small>
-            </div>
-            <div class="current-time" id="currentTime">
-                <small class="text-white-50"></small>
-            </div>
-        </div>
-    </li>
     
     <!-- Clock In/Out Action Buttons -->
     <li class="clock-actions-container px-2">
@@ -160,6 +106,22 @@
             </button>
         </div>
     </li>
+
+    <li>
+        <a href="#" class="nav-link sub-nav-link text-white" onclick="quickAddTimesheet()">
+            <i class="bi bi-plus-circle me-2"></i>
+            <span>Add Timesheet Entry</span>
+        </a>
+    </li>
+
+    {{-- Profile Management --}}
+    <li>
+        <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->is('profile*') ? 'active' : 'text-white' }}">
+            <i class="bi bi-person-gear"></i>
+            <span>Profile</span>
+        </a>
+    </li>
+
 @endif
 
 {{-- JavaScript for user navigation functionality --}}

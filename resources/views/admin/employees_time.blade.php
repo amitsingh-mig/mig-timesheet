@@ -48,7 +48,7 @@
     <!-- Chart Section -->
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Hours Overview</h5>
+            <h5 class="mb-0"><i class="bi bi-activity me-2"></i>Hours Overview</h5>
             <div class="btn-group btn-group-sm" role="group">
                 <input type="radio" class="btn-check" name="chartPeriod" id="chartDay" autocomplete="off">
                 <label class="btn btn-outline-primary" for="chartDay" onclick="updateChart('day')">Day</label>

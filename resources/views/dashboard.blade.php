@@ -46,7 +46,7 @@
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="card border-0 shadow-lg h-100 bg-gradient-3 card-gradient transition-all">
             <div class="card-body text-white text-center py-4">
-                <i class="bi bi-calendar-month-fill text-2_5xl d-block mb-2"></i>
+                <i class="bi bi-calendar text-2_5xl d-block mb-2"></i>
                 <h2 class="h1 fw-bold mb-1" id="monthlyHours">0.0h</h2>
                 <p class="mb-0 fs-6">Monthly Hours</p>
                 <small class="opacity-75">This month</small>

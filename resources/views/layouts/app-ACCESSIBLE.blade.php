@@ -22,66 +22,7 @@
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <!-- Additional styles -->
-    @stack('styles')
-    
-    <!-- Accessibility Enhancement Styles -->
-    <style>
-        /* Skip Link Styles */
-        .skip-link {
-            position: absolute;
-            top: -40px;
-            left: 6px;
-            background: #000;
-            color: #fff;
-            padding: 8px;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: bold;
-            z-index: 1000;
-            transition: top 0.3s;
-        }
-        
-        .skip-link:focus {
-            top: 6px;
-        }
-        
-        /* Focus Enhancement */
-        .focus\:ring-enhanced:focus {
-            outline: 2px solid #3b82f6;
-            outline-offset: 2px;
-        }
-        
-        /* High Contrast Mode Support */
-        @media (prefers-contrast: high) {
-            .bg-gradient-to-br {
-                background: #000 !important;
-                color: #fff !important;
-            }
-        }
-        
-        /* Reduced Motion Support */
-        @media (prefers-reduced-motion: reduce) {
-            * {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-        
-        /* Screen Reader Only Text */
-        .sr-only {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            padding: 0;
-            margin: -1px;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            white-space: nowrap;
-            border: 0;
-        }
-    </style>
+    <!-- Additional styles --
 </head>
 <body class="font-sans antialiased bg-gray-50" 
       x-data="globalAppState()" 
@@ -89,11 +30,11 @@
       @toggle-sidebar.window="handleSidebarToggle()">
     
     <!-- Skip Links for Accessibility -->
-    <div class="sr-only" aria-hidden="false">
+    {{-- <div class="sr-only" aria-hidden="false">
         <a href="#main-content" class="skip-link focus:not-sr-only">Skip to main content</a>
         <a href="#navigation" class="skip-link focus:not-sr-only">Skip to navigation</a>
         <a href="#footer" class="skip-link focus:not-sr-only">Skip to footer</a>
-    </div>
+    </div> --}}
     
     <!-- Live Region for Announcements -->
     <div id="announcements" 
