@@ -25,6 +25,7 @@ class Timesheet extends Model
         'description',
         'location',
         'is_overtime',
+        'overtime_hours',
         'expected_hours',
         'break_duration',
         'project_id',
@@ -52,6 +53,7 @@ class Timesheet extends Model
         'approved_at' => 'datetime',
         'submitted_at' => 'datetime',
         'is_overtime' => 'boolean',
+        'overtime_hours' => 'decimal:2',
         'expected_hours' => 'decimal:2',
         'break_duration' => 'decimal:2',
     ];
@@ -62,15 +64,107 @@ class Timesheet extends Model
     }
 
     /**
-     * Boot method to automatically set user modifications
+     * Get the approver user
+     */
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    /**
+     * Get timesheet approvals
+     */
+    public function approvals()
+    {
+        return $this->hasMany(TimesheetApproval::class);
+    }
+
+    /**
+     * Calculate overtime based on hours worked and expected hours
+     */
+    public function calculateOvertime()
+    {
+        $hoursWorked = $this->hours_worked ?? $this->hours ?? 0;
+        $expectedHours = $this->expected_hours ?? 8.0; // Default 8 hours per day
+        
+        // Check if hours worked exceed expected hours
+        $this->is_overtime = $hoursWorked > $expectedHours;
+        
+        // Calculate overtime hours
+        $this->overtime_hours = $this->is_overtime ? max(0, $hoursWorked - $expectedHours) : 0;
+        
+        return $this;
+    }
+
+    /**
+     * Get overtime hours for this timesheet
+     */
+    public function getOvertimeHoursAttribute()
+    {
+        if (!$this->is_overtime) {
+            return 0;
+        }
+        
+        $hoursWorked = $this->hours_worked ?? $this->hours ?? 0;
+        $expectedHours = $this->expected_hours ?? 8.0;
+        
+        return max(0, $hoursWorked - $expectedHours);
+    }
+
+    /**
+     * Get regular hours (non-overtime)
+     */
+    public function getRegularHoursAttribute()
+    {
+        $hoursWorked = $this->hours_worked ?? $this->hours ?? 0;
+        $expectedHours = $this->expected_hours ?? 8.0;
+        
+        return min($hoursWorked, $expectedHours);
+    }
+
+    /**
+     * Check if timesheet requires overtime approval
+     */
+    public function requiresOvertimeApproval()
+    {
+        return $this->is_overtime && $this->overtime_hours > 0;
+    }
+
+    /**
+     * Get overtime rate multiplier (1.5x for overtime)
+     */
+    public function getOvertimeRateAttribute()
+    {
+        return 1.5; // Standard overtime rate
+    }
+
+    /**
+     * Calculate total pay including overtime
+     */
+    public function calculateTotalPay($hourlyRate = 0)
+    {
+        if ($hourlyRate <= 0) {
+            return 0;
+        }
+        
+        $regularPay = $this->regular_hours * $hourlyRate;
+        $overtimePay = $this->overtime_hours * $hourlyRate * $this->overtime_rate;
+        
+        return $regularPay + $overtimePay;
+    }
+
+    /**
+     * Boot method to automatically set user modifications and calculate overtime
      */
     protected static function boot()
     {
         parent::boot();
 
         static::creating(function ($timesheet) {
+            // Calculate overtime automatically
+            $timesheet->calculateOvertime();
             $timesheet->last_modified_by = auth()->id();
-            $timesheet->status = 'draft';
+            // Don't set status here - let it use the database default
         });
 
         static::updating(function ($timesheet) {
@@ -78,19 +172,9 @@ class Timesheet extends Model
         });
     }
 
-    public function approver()
-    {
-        return $this->belongsTo(User::class, 'approved_by');
-    }
-
     public function lastModifiedBy()
     {
         return $this->belongsTo(User::class, 'last_modified_by');
-    }
-
-    public function approvals()
-    {
-        return $this->hasMany(TimesheetApproval::class);
     }
 
     /**

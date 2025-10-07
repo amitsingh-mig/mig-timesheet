@@ -134,6 +134,7 @@ Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
     Route::prefix('users')->name('admin.users.')->group(function () {
         Route::get('/', [AdminUserController::class, 'index'])->name('index');
         Route::get('/data', [AdminUserController::class, 'getData'])->name('data');
+        Route::get('/employees', [AdminUserController::class, 'getEmployeesForCalendar'])->name('employees');
         Route::post('/', [AdminUserController::class, 'store'])->name('store');
         Route::put('/{id}', [AdminUserController::class, 'update'])->name('update');
         Route::post('/{id}/reset-password', [AdminUserController::class, 'resetPassword'])->name('reset_password');
@@ -157,6 +158,7 @@ Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
     Route::prefix('timesheet-calendar')->name('admin.timesheet.calendar')->group(function () { 
         Route::get('/', [TimesheetCalendarController::class, 'index'])->name(''); // This will now be named 'admin.timesheet.calendar'
         Route::get('/data', [TimesheetCalendarController::class, 'getCalendarData'])->name('.data');
+        Route::get('/employee-time', [TimesheetCalendarController::class, 'getEmployeeTimeData'])->name('.employeeTime');
         Route::get('/day/{date}', [TimesheetCalendarController::class, 'getDayDetails'])->name('.day');
         Route::get('/stats', [TimesheetCalendarController::class, 'getStatistics'])->name('.stats');
         Route::post('/approve/{id}', [TimesheetCalendarController::class, 'approveTimesheet'])->name('.approve');

@@ -97,7 +97,8 @@ class UserController extends Controller
 
             return response()->json([
                 'success' => true,
-                'users' => $formattedUsers,
+                'data' => $formattedUsers,
+                'users' => $formattedUsers, // Backward compatibility
                 'current_page' => $users->currentPage(),
                 'total_pages' => $users->lastPage(),
                 'total' => $users->total(),
@@ -410,6 +411,46 @@ class UserController extends Controller
         }
         
         return $workingDays;
+    }
+
+    /**
+     * Get all employees for calendar filter (non-admin users only)
+     */
+    public function getEmployeesForCalendar()
+    {
+        // Check if user is admin
+        if (!Auth::user() || !Auth::user()->role || Auth::user()->role->name !== 'admin') {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+
+        try {
+            $employees = User::with('role')
+                ->whereHas('role', function($query) {
+                    $query->where('name', '!=', 'admin');
+                })
+                ->orderBy('name')
+                ->get()
+                ->map(function($user) {
+                    return [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role ? $user->role->name : 'employee'
+                    ];
+                });
+
+            return response()->json([
+                'success' => true,
+                'data' => $employees,
+                'total' => $employees->count()
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load employees: ' . $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
