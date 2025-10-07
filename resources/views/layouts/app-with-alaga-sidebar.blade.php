@@ -115,7 +115,6 @@ INTEGRATION INSTRUCTIONS:
    - admin.dashboard
    - admin.users.index
    - admin.employees.time.view
-   - admin.timesheet.calendar
    
    Employee routes:
    - dashboard

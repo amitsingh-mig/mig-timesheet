@@ -116,9 +116,6 @@
                         <a href="{{ route('timesheet.admin.index') }}" class="btn btn-outline-info text-start">
                             <i class="bi bi-clock-history me-2"></i>View Timesheets
                         </a>
-                        <a href="{{ route('admin.timesheet.calendar') }}" class="btn btn-outline-secondary text-start">
-                            <i class="bi bi-calendar3 me-2"></i>Timesheet Calendar
-                        </a>
                         <button class="btn btn-outline-warning text-start" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
                             <i class="bi bi-person-plus me-2"></i>Add Employee
                         </button>

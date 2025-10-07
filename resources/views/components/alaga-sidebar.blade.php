@@ -46,12 +46,6 @@
             'icon' => 'clock-history',
             'permission' => null, // e.g., 'admin.employees.view'
         ],
-        [
-            'route' => 'admin.timesheet.calendar',
-            'label' => 'Reports',
-            'icon' => 'graph-up',
-            'permission' => null, // e.g., 'admin.reports.view'
-        ],
     ];
     
     $employeeMenuItems = [

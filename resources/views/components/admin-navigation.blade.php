@@ -55,6 +55,14 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{ route('timesheet.admin.index') }}" 
+                       class="nav-link sub-nav-link {{ request()->routeIs('timesheet.admin.index') ? 'active' : 'text-white' }}">
+                        <i class="bi bi-list-check me-2"></i>
+                        <span>All Timesheets</span>
+                    </a>
+                </li>
+
             </ul>
         </div>
     </li>
@@ -69,7 +77,7 @@
     </li>
 
     {{-- Timesheet Management Dropdown --}}
-    <li class="nav-item dropdown-nav">
+    {{-- <li class="nav-item dropdown-nav">
         <a href="#" class="nav-link text-white dropdown-toggle-nav" 
            data-bs-toggle="collapse" 
            data-bs-target="#timesheetManagementCollapse{{ $mobile ?? false ? 'Mobile' : '' }}" 
@@ -81,23 +89,10 @@
         <div class="collapse {{ request()->is('admin/timesheet*') ? 'show' : '' }}" 
              id="timesheetManagementCollapse{{ $mobile ?? false ? 'Mobile' : '' }}">
             <ul class="nav flex-column ms-3">
-                <li>
-                    <a href="{{ route('timesheet.admin.index') }}" 
-                       class="nav-link sub-nav-link {{ request()->routeIs('timesheet.admin.index') ? 'active' : 'text-white' }}">
-                        <i class="bi bi-list-check me-2"></i>
-                        <span>All Timesheets</span>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('admin.timesheet.calendar') }}" 
-                       class="nav-link sub-nav-link {{ request()->routeIs('admin.timesheet.calendar') ? 'active' : 'text-white' }}">
-                        <i class="bi bi-calendar3 me-2"></i>
-                        <span>Calendar View</span>
-                    </a>
-                </li>
+               
             </ul>
         </div>
-    </li>
+    </li> --}}
     
     {{-- Attendance Management --}}
     {{-- <li>
