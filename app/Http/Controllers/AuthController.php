@@ -18,28 +18,38 @@ class AuthController extends Controller
         $validator = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8',
         ]);
+
+        // Get employee role dynamically
+        $employeeRole = Role::where('name', 'employee')->first();
+        if (!$employeeRole) {
+            return response()->json([
+                'message' => 'Employee role not found. Please contact administrator.'
+            ], 500);
+        }
 
         // create a new user
         $user = User::create([
             'name' => $validator['name'],
             'email' => $validator['email'],
             'password' => Hash::make($validator['password']),
-            'role_id' => 2,
+            'role_id' => $employeeRole->id,
         ]);
-
-        //assign role to the user
-        $employee_role = Role::where('name', 'employee')->first();
-        $employee_role->users()->save($user);
 
         //create token for the user
         $token = $user->createToken('api_token')->plainTextToken;
 
-        //return response
+        //return response (don't expose full user object)
         $response = [
             'message' => 'User created successfully',
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role->name ?? 'employee'
+            ],
             'access_token' => $token,
         ];
 
@@ -51,24 +61,35 @@ class AuthController extends Controller
         //validate the request
         $validator = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string',
         ]);
 
         //attempt to authenticate
         if (Auth::attempt($validator)) {
             //get user
-            $user = User::where('email', $validator['email'])->first();
+            $user = User::where('email', $validator['email'])->with('role')->first();
+            
             //token generated
             $token = $user->createToken('api_token')->plainTextToken;
-            //return response with token
+            
+            //return response with token and user info
             $response = [
+                'message' => 'Login successful',
                 'data' => [
-                    'access_token' => $token
+                    'access_token' => $token,
+                    'user' => [
+                        'id' => $user->id,
+                        'name' => $user->name,
+                        'email' => $user->email,
+                        'role' => $user->role->name ?? 'employee'
+                    ]
                 ]
             ];
             return response()->json($response);
         } else {
-            return response()->json(['massage' => 'Unauthenticated'], 401);
+            return response()->json([
+                'message' => 'Invalid credentials'
+            ], 401);
         }
     }
 
@@ -80,27 +101,36 @@ class AuthController extends Controller
     }
 
     public function resetPassword(Request $request)
-{
-    // validate
-    $validator = $request->validate([
-        'password' => 'required|min:8',
-    ]);
+    {
+        // validate
+        $validator = $request->validate([
+            'current_password' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+            'password_confirmation' => 'required|string|min:8',
+        ]);
 
-    // get user
-    $user = $request->user();
+        // get user
+        $user = $request->user();
 
-    // change password
-    $user->password = Hash::make($validator['password']);
-    $user->save();
+        // verify current password
+        if (!Hash::check($validator['current_password'], $user->password)) {
+            return response()->json([
+                'message' => 'Current password is incorrect'
+            ], 400);
+        }
 
-    // delete all tokens (logout from everywhere)
-    $user->tokens()->delete(); // ✅ FIX HERE
+        // change password
+        $user->password = Hash::make($validator['password']);
+        $user->save();
 
-    // return response 
-    return response()->json([
-        'message' => 'Password changed successfully' // ✅ also corrected spelling
-    ], 200);
-}
+        // delete all tokens (logout from everywhere)
+        $user->tokens()->delete();
+
+        // return response 
+        return response()->json([
+            'message' => 'Password changed successfully. Please log in again.'
+        ], 200);
+    }
 
 
 

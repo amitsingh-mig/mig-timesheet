@@ -63,7 +63,7 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     {
         Gate::define('viewTelescope', function ($user) {
             // Allow access only to users with 'admin' role
-            return $user && $user->role === 'admin';
+            return $user && $user->role && $user->role->name === 'admin';
 
             // OR, you can allow specific emails:
             // return in_array($user->email, ['admin@example.com']);

@@ -335,6 +335,56 @@ class TimesheetCalendarController extends Controller
     }
     
     /**
+     * Bulk reject timesheets
+     */
+    public function bulkReject(Request $request)
+    {
+        try {
+            $request->validate([
+                'timesheet_ids' => 'required|array',
+                'timesheet_ids.*' => 'integer|exists:timesheets,id',
+                'reason' => 'required|string|max:500'
+            ]);
+            
+            $timesheetIds = $request->get('timesheet_ids');
+            $reason = $request->get('reason');
+            
+            DB::transaction(function() use ($timesheetIds, $reason) {
+                // Update all timesheets
+                Timesheet::whereIn('id', $timesheetIds)
+                    ->update([
+                        'status' => 'rejected',
+                        'approved_by' => Auth::id(),
+                        'approved_at' => now(),
+                        'rejection_reason' => $reason
+                    ]);
+                
+                // Log bulk rejection
+                foreach ($timesheetIds as $timesheetId) {
+                    TimesheetApproval::create([
+                        'timesheet_id' => $timesheetId,
+                        'admin_id' => Auth::id(),
+                        'action' => 'rejected',
+                        'reason' => $reason
+                    ]);
+                }
+            });
+            
+            return response()->json([
+                'success' => true,
+                'message' => count($timesheetIds) . ' timesheets rejected successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            Log::error('Bulk reject error: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to reject timesheets: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
      * Get statistics for dashboard
      */
     public function getStatistics(Request $request)

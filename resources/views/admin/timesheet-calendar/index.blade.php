@@ -36,13 +36,11 @@
                     <div class="col-md-2">
                         <label class="form-label">Status Filter</label>
                         {{-- FIX: ID renamed from statusFilter to timeFilter --}}
-                        <select id="timeFilter" class="form-select">
+                        <select id="statusFilter" class="form-select">
                             <option value="">All Status</option>
-                            <option value="pending"><i class="bi bi-circle-fill text-warning me-1"></i>Last Week</option>
-                            <option value="approved"><i class="bi bi-circle-fill text-success me-1"></i>Last Month</option>
-                            <option value="rejected"><i class="bi bi-circle-fill text-danger me-1"></i>Last 6 Month
-                            </option>
-                            <option value="rejected"><i class="bi bi-circle-fill text-danger me-1"></i>Last Year </option>
+                            <option value="pending"><i class="bi bi-circle-fill text-warning me-1"></i>Pending</option>
+                            <option value="approved"><i class="bi bi-circle-fill text-success me-1"></i>Approved</option>
+                            <option value="rejected"><i class="bi bi-circle-fill text-danger me-1"></i>Rejected</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -78,6 +76,58 @@
                         <button class="btn btn-primary w-100" onclick="applyFilters()">
                             <i class="bi bi-funnel"></i> Apply Filters
                         </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary mb-1" id="totalEntries">0</h5>
+                        <p class="card-text small text-muted">Total Entries</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-warning mb-1" id="pendingCount">0</h5>
+                        <p class="card-text small text-muted">Pending</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-success mb-1" id="approvedCount">0</h5>
+                        <p class="card-text small text-muted">Approved</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-danger mb-1" id="rejectedCount">0</h5>
+                        <p class="card-text small text-muted">Rejected</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-info mb-1" id="overtimeCount">0</h5>
+                        <p class="card-text small text-muted">Overtime</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body">
+                        <h5 class="card-title text-secondary mb-1" id="missingCount">0</h5>
+                        <p class="card-text small text-muted">Missing</p>
                     </div>
                 </div>
             </div>
@@ -212,14 +262,16 @@
             fetch('/admin/users/data')
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success && data.users) {
+                    if (data.success && data.data) {
                         const userSelect = document.getElementById('userFilter');
                         userSelect.innerHTML = '<option value="">All Employees</option>';
-                        data.users.forEach(user => {
+                        data.data.forEach(user => {
                             if (user.role !== 'admin') {
                                 userSelect.innerHTML += `<option value="${user.id}">${user.name}</option>`;
                             }
                         });
+                    } else {
+                        console.error('Failed to load users:', data.message);
                     }
                 })
                 .catch(error => console.error('Error loading users:', error));
@@ -231,8 +283,8 @@
                 year: currentYear,
                 view: currentView,
                 user_id: document.getElementById('userFilter').value,
-                // 🛠️ Step 4: ID is now 'timeFilter' in HTML, JS is correct
-                time_range: document.getElementById('timeFilter').value
+                // Fixed: Use correct status filter parameter
+                status: document.getElementById('statusFilter').value
             });
 
             fetch(`/admin/timesheet-calendar/data?${params}`)
@@ -276,9 +328,108 @@
                 renderMonthlyCalendar(data);
             } else if (currentView === 'week') {
                 renderWeeklyCalendar(data);
-            } else {
+            } else if (currentView === 'day') {
                 renderDailyCalendar(data);
+            } else {
+                renderMonthlyCalendar(data); // Default to monthly view
             }
+        }
+
+        function renderWeeklyCalendar(data) {
+            const container = document.getElementById('calendarContainer');
+            const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+            let html = '<div class="table-responsive">';
+            html += '<table class="table table-bordered mb-0">';
+
+            // Header
+            html += '<thead class="table-dark"><tr>';
+            daysOfWeek.forEach(day => {
+                html += `<th class="text-center p-2">${day}</th>`;
+            });
+            html += '</tr></thead><tbody><tr>';
+
+            // Get current week dates
+            const today = new Date();
+            const startOfWeek = new Date(today);
+            startOfWeek.setDate(today.getDate() - today.getDay());
+
+            for (let i = 0; i < 7; i++) {
+                const currentDate = new Date(startOfWeek);
+                currentDate.setDate(startOfWeek.getDate() + i);
+                const dateStr = currentDate.toISOString().split('T')[0];
+                const dayData = data.find(d => d.date === dateStr);
+                const isToday = dateStr === new Date().toISOString().split('T')[0];
+
+                html += `<td class="p-2 align-top calendar-cell ${isToday ? 'bg-light' : ''}" 
+                         onclick="showDayDetails('${dateStr}')" style="height: 150px; cursor: pointer;">`;
+                html += `<div class="fw-bold mb-1">${currentDate.getDate()}</div>`;
+
+                if (dayData && dayData.summary) {
+                    html += renderDaySummary(dayData.summary);
+                }
+
+                html += '</td>';
+            }
+
+            html += '</tr></tbody></table></div>';
+            container.innerHTML = html;
+        }
+
+        function renderDailyCalendar(data) {
+            const container = document.getElementById('calendarContainer');
+            const today = new Date();
+            const dateStr = today.toISOString().split('T')[0];
+            const dayData = data.find(d => d.date === dateStr);
+
+            let html = '<div class="row">';
+            html += '<div class="col-12">';
+            html += '<div class="card">';
+            html += '<div class="card-header">';
+            html += `<h5 class="mb-0">Today - ${today.toLocaleDateString()}</h5>`;
+            html += '</div>';
+            html += '<div class="card-body">';
+
+            if (dayData && dayData.timesheets && dayData.timesheets.length > 0) {
+                html += '<div class="table-responsive">';
+                html += '<table class="table table-hover">';
+                html += '<thead><tr>';
+                html += '<th>Employee</th><th>Hours</th><th>Status</th><th>Description</th><th>Actions</th>';
+                html += '</tr></thead><tbody>';
+
+                dayData.timesheets.forEach(timesheet => {
+                    const statusBadge = getStatusBadge(timesheet.status, timesheet.is_overtime);
+                    html += '<tr>';
+                    html += `<td>${timesheet.user_name}</td>`;
+                    html += `<td>${timesheet.hours}h</td>`;
+                    html += `<td>${statusBadge}</td>`;
+                    html += `<td>${timesheet.description || '-'}</td>`;
+                    html += '<td>';
+                    if (timesheet.status === 'pending') {
+                        html += `<button class="btn btn-sm btn-success me-1" onclick="approveTimesheet(${timesheet.id})">
+                                    <i class="bi bi-check"></i>
+                                </button>`;
+                        html += `<button class="btn btn-sm btn-danger" onclick="rejectTimesheet(${timesheet.id})">
+                                    <i class="bi bi-x"></i>
+                                </button>`;
+                    } else {
+                        html += `<button class="btn btn-sm btn-outline-info" onclick="viewTimesheetDetails(${timesheet.id})">
+                                    <i class="bi bi-eye"></i>
+                                </button>`;
+                    }
+                    html += '</td></tr>';
+                });
+
+                html += '</tbody></table></div>';
+            } else {
+                html += '<div class="text-center py-4">';
+                html += '<i class="bi bi-calendar-x fs-1 text-muted"></i>';
+                html += '<p class="text-muted mt-2">No timesheet entries for today</p>';
+                html += '</div>';
+            }
+
+            html += '</div></div></div></div>';
+            container.innerHTML = html;
         }
 
         // Toggle active styles for view mode labels
