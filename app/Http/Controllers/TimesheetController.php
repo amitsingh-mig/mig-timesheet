@@ -7,6 +7,9 @@ use App\Models\Timesheet;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+
 
 class TimesheetController extends Controller
 {
