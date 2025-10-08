@@ -16,15 +16,29 @@
 <div class="card border-0 shadow-sm mb-4">
     <div class="card-body">
         <div class="row g-3">
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label for="dateRange" class="form-label fw-medium">Date Range</label>
                 <input type="date" class="form-control" id="startDate" value="{{ now()->startOfMonth()->format('Y-m-d') }}">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-medium">&nbsp;</label>
                 <input type="date" class="form-control" id="endDate" value="{{ now()->format('Y-m-d') }}">
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label for="departmentFilter" class="form-label fw-medium">Department</label>
+                <select class="form-select" id="departmentFilter">
+                    <option value="">All Departments</option>
+                    <option value="Web">Web Development</option>
+                    <option value="Graphic">Graphic Design</option>
+                    <option value="Editorial">Editorial</option>
+                    <option value="Multimedia">Multimedia</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Intern">Internship</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label for="statusFilter" class="form-label fw-medium">Status</label>
                 <select class="form-select" id="statusFilter">
                     <option value="">All Status</option>
@@ -34,7 +48,7 @@
                     <option value="leave">Leave</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label fw-medium">&nbsp;</label>
                 <button class="btn btn-primary w-100" onclick="filterAttendance()">
                     <i class="bi bi-funnel me-2"></i>Apply Filter

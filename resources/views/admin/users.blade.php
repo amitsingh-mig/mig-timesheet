@@ -29,15 +29,30 @@
                     <input type="text" id="searchQuery" class="form-control" placeholder="Search by name or email">
                 </div>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
                 <label class="form-label">Role</label>
                 <select id="roleFilter" class="form-select">
                     <option value="">All Roles</option>
                     <option value="admin">Admin</option>
-                    <option value="user">User</option>
+                    <option value="employee">Employee</option>
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2">
+                <label class="form-label">Department</label>
+                <select id="departmentFilter" class="form-select">
+                    <option value="">All Departments</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Web">Web Development</option>
+                    <option value="Graphic">Graphic Design</option>
+                    <option value="Editorial">Editorial</option>
+                    <option value="Multimedia">Multimedia</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Intern">Internship</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
+            <div class="col-md-2">
                 <label class="form-label">Status</label>
                 <select id="statusFilter" class="form-select">
                     <option value="">All Status</option>
@@ -64,6 +79,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Department</th>
                         <th>Status</th>
                         <th class="text-center" style="width: 180px;">Actions</th>
                     </tr>
@@ -113,15 +129,29 @@
                     <div class="col-md-4">
                         <label class="form-label">Role</label>
                         <select class="form-select" id="role" required>
-                            <option value="user">User</option>
+                            <option value="employee">Employee</option>
                             <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="department">
+                            <option value="">Select Department</option>
+                            <option value="Web">Web Development</option>
+                            <option value="Graphic">Graphic Design</option>
+                            <option value="Editorial">Editorial</option>
+                            <option value="Multimedia">Multimedia</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Intern">Internship</option>
+                            <option value="General">General</option>
                         </select>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Password</label>
                         <input type="password" class="form-control" id="password" required>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-6">
                         <label class="form-label">Confirm Password</label>
                         <input type="password" class="form-control" id="password_confirmation" required>
                     </div>
@@ -137,22 +167,124 @@
     </div>
 </div>
 
+<!-- Edit User Modal -->
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(90deg, #28a745, #20c997);">
+                <h5 class="modal-title text-white"><i class="bi bi-person-gear me-2"></i>Edit User</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editUserForm" class="row g-3">
+                    <input type="hidden" id="editUserId">
+                    <div class="col-md-6">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" id="editName" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" id="editEmail" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Role</label>
+                        <select class="form-select" id="editRole" required>
+                            <option value="employee">Employee</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="editDepartment">
+                            <option value="">Select Department</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Web">Web Development</option>
+                            <option value="Graphic">Graphic Design</option>
+                            <option value="Editorial">Editorial</option>
+                            <option value="Multimedia">Multimedia</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Intern">Internship</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="editStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="editChangePassword">
+                            <label class="form-check-label" for="editChangePassword">
+                                Change Password
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6" id="editPasswordField" style="display: none;">
+                        <label class="form-label">New Password</label>
+                        <input type="password" class="form-control" id="editPassword">
+                    </div>
+                    <div class="col-md-6" id="editPasswordConfirmField" style="display: none;">
+                        <label class="form-label">Confirm New Password</label>
+                        <input type="password" class="form-control" id="editPasswordConfirmation">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-success" onclick="updateUser()">
+                    <i class="bi bi-check2-circle me-1"></i>Update User
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @push('scripts')
 <script>
 let currentUserPage = 1;
+
+// Handle password change toggle
+document.addEventListener('DOMContentLoaded', function() {
+    const changePasswordCheckbox = document.getElementById('editChangePassword');
+    const passwordField = document.getElementById('editPasswordField');
+    const passwordConfirmField = document.getElementById('editPasswordConfirmField');
+    
+    if (changePasswordCheckbox) {
+        changePasswordCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                passwordField.style.display = 'block';
+                passwordConfirmField.style.display = 'block';
+                document.getElementById('editPassword').required = true;
+                document.getElementById('editPasswordConfirmation').required = true;
+            } else {
+                passwordField.style.display = 'none';
+                passwordConfirmField.style.display = 'none';
+                document.getElementById('editPassword').required = false;
+                document.getElementById('editPasswordConfirmation').required = false;
+                document.getElementById('editPassword').value = '';
+                document.getElementById('editPasswordConfirmation').value = '';
+            }
+        });
+    }
+});
 
 // Load users
 function loadUsers() {
     console.log('Loading users data...');
     const q = document.getElementById('searchQuery').value;
     const role = document.getElementById('roleFilter').value;
+    const department = document.getElementById('departmentFilter').value;
     const status = document.getElementById('statusFilter').value;
 
     // Show loading state
     const tbody = document.getElementById('usersTableBody');
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>';
 
-    fetch(`/admin/users/data?q=${encodeURIComponent(q)}&role=${role}&status=${status}&page=${currentUserPage}`, {
+    fetch(`/admin/users/data?q=${encodeURIComponent(q)}&role=${role}&department=${department}&status=${status}&page=${currentUserPage}`, {
         method: 'GET', 
         headers: { 
             'Accept': 'application/json',
@@ -177,12 +309,13 @@ function loadUsers() {
                     <td class="fw-medium">${u.name}</td>
                     <td>${u.email}</td>
                     <td><span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
+                    <td><span class="badge bg-info">${u.department || 'General'}</span></td>
                     <td>${u.status === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'}</td>
                     <td class="text-center">
                         <div class="d-inline-flex gap-2 flex-wrap justify-content-center align-items-center">
-                            <button class="btn btn-outline-primary" onclick="editUser(${u.id})"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-outline-warning" onclick="resetPassword(${u.id})"><i class="bi bi-key"></i></button>
-                            <button class="btn btn-outline-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-outline-primary" onclick="editUser(${u.id})" title="Edit User"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-outline-warning" onclick="resetPassword(${u.id})" title="Reset Password"><i class="bi bi-key"></i></button>
+                            <button class="btn btn-outline-danger" onclick="deleteUser(${u.id})" title="Delete User"><i class="bi bi-trash"></i></button>
                         </div>
                     </td>
                 </tr>`;
@@ -192,16 +325,16 @@ function loadUsers() {
             document.getElementById('userCount').textContent = data.total || data.users.length;
             renderUserPagination(data.current_page || 1, data.total_pages || 1);
         } else {
-            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-muted">No users found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No users found</td></tr>';
             document.getElementById('userCount').textContent = '0';
         }
     })
         .catch(() => {
             // Demo data fallback
             const demo = [
-                {id:1,name:'Alice Johnson',email:'alice@example.com',role:'admin',status:'active'},
-                {id:2,name:'Bob Smith',email:'bob@example.com',role:'user',status:'active'},
-                {id:3,name:'Carol Lee',email:'carol@example.com',role:'user',status:'inactive'}
+                {id:1,name:'Alice Johnson',email:'alice@example.com',role:'admin',department:'Admin',status:'active'},
+                {id:2,name:'Bob Smith',email:'bob@example.com',role:'employee',department:'Web',status:'active'},
+                {id:3,name:'Carol Lee',email:'carol@example.com',role:'employee',department:'Intern',status:'inactive'}
             ];
             const tbody = document.getElementById('usersTableBody');
             tbody.innerHTML = '';
@@ -210,12 +343,13 @@ function loadUsers() {
                     <td class="fw-medium">${u.name}</td>
                     <td>${u.email}</td>
                     <td><span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
+                    <td><span class="badge bg-info">${u.department || 'General'}</span></td>
                     <td>${u.status === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'}</td>
                     <td class="text-center">
                         <div class="d-inline-flex gap-2 flex-wrap justify-content-center align-items-center">
-                            <button class="btn btn-outline-primary"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-outline-warning"><i class="bi bi-key"></i></button>
-                            <button class="btn btn-outline-danger"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-outline-primary" onclick="editUser(${u.id})" title="Edit User"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-outline-warning" onclick="resetPassword(${u.id})" title="Reset Password"><i class="bi bi-key"></i></button>
+                            <button class="btn btn-outline-danger" onclick="deleteUser(${u.id})" title="Delete User"><i class="bi bi-trash"></i></button>
                         </div>
                     </td>
                 </tr>`;
@@ -244,6 +378,7 @@ function createUser() {
         name: document.getElementById('name').value,
         email: document.getElementById('email').value,
         role: document.getElementById('role').value,
+        department: document.getElementById('department').value,
         password: document.getElementById('password').value,
         password_confirmation: document.getElementById('password_confirmation').value
     };
@@ -289,8 +424,203 @@ function createUser() {
 }
 
 function editUser(id) {
-    // For now, just show a placeholder - could implement a full edit modal
-    showToast(`Edit user ${id} - Feature coming soon`, 'info');
+    // Find the user data from the current table
+    const tbody = document.getElementById('usersTableBody');
+    const rows = tbody.querySelectorAll('tr');
+    let userData = null;
+    
+    // Try to find user data from the table
+    for (let row of rows) {
+        const editButton = row.querySelector('button[onclick*="editUser"]');
+        if (editButton && editButton.getAttribute('onclick').includes(id)) {
+            const cells = row.querySelectorAll('td');
+            userData = {
+                id: id,
+                name: cells[0].textContent.trim(),
+                email: cells[1].textContent.trim(),
+                role: cells[2].querySelector('.badge').textContent.trim(),
+                department: cells[3].querySelector('.badge').textContent.trim(),
+                status: cells[4].querySelector('.badge').textContent.trim().toLowerCase()
+            };
+            break;
+        }
+    }
+    
+    // Debug: Log the extracted user data
+    console.log('Extracted user data:', userData);
+    
+    if (userData) {
+        // Populate the edit form
+        document.getElementById('editUserId').value = userData.id;
+        document.getElementById('editName').value = userData.name;
+        document.getElementById('editEmail').value = userData.email;
+        document.getElementById('editRole').value = userData.role;
+        document.getElementById('editDepartment').value = userData.department;
+        document.getElementById('editStatus').value = userData.status;
+        
+        // Reset password fields
+        document.getElementById('editChangePassword').checked = false;
+        document.getElementById('editPassword').value = '';
+        document.getElementById('editPasswordConfirmation').value = '';
+        document.getElementById('editPasswordField').style.display = 'none';
+        document.getElementById('editPasswordConfirmField').style.display = 'none';
+        
+        // Show the modal
+        const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+        modal.show();
+    } else {
+        // Fallback: Try to get user data from server
+        fetch(`/admin/users/data?user_id=${id}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success && data.users && data.users.length > 0) {
+                const user = data.users[0];
+                // Populate the edit form
+                document.getElementById('editUserId').value = user.id;
+                document.getElementById('editName').value = user.name;
+                document.getElementById('editEmail').value = user.email;
+                document.getElementById('editRole').value = user.role;
+                document.getElementById('editDepartment').value = user.department || 'General';
+                document.getElementById('editStatus').value = user.status;
+                
+                // Reset password fields
+                document.getElementById('editChangePassword').checked = false;
+                document.getElementById('editPassword').value = '';
+                document.getElementById('editPasswordConfirmation').value = '';
+                document.getElementById('editPasswordField').style.display = 'none';
+                document.getElementById('editPasswordConfirmField').style.display = 'none';
+                
+                // Show the modal
+                const modal = new bootstrap.Modal(document.getElementById('editUserModal'));
+                modal.show();
+            } else {
+                showToast('User data not found', 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+            showToast('Failed to load user data', 'error');
+        });
+    }
+}
+
+function updateUser() {
+    const userId = document.getElementById('editUserId').value;
+    const name = document.getElementById('editName').value;
+    const email = document.getElementById('editEmail').value;
+    const role = document.getElementById('editRole').value;
+    const department = document.getElementById('editDepartment').value;
+    const status = document.getElementById('editStatus').value;
+    const changePassword = document.getElementById('editChangePassword').checked;
+    const password = document.getElementById('editPassword').value;
+    const passwordConfirmation = document.getElementById('editPasswordConfirmation').value;
+    
+    // Debug: Log all form values
+    console.log('Form values:', {
+        userId, name, email, role, department, status, changePassword, password, passwordConfirmation
+    });
+    
+    // Basic validation
+    if (!name || !email) {
+        showToast('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    if (changePassword) {
+        if (!password || !passwordConfirmation) {
+            showToast('Please fill in password fields', 'error');
+            return;
+        }
+        if (password !== passwordConfirmation) {
+            showToast('Passwords do not match', 'error');
+            return;
+        }
+        if (password.length < 8) {
+            showToast('Password must be at least 8 characters long', 'error');
+            return;
+        }
+    }
+    
+    const payload = {
+        name: name,
+        email: email,
+        role: role,
+        department: department,
+        status: status
+    };
+    
+    if (changePassword) {
+        payload.password = password;
+        payload.password_confirmation = passwordConfirmation;
+    }
+    
+    // Debug: Log the payload being sent
+    console.log('Update user payload:', payload);
+    console.log('CSRF Token:', document.querySelector('meta[name="csrf-token"]')?.content);
+    
+    // Add _method field for Laravel method spoofing
+    payload._method = 'PUT';
+    
+    // Send as FormData for better Laravel compatibility
+    const formData = new FormData();
+    Object.keys(payload).forEach(key => {
+        if (payload[key] !== null && payload[key] !== undefined) {
+            formData.append(key, payload[key]);
+        }
+    });
+    
+    fetch(`/admin/users/${userId}`, {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Accept': 'application/json'
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(JSON.stringify(errorData));
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editUserModal'));
+            if (modal) modal.hide();
+            document.getElementById('editUserForm').reset();
+            loadUsers();
+            showToast('User updated successfully!', 'success');
+        } else {
+            let errorMessage = data.message || 'Failed to update user';
+            if (data.errors) {
+                const errorList = Object.values(data.errors).flat().join(', ');
+                errorMessage += ': ' + errorList;
+            }
+            showToast(errorMessage, 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error updating user:', error);
+        try {
+            const errorData = JSON.parse(error.message);
+            let errorMessage = errorData.message || 'An error occurred while updating the user';
+            if (errorData.errors) {
+                const errorList = Object.values(errorData.errors).flat().join(', ');
+                errorMessage += ': ' + errorList;
+            }
+            showToast(errorMessage, 'error');
+        } catch (e) {
+            showToast('An error occurred while updating the user', 'error');
+        }
+    });
 }
 
 function resetPassword(id) {

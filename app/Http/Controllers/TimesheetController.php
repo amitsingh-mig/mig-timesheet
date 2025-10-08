@@ -325,6 +325,11 @@ class TimesheetController extends Controller
         if ($request->filled('user_id')) {
             $query->where('user_id', $request->integer('user_id'));
         }
+        if ($request->filled('department')) {
+            $query->whereHas('user', function($q) use ($request) {
+                $q->where('department', $request->get('department'));
+            });
+        }
         if ($request->filled('task')) {
             $query->where('task', 'like', '%'.$request->get('task').'%');
         }

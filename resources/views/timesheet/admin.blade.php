@@ -5,10 +5,23 @@
     <div class="card-header bg-dark text-white">Admin Timesheets</div>
     <div class="card-body">
         <form class="row g-2 mb-3" method="GET" action="{{ route('timesheet.admin.index') }}">
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <input type="number" name="user_id" value="{{ request('user_id') }}" class="form-control rounded-input" placeholder="User ID">
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
+                <select name="department" class="form-control rounded-input">
+                    <option value="">All Departments</option>
+                    <option value="Web" {{ request('department') == 'Web' ? 'selected' : '' }}>Web Development</option>
+                    <option value="Graphic" {{ request('department') == 'Graphic' ? 'selected' : '' }}>Graphic Design</option>
+                    <option value="Editorial" {{ request('department') == 'Editorial' ? 'selected' : '' }}>Editorial</option>
+                    <option value="Multimedia" {{ request('department') == 'Multimedia' ? 'selected' : '' }}>Multimedia</option>
+                    <option value="Sales" {{ request('department') == 'Sales' ? 'selected' : '' }}>Sales</option>
+                    <option value="Marketing" {{ request('department') == 'Marketing' ? 'selected' : '' }}>Marketing</option>
+                    <option value="Intern" {{ request('department') == 'Intern' ? 'selected' : '' }}>Internship</option>
+                    <option value="General" {{ request('department') == 'General' ? 'selected' : '' }}>General</option>
+                </select>
+            </div>
+            <div class="col-sm-2">
                 <input type="text" name="task" value="{{ request('task') }}" class="form-control rounded-input" placeholder="Task">
             </div>
             <div class="col-sm-2">

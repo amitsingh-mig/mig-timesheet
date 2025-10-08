@@ -19,22 +19,36 @@
     <div class="card border-0 shadow-sm mb-4">
         <div class="card-body">
             <div class="row g-3 align-items-end">
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">Employee</label>
                     <select id="employeeFilter" class="form-select">
                         <option value="">All Employees</option>
                         <!-- Populated by JavaScript -->
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
+                    <label class="form-label">Department</label>
+                    <select id="departmentFilter" class="form-select">
+                        <option value="">All Departments</option>
+                        <option value="Web">Web Development</option>
+                        <option value="Graphic">Graphic Design</option>
+                        <option value="Editorial">Editorial</option>
+                        <option value="Multimedia">Multimedia</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Intern">Internship</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
                     <label class="form-label">Start Date</label>
                     <input type="date" id="startDateFilter" class="form-control" value="{{ date('Y-m-01') }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="form-label">End Date</label>
                     <input type="date" id="endDateFilter" class="form-control" value="{{ date('Y-m-d') }}">
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="d-grid">
                         <button class="btn btn-primary" onclick="loadEmployeeTime()">
                             <i class="bi bi-funnel me-1"></i>Apply Filters

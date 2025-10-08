@@ -53,7 +53,7 @@ class CreateUserRequest extends FormRequest
                     ->uncompromised()
             ],
             'role' => $roleValidation,
-            'department' => 'nullable|string|max:100',
+            'department' => 'nullable|string|max:100|in:Web,Graphic,Editorial,Multimedia,Sales,Marketing,Intern,General',
             'position' => 'nullable|string|max:100',
             'phone' => 'nullable|string|max:20|regex:/^[\+\-\(\)\s\d]+$/',
             'start_date' => 'nullable|date|after_or_equal:today',
@@ -123,8 +123,10 @@ class CreateUserRequest extends FormRequest
         // Set email as verified for admin-created accounts
         $data['email_verified_at'] = now();
         
-        // Set default values
-        $data['department'] = $data['department'] ?? 'General';
+        // Set default values based on role
+        if (!isset($data['department'])) {
+            $data['department'] = $data['role'] === 'admin' ? 'Admin' : 'General';
+        }
         $data['start_date'] = $data['start_date'] ?? now()->toDateString();
         
         return $data;

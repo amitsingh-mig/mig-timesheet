@@ -151,8 +151,22 @@
                         <label class="form-label">Role <span class="text-danger">*</span></label>
                         <select name="role" class="form-select" required>
                             <option value="">Select Role</option>
-                            <option value="user">User</option>
+                            <option value="employee">Employee</option>
                             <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Department</label>
+                        <select name="department" class="form-select">
+                            <option value="">Select Department</option>
+                            <option value="Web">Web Development</option>
+                            <option value="Graphic">Graphic Design</option>
+                            <option value="Editorial">Editorial</option>
+                            <option value="Multimedia">Multimedia</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Intern">Internship</option>
+                            <option value="General">General</option>
                         </select>
                     </div>
                     <div class="mb-3">

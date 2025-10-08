@@ -94,6 +94,8 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
+        Route::delete('/photo', [ProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
         Route::delete('/', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 

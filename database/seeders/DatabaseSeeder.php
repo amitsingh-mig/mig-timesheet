@@ -42,6 +42,7 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Administrator',
                 'password' => Hash::make('Admin@9711#31$'),
                 'role_id' => $adminRole?->id ?? 1,
+                'department' => 'Admin',
             ]
         );
 
@@ -51,7 +52,13 @@ class DatabaseSeeder extends Seeder
                 'name' => 'Employee One',
                 'password' => Hash::make('password'),
                 'role_id' => $employeeRole?->id ?? 2,
+                'department' => 'General',
             ]
         );
+
+        // Run department seeder to ensure proper department assignments
+        $this->call([
+            DepartmentSeeder::class,
+        ]);
     }
 }

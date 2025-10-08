@@ -22,6 +22,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role_id',
+        'profile_photo',
+        'phone',
+        'department',
+        'bio',
     ];
 
     /**
@@ -99,6 +103,63 @@ class User extends Authenticatable
     }
 
     /**
+     * Get user's department with validation
+     */
+    public function getDepartment(): string
+    {
+        if ($this->isAdmin()) {
+            return 'Admin';
+        }
+        
+        return $this->department ?? 'General';
+    }
+
+    /**
+     * Check if user belongs to a specific department
+     */
+    public function belongsToDepartment(string $department): bool
+    {
+        return $this->getDepartment() === $department;
+    }
+
+    /**
+     * Check if user belongs to any of the specified departments
+     */
+    public function belongsToAnyDepartment(array $departments): bool
+    {
+        return in_array($this->getDepartment(), $departments);
+    }
+
+    /**
+     * Get valid departments for user role
+     */
+    public function getValidDepartments(): array
+    {
+        if ($this->isAdmin()) {
+            return ['Admin'];
+        }
+        
+        return [
+            'Web',
+            'Graphic', 
+            'Editorial',
+            'Multimedia',
+            'Sales',
+            'Marketing',
+            'Intern',
+            'General'
+        ];
+    }
+
+    /**
+     * Check if department is valid for user's role
+     */
+    public function isValidDepartment(string $department): bool
+    {
+        return in_array($department, $this->getValidDepartments());
+    }
+
+    /**
      * Check if user can access admin features
      */
     public function canAccessAdmin(): bool
@@ -133,6 +194,28 @@ class User extends Authenticatable
             'manager' => 'Manager',
             default => 'User'
         };
+    }
+
+    /**
+     * Get the profile photo URL
+     */
+    public function getProfilePhotoUrl(): string
+    {
+        if ($this->profile_photo) {
+            return asset('storage/profile-photos/' . $this->profile_photo);
+        }
+        
+        // Return default avatar based on user's name
+        $name = urlencode($this->name);
+        return "https://ui-avatars.com/api/?name={$name}&background=667eea&color=fff&size=200";
+    }
+
+    /**
+     * Get the profile photo path for storage
+     */
+    public function getProfilePhotoPath(): ?string
+    {
+        return $this->profile_photo ? 'profile-photos/' . $this->profile_photo : null;
     }
 
     /**

@@ -64,6 +64,11 @@ class UserController extends Controller
                 });
             }
 
+            // Department filter
+            if ($request->get('department')) {
+                $query->where('department', $request->get('department'));
+            }
+
             // Status filter (assuming you have a status column or use email_verified_at)
             if ($request->get('status')) {
                 if ($request->get('status') === 'active') {
@@ -83,7 +88,8 @@ class UserController extends Controller
                     'id' => $user->id,
                     'name' => $user->name,
                     'email' => $user->email,
-                    'role' => $user->role ? $user->role->name : 'user',
+                    'role' => $user->role ? $user->role->name : 'employee',
+                    'department' => $user->department ?? 'General',
                     'status' => $user->email_verified_at ? 'active' : 'inactive',
                     'created_at' => $user->created_at->format('Y-m-d H:i:s')
                 ];
@@ -131,13 +137,18 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8|confirmed',
-                'role' => 'required|string|in:admin,employee'
+                'role' => 'required|string|in:admin,employee',
+                'department' => 'nullable|string|max:100|in:Web,Graphic,Editorial,Multimedia,Sales,Marketing,Intern,General'
             ]);
+
+            // Set department based on role
+            $department = $validated['department'] ?? ($validated['role'] === 'admin' ? 'Admin' : 'General');
 
             $user = User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
                 'password' => Hash::make($validated['password']),
+                'department' => $department,
                 'email_verified_at' => now()
             ]);
 
@@ -186,16 +197,44 @@ class UserController extends Controller
         try {
             $user = User::findOrFail($id);
             
-            $validated = $request->validate([
+            // Log the incoming request data for debugging
+            \Log::info('User update request data:', $request->all());
+            
+            $validationRules = [
                 'name' => 'required|string|max:255',
                 'email' => 'required|string|email|max:255|unique:users,email,' . $id,
-                'role' => 'required|string|in:admin,employee'
-            ]);
+                'role' => 'required|string|in:admin,employee',
+                'department' => 'nullable|string|max:100|in:Admin,Web,Graphic,Editorial,Multimedia,Sales,Marketing,Intern,General',
+                'status' => 'required|string|in:active,inactive'
+            ];
 
-            $user->update([
+            // Add password validation if password is being changed
+            if ($request->has('password') && $request->password) {
+                $validationRules['password'] = 'required|string|min:8|confirmed';
+            }
+
+            $validated = $request->validate($validationRules);
+
+            // Update user data
+            $updateData = [
                 'name' => $validated['name'],
-                'email' => $validated['email']
-            ]);
+                'email' => $validated['email'],
+                'department' => $validated['department'] ?? ($validated['role'] === 'admin' ? 'Admin' : 'General')
+            ];
+
+            // Update email verification status based on status
+            if ($validated['status'] === 'active') {
+                $updateData['email_verified_at'] = now();
+            } else {
+                $updateData['email_verified_at'] = null;
+            }
+
+            // Update password if provided
+            if (isset($validated['password'])) {
+                $updateData['password'] = Hash::make($validated['password']);
+            }
+
+            $user->update($updateData);
 
             // Update role
             $role = Role::where('name', $validated['role'])->first();
@@ -214,7 +253,14 @@ class UserController extends Controller
                 'message' => 'User updated successfully'
             ]);
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
         } catch (\Exception $e) {
+            \Log::error('User update error:', ['error' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update user: ' . $e->getMessage()
@@ -475,6 +521,12 @@ class UserController extends Controller
             // Apply filters
             if ($request->get('employee_id')) {
                 $query->where('user_id', $request->get('employee_id'));
+            }
+
+            if ($request->get('department')) {
+                $query->whereHas('user', function($q) use ($request) {
+                    $q->where('department', $request->get('department'));
+                });
             }
 
             if ($request->get('start_date')) {
