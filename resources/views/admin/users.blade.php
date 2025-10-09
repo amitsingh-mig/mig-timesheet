@@ -3,66 +3,72 @@
 @section('content')
 <div class="container-fluid">
     <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h2 fw-bold text-dark mb-1">User Management</h1>
-            <p class="text-muted mb-0">Manage users, roles, and access</p>
-        </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
-                <i class="bi bi-person-plus me-2"></i>Create New User
-            </button>
-            <a href="{{ route('admin.employees.time.view') }}" class="btn btn-outline-primary">
-                <i class="bi bi-clock-history me-2"></i>Employee Time Overview
-            </a>
+    <div class="page-header-modern">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title-modern">User Management</h1>
+                <p class="page-subtitle-modern">Manage users, roles, and access permissions</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-action-modern btn-create-user" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                    <i class="bi bi-person-plus"></i>Create New User
+                </button>
+                <a href="{{ route('admin.employees.time.view') }}" class="btn btn-action-modern btn-time-overview">
+                    <i class="bi bi-clock-history"></i>Time Overview
+                </a>
+            </div>
         </div>
     </div>
 
 <!-- Search and Filters -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
-        <div class="row g-3 align-items-end">
-            <div class="col-md-4">
-                <label class="form-label">Search</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="text" id="searchQuery" class="form-control" placeholder="Search by name or email">
-                </div>
+<div class="filter-section-modern">
+    <h3 class="filter-title-modern">
+        <i class="bi bi-funnel"></i>Filters
+    </h3>
+    <div class="row g-3">
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <label class="form-label">Search</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input type="text" id="searchQuery" class="form-control" placeholder="Search by name or email">
             </div>
-            <div class="col-md-2">
-                <label class="form-label">Role</label>
-                <select id="roleFilter" class="form-select">
-                    <option value="">All Roles</option>
-                    <option value="admin">Admin</option>
-                    <option value="employee">Employee</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Department</label>
-                <select id="departmentFilter" class="form-select">
-                    <option value="">All Departments</option>
-                    <option value="Admin">Admin</option>
-                    <option value="Web">Web Development</option>
-                    <option value="Graphic">Graphic Design</option>
-                    <option value="Editorial">Editorial</option>
-                    <option value="Multimedia">Multimedia</option>
-                    <option value="Sales">Sales</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Intern">Internship</option>
-                    <option value="General">General</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <label class="form-label">Status</label>
-                <select id="statusFilter" class="form-select">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <button class="btn btn-outline-primary w-100" onclick="loadUsers()">
-                    <i class="bi bi-funnel me-1"></i>Filter
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <label class="form-label">Role</label>
+            <select id="roleFilter" class="form-select">
+                <option value="">All Roles</option>
+                <option value="admin">Admin</option>
+                <option value="employee">Employee</option>
+            </select>
+        </div>
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <label class="form-label">Department</label>
+            <select id="departmentFilter" class="form-select">
+                <option value="">All Departments</option>
+                <option value="Admin">Admin</option>
+                <option value="Web">Web Development</option>
+                <option value="Graphic">Graphic Design</option>
+                <option value="Editorial">Editorial</option>
+                <option value="Multimedia">Multimedia</option>
+                <option value="Sales">Sales</option>
+                <option value="Marketing">Marketing</option>
+                <option value="Intern">Internship</option>
+                <option value="General">General</option>
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <label class="form-label">Status</label>
+            <select id="statusFilter" class="form-select">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+        <div class="col-lg-2 col-md-4 col-sm-6">
+            <label class="form-label">&nbsp;</label>
+            <div class="d-grid">
+                <button class="btn btn-primary" onclick="loadUsers()">
+                    <i class="bi bi-funnel"></i>Apply Filters
                 </button>
             </div>
         </div>
@@ -70,30 +76,40 @@
 </div>
 
 <!-- Users Table -->
-<div class="card border-0 shadow-sm">
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover table-bordered mb-0 align-middle" id="usersTable">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Department</th>
-                        <th>Status</th>
-                        <th class="text-center" style="width: 180px;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="usersTableBody">
-                    <!-- Populated by JavaScript -->
-                </tbody>
-            </table>
+<div class="data-table-modern">
+    <div class="table-header-modern">
+        <h3 class="table-title-modern">
+            <i class="bi bi-people"></i>Users List
+        </h3>
+        <div>
+            <span class="badge badge-modern badge-department">
+                <span id="userCount">0</span> USERS
+            </span>
         </div>
     </div>
-    <div class="card-footer bg-light d-flex justify-content-between align-items-center">
-        <small class="text-muted">Showing <span id="userCount">0</span> users</small>
+    <div class="table-responsive">
+        <table class="table-modern" id="usersTable">
+            <thead>
+                <tr>
+                    <th style="width: 20%;">Name</th>
+                    <th style="width: 25%;">Email</th>
+                    <th style="width: 12%;">Role</th>
+                    <th style="width: 15%;">Department</th>
+                    <th style="width: 12%;">Status</th>
+                    <th class="text-center" style="width: 16%;">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="usersTableBody">
+                <!-- Populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination-container-modern">
+        <div class="pagination-info-modern">
+            Showing <span id="userCountFooter">0</span> users
+        </div>
         <nav aria-label="User pagination">
-            <ul class="pagination pagination-sm mb-0" id="usersPagination"></ul>
+            <ul class="pagination-modern" id="usersPagination"></ul>
         </nav>
     </div>
 </div>
@@ -108,15 +124,17 @@
     </div>
 </div> --}}
 
-<!-- Create User Modal -->
+<!-- Simple Create User Modal -->
 <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(90deg, #4e54c8, #8f94fb);">
-                <h5 class="modal-title text-white"><i class="bi bi-person-plus me-2"></i>Create New User</h5>
+        <div class="modal-content modal-content-modern">
+            <div class="modal-header modal-header-modern">
+                <h5 class="modal-title modal-title-modern">
+                    <i class="bi bi-person-plus"></i>Create New User
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body modal-body-modern">
                 <form id="createUserForm" class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label">Name</label>
@@ -157,7 +175,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer modal-footer-modern">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-primary" onclick="createUser()">
                     <i class="bi bi-check2-circle me-1"></i>Create User
@@ -167,15 +185,17 @@
     </div>
 </div>
 
-<!-- Edit User Modal -->
+<!-- Simple Edit User Modal -->
 <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(90deg, #28a745, #20c997);">
-                <h5 class="modal-title text-white"><i class="bi bi-person-gear me-2"></i>Edit User</h5>
+        <div class="modal-content modal-content-modern">
+            <div class="modal-header modal-header-modern" style="background: #10b981;">
+                <h5 class="modal-title modal-title-modern">
+                    <i class="bi bi-person-gear"></i>Edit User
+                </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body modal-body-modern">
                 <form id="editUserForm" class="row g-3">
                     <input type="hidden" id="editUserId">
                     <div class="col-md-6">
@@ -233,7 +253,7 @@
                     </div>
                 </form>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer modal-footer-modern">
                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
                 <button type="button" class="btn btn-success" onclick="updateUser()">
                     <i class="bi bi-check2-circle me-1"></i>Update User
@@ -282,7 +302,7 @@ function loadUsers() {
 
     // Show loading state
     const tbody = document.getElementById('usersTableBody');
-    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4"><div class="spinner-border text-primary" role="status"></div></td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="text-center py-5"><div class="loading-spinner"></div><div class="mt-2 text-muted">Loading users...</div></td></tr>';
 
     fetch(`/admin/users/data?q=${encodeURIComponent(q)}&role=${role}&department=${department}&status=${status}&page=${currentUserPage}`, {
         method: 'GET', 
@@ -308,25 +328,28 @@ function loadUsers() {
                 const row = `<tr>
                     <td class="fw-medium">${u.name}</td>
                     <td>${u.email}</td>
-                    <td><span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
-                    <td><span class="badge bg-info">${u.department || 'General'}</span></td>
-                    <td>${u.status === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'}</td>
+                    <td><span class="badge-modern ${u.role === 'admin' ? 'badge-admin' : 'badge-employee'}">${u.role.toUpperCase()}</span></td>
+                    <td><span class="badge-modern badge-department">${(u.department || 'General').toUpperCase()}</span></td>
+                    <td><span class="badge-modern ${u.status === 'active' ? 'badge-active' : 'badge-inactive'}">${u.status.toUpperCase()}</span></td>
                     <td class="text-center">
                         <div class="d-inline-flex gap-2 flex-wrap justify-content-center align-items-center">
-                            <button class="btn btn-outline-primary" onclick="editUser(${u.id})" title="Edit User"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-outline-warning" onclick="resetPassword(${u.id})" title="Reset Password"><i class="bi bi-key"></i></button>
-                            <button class="btn btn-outline-danger" onclick="deleteUser(${u.id})" title="Delete User"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-table-action btn-edit" onclick="editUser(${u.id})" title="Edit User"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-table-action btn-reset" onclick="resetPassword(${u.id})" title="Reset Password"><i class="bi bi-key"></i></button>
+                            <button class="btn btn-table-action btn-delete" onclick="deleteUser(${u.id})" title="Delete User"><i class="bi bi-trash"></i></button>
                         </div>
                     </td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
             
-            document.getElementById('userCount').textContent = data.total || data.users.length;
+            const userCount = data.total || data.users.length;
+            document.getElementById('userCount').textContent = userCount;
+            document.getElementById('userCountFooter').textContent = userCount;
             renderUserPagination(data.current_page || 1, data.total_pages || 1);
         } else {
-            tbody.innerHTML = '<tr><td colspan="6" class="text-center py-4 text-muted">No users found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="empty-state-modern"><i class="bi bi-people"></i><h5>No users found</h5><p>Try adjusting your search criteria or create a new user.</p></td></tr>';
             document.getElementById('userCount').textContent = '0';
+            document.getElementById('userCountFooter').textContent = '0';
         }
     })
         .catch(() => {
@@ -342,20 +365,21 @@ function loadUsers() {
                 const row = `<tr>
                     <td class="fw-medium">${u.name}</td>
                     <td>${u.email}</td>
-                    <td><span class="badge ${u.role === 'admin' ? 'bg-danger' : 'bg-secondary'}">${u.role}</span></td>
-                    <td><span class="badge bg-info">${u.department || 'General'}</span></td>
-                    <td>${u.status === 'active' ? '<span class="badge bg-success">Active</span>' : '<span class="badge bg-secondary">Inactive</span>'}</td>
+                    <td><span class="badge-modern ${u.role === 'admin' ? 'badge-admin' : 'badge-employee'}">${u.role}</span></td>
+                    <td><span class="badge-modern badge-department">${u.department || 'General'}</span></td>
+                    <td><span class="badge-modern ${u.status === 'active' ? 'badge-active' : 'badge-inactive'}">${u.status}</span></td>
                     <td class="text-center">
                         <div class="d-inline-flex gap-2 flex-wrap justify-content-center align-items-center">
-                            <button class="btn btn-outline-primary" onclick="editUser(${u.id})" title="Edit User"><i class="bi bi-pencil"></i></button>
-                            <button class="btn btn-outline-warning" onclick="resetPassword(${u.id})" title="Reset Password"><i class="bi bi-key"></i></button>
-                            <button class="btn btn-outline-danger" onclick="deleteUser(${u.id})" title="Delete User"><i class="bi bi-trash"></i></button>
+                            <button class="btn btn-table-action btn-edit" onclick="editUser(${u.id})" title="Edit User"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-table-action btn-reset" onclick="resetPassword(${u.id})" title="Reset Password"><i class="bi bi-key"></i></button>
+                            <button class="btn btn-table-action btn-delete" onclick="deleteUser(${u.id})" title="Delete User"><i class="bi bi-trash"></i></button>
                         </div>
                     </td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
             document.getElementById('userCount').textContent = demo.length;
+            document.getElementById('userCountFooter').textContent = demo.length;
             renderUserPagination(1,1);
         });
 }
