@@ -1,368 +1,203 @@
 @extends('layouts.app')
 
-@push('styles')
-<style>
-.bg-gradient-primary {
-    background: linear-gradient(135deg, #667eea, #764ba2) !important;
-}
-
-.bg-gradient-info {
-    background: linear-gradient(135deg, #42a5f5, #1e88e5) !important;
-}
-
-.bg-gradient-warning {
-    background: linear-gradient(135deg, #ffa726, #ff9800) !important;
-}
-
-.bg-gradient-success {
-    background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
-}
-
-.bg-info-modern {
-    background: linear-gradient(135deg, #42a5f5, #1e88e5) !important;
-    color: white !important;
-}
-
-.bg-primary-modern {
-    background: linear-gradient(135deg, #667eea, #764ba2) !important;
-    color: white !important;
-}
-
-.bg-success-modern {
-    background: linear-gradient(135deg, #4ecdc4, #44a08d) !important;
-    color: white !important;
-}
-
-.bg-warning-modern {
-    background: linear-gradient(135deg, #ffa726, #ff9800) !important;
-    color: white !important;
-}
-
-.bg-danger-modern {
-    background: linear-gradient(135deg, #ff6b6b, #ee5a24) !important;
-    color: white !important;
-}
-
-.btn-info-modern {
-    background: linear-gradient(135deg, #42a5f5, #1e88e5) !important;
-    color: white !important;
-    border: none !important;
-}
-
-.btn-info-modern:hover {
-    background: linear-gradient(135deg, #64b5f6, #42a5f5) !important;
-    color: white !important;
-}
-
-.avatar-fallback {
-    background: linear-gradient(135deg, #667eea, #764ba2) !important;
-    color: white !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-weight: 600 !important;
-    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3) !important;
-}
-
-.table tbody tr:hover {
-    background-color: rgba(102, 126, 234, 0.05) !important;
-    transform: translateY(-1px) !important;
-    transition: all 0.3s ease !important;
-}
-
-.badge {
-    font-weight: 500 !important;
-    border-radius: 8px !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
-}
-
-.form-select.rounded-input, .form-control.rounded-input {
-    border-radius: 12px !important;
-    border: 2px solid #e5e7eb !important;
-    transition: all 0.3s ease !important;
-}
-
-.form-select.rounded-input:focus, .form-control.rounded-input:focus {
-    border-color: #667eea !important;
-    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15) !important;
-}
-
-.btn-modern {
-    border-radius: 12px !important;
-    font-weight: 600 !important;
-    transition: all 0.3s ease !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-}
-
-.btn-modern:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
-}
-
-.card.hover-lift {
-    transition: all 0.3s ease !important;
-}
-
-.card.hover-lift:hover {
-    transform: translateY(-4px) !important;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
-}
-
-.pagination .page-link {
-    border-radius: 8px !important;
-    margin: 0 2px !important;
-    border: 1px solid #e5e7eb !important;
-    color: #667eea !important;
-    font-weight: 500 !important;
-}
-
-.pagination .page-link:hover {
-    background-color: #667eea !important;
-    color: white !important;
-    transform: translateY(-1px) !important;
-}
-
-.pagination .page-item.active .page-link {
-    background-color: #667eea !important;
-    border-color: #667eea !important;
-    color: white !important;
-}
-</style>
-@endpush
-
 @section('content')
 <div class="container-fluid">
     <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h2 fw-bold text-dark mb-1">
-                <i class="bi bi-people-fill me-2 text-primary"></i>Employee Records Management
-            </h1>
-            <p class="text-muted mb-0">Advanced filtering and working hours analysis for all employees</p>
-        </div>
-        <div class="d-flex gap-2">
-            <a href="{{ route('admin.users.index') }}" class="btn btn-outline-secondary btn-modern">
-                <i class="bi bi-arrow-left me-2"></i>Back to Users
-            </a>
+    <div class="page-header-modern">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="page-title-modern">Employee Time Overview</h1>
+                <p class="page-subtitle-modern">Advanced filtering and working hours analysis for all employees</p>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{{ route('admin.users.index') }}" class="btn btn-action-modern btn-time-overview">
+                    <i class="bi bi-arrow-left"></i>Back to Users
+                </a>
+            </div>
         </div>
     </div>
 
-    <!-- Advanced Filters -->
-    <div class="card border-0 shadow-sm mb-4 hover-lift">
-        <div class="card-header bg-gradient-primary text-white">
-            <h6 class="mb-0 fw-semibold">
-                <i class="bi bi-funnel-fill me-2"></i>Advanced Employee Records Filter
-            </h6>
-        </div>
-        <div class="card-body bg-light">
-            <div class="row g-3 align-items-end">
-                <div class="col-lg-3 col-md-6">
-                    <label class="form-label fw-semibold text-dark">
-                        <i class="bi bi-person me-1"></i>Employee Name
-                    </label>
-                    <select id="employeeFilter" class="form-select rounded-input">
-                        <option value="">All Employees</option>
-                        <!-- Populated by JavaScript -->
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <label class="form-label fw-semibold text-dark">
-                        <i class="bi bi-building me-1"></i>Department
-                    </label>
-                    <select id="departmentFilter" class="form-select rounded-input">
-                        <option value="">All Departments</option>
-                        <option value="Web">Web Development</option>
-                        <option value="Graphic">Graphic Design</option>
-                        <option value="Editorial">Editorial</option>
-                        <option value="Multimedia">Multimedia</option>
-                        <option value="Sales">Sales</option>
-                        <option value="Marketing">Marketing</option>
-                        <option value="Intern">Internship</option>
-                        <option value="General">General</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <label class="form-label fw-semibold text-dark">
-                        <i class="bi bi-calendar-range me-1"></i>Time Period
-                    </label>
-                    <select id="timePeriodFilter" class="form-select rounded-input">
-                        <option value="days">Days</option>
-                        <option value="weeks">Weeks</option>
-                        <option value="months">Months</option>
-                        <option value="years">Years</option>
-                    </select>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="d-grid gap-2">
-                        <button class="btn btn-primary-modern btn-modern" onclick="loadEmployeeTime()">
-                            <i class="bi bi-funnel-fill me-2"></i>Apply Filters
-                        </button>
-                        <button class="btn btn-success-modern btn-modern" onclick="exportData()">
-                            <i class="bi bi-download me-2"></i>Export CSV
-                        </button>
-                    </div>
+    <!-- Filters -->
+    <div class="filter-section-modern">
+        <h3 class="filter-title-modern">
+            <i class="bi bi-funnel"></i>Filters
+        </h3>
+        <div class="row g-3">
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <label class="form-label">Employee Name</label>
+                <select id="employeeFilter" class="form-select">
+                    <option value="">All Employees</option>
+                    <!-- Populated by JavaScript -->
+                </select>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <label class="form-label">Department</label>
+                <select id="departmentFilter" class="form-select">
+                    <option value="">All Departments</option>
+                    <option value="Web">Web Development</option>
+                    <option value="Graphic">Graphic Design</option>
+                    <option value="Editorial">Editorial</option>
+                    <option value="Multimedia">Multimedia</option>
+                    <option value="Sales">Sales</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Intern">Internship</option>
+                    <option value="General">General</option>
+                </select>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <label class="form-label">Time Period</label>
+                <select id="timePeriodFilter" class="form-select">
+                    <option value="days">Days</option>
+                    <option value="weeks">Weeks</option>
+                    <option value="months">Months</option>
+                    <option value="years">Years</option>
+                </select>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <label class="form-label">&nbsp;</label>
+                <div class="d-grid">
+                    <button class="btn btn-primary" onclick="loadEmployeeTime()">
+                        <i class="bi bi-funnel"></i>Apply Filters
+                    </button>
                 </div>
             </div>
-            
-            <!-- Date Range Filters (Hidden by default, shown when needed) -->
-            <div class="row g-3 align-items-end mt-4" id="dateRangeFilters" style="display: none;">
-                <div class="col-md-4">
-                    <label class="form-label fw-semibold text-dark">
-                        <i class="bi bi-calendar-event me-1"></i>Start Date
+        </div>
+        
+        <!-- Date Range Filters (Hidden by default, shown when needed) -->
+        <div class="row g-3 mt-3" id="dateRangeFilters" style="display: none;">
+            <div class="col-md-4">
+                <label class="form-label">Start Date</label>
+                <input type="date" id="startDateFilter" class="form-control" value="{{ date('Y-m-01') }}">
+            </div>
+            <div class="col-md-4">
+                <label class="form-label">End Date</label>
+                <input type="date" id="endDateFilter" class="form-control" value="{{ date('Y-m-d') }}">
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="useCustomDateRange">
+                    <label class="form-check-label" for="useCustomDateRange">
+                        Use Custom Date Range
                     </label>
-                    <input type="date" id="startDateFilter" class="form-control rounded-input" value="{{ date('Y-m-01') }}">
-                </div>
-                <div class="col-md-4">
-                    <label class="form-label fw-semibold text-dark">
-                        <i class="bi bi-calendar-check me-1"></i>End Date
-                    </label>
-                    <input type="date" id="endDateFilter" class="form-control rounded-input" value="{{ date('Y-m-d') }}">
-                </div>
-                <div class="col-md-4">
-                    <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" id="useCustomDateRange">
-                        <label class="form-check-label fw-semibold text-dark" for="useCustomDateRange">
-                            <i class="bi bi-calendar-range me-1"></i>Use Custom Date Range
-                        </label>
-                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Working Hours Summary -->
-    <div class="card border-0 shadow-sm mb-4 hover-lift">
-        <div class="card-header bg-gradient-info text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-graph-up me-2"></i>Working Hours Summary
-            </h5>
+    <div class="data-table-modern mb-4">
+        <div class="table-header-modern">
+            <h3 class="table-title-modern">
+                <i class="bi bi-graph-up"></i>Working Hours Summary
+            </h3>
             <div class="btn-group btn-group-sm" role="group">
                 <input type="radio" class="btn-check" name="summaryPeriod" id="summaryDay" autocomplete="off" checked>
-                <label class="btn btn-outline-light" for="summaryDay" onclick="updateSummary('day')">
+                <label class="btn btn-outline-primary" for="summaryDay" onclick="updateSummary('day')">
                     <i class="bi bi-calendar-day me-1"></i>Day
                 </label>
                 
                 <input type="radio" class="btn-check" name="summaryPeriod" id="summaryWeek" autocomplete="off">
-                <label class="btn btn-outline-light" for="summaryWeek" onclick="updateSummary('week')">
+                <label class="btn btn-outline-primary" for="summaryWeek" onclick="updateSummary('week')">
                     <i class="bi bi-calendar-week me-1"></i>Week
                 </label>
                 
                 <input type="radio" class="btn-check" name="summaryPeriod" id="summaryMonth" autocomplete="off">
-                <label class="btn btn-outline-light" for="summaryMonth" onclick="updateSummary('month')">
+                <label class="btn btn-outline-primary" for="summaryMonth" onclick="updateSummary('month')">
                     <i class="bi bi-calendar-month me-1"></i>Month
                 </label>
                 
                 <input type="radio" class="btn-check" name="summaryPeriod" id="summaryYear" autocomplete="off">
-                <label class="btn btn-outline-light" for="summaryYear" onclick="updateSummary('year')">
+                <label class="btn btn-outline-primary" for="summaryYear" onclick="updateSummary('year')">
                     <i class="bi bi-calendar-year me-1"></i>Year
                 </label>
             </div>
         </div>
-        <div class="card-body bg-light">
+        <div class="p-4">
             <div class="row" id="hoursSummary">
                 <!-- Populated by JavaScript -->
                 <div class="col-12 text-center py-4">
-                    <div class="spinner-border text-primary" role="status"></div>
-                    <p class="mt-3 text-muted fw-medium">Loading hours summary...</p>
+                    <div class="loading-spinner"></div>
+                    <p class="mt-3 text-muted">Loading hours summary...</p>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Chart Section -->
-    <div class="card border-0 shadow-sm mb-4 hover-lift">
-        <div class="card-header bg-gradient-warning text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-bar-chart-fill me-2"></i>Hours Overview Chart
-            </h5>
+    <div class="data-table-modern mb-4">
+        <div class="table-header-modern">
+            <h3 class="table-title-modern">
+                <i class="bi bi-bar-chart-fill"></i>Hours Overview Chart
+            </h3>
             <div class="btn-group btn-group-sm" role="group">
                 <input type="radio" class="btn-check" name="chartPeriod" id="chartDay" autocomplete="off">
-                <label class="btn btn-outline-light" for="chartDay" onclick="updateChart('day')">
+                <label class="btn btn-outline-primary" for="chartDay" onclick="updateChart('day')">
                     <i class="bi bi-calendar-day me-1"></i>Day
                 </label>
                 
                 <input type="radio" class="btn-check" name="chartPeriod" id="chartWeek" autocomplete="off" checked>
-                <label class="btn btn-outline-light" for="chartWeek" onclick="updateChart('week')">
+                <label class="btn btn-outline-primary" for="chartWeek" onclick="updateChart('week')">
                     <i class="bi bi-calendar-week me-1"></i>Week
                 </label>
                 
                 <input type="radio" class="btn-check" name="chartPeriod" id="chartMonth" autocomplete="off">
-                <label class="btn btn-outline-light" for="chartMonth" onclick="updateChart('month')">
+                <label class="btn btn-outline-primary" for="chartMonth" onclick="updateChart('month')">
                     <i class="bi bi-calendar-month me-1"></i>Month
                 </label>
                 
                 <input type="radio" class="btn-check" name="chartPeriod" id="chartYear" autocomplete="off">
-                <label class="btn btn-outline-light" for="chartYear" onclick="updateChart('year')">
+                <label class="btn btn-outline-primary" for="chartYear" onclick="updateChart('year')">
                     <i class="bi bi-calendar-year me-1"></i>Year
                 </label>
             </div>
         </div>
-        <div class="card-body bg-light">
+        <div class="p-4">
             <canvas id="hoursChart" height="100"></canvas>
         </div>
     </div>
 
     <!-- Employee Records Table -->
-    <div class="card border-0 shadow-sm hover-lift">
-        <div class="card-header bg-gradient-success text-white d-flex justify-content-between align-items-center">
-            <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-table me-2"></i>Employee Records
-            </h5>
+    <div class="data-table-modern">
+        <div class="table-header-modern">
+            <h3 class="table-title-modern">
+                <i class="bi bi-table"></i>Employee Records
+            </h3>
             <div>
-                <button class="btn btn-light btn-modern" onclick="exportData()">
-                    <i class="bi bi-download me-2"></i>Export CSV
+                <button class="btn btn-primary" onclick="exportData()">
+                    <i class="bi bi-download me-1"></i>Export CSV
                 </button>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover table-striped mb-0 align-middle">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="fw-semibold">
-                                <i class="bi bi-person me-1"></i>Employee Name
-                            </th>
-                            <th class="fw-semibold">
-                                <i class="bi bi-building me-1"></i>Department
-                            </th>
-                            <th class="fw-semibold">
-                                <i class="bi bi-envelope me-1"></i>Email
-                            </th>
-                            <th class="fw-semibold text-center">
-                                <i class="bi bi-calendar-day me-1"></i>Days (hrs)
-                            </th>
-                            <th class="fw-semibold text-center">
-                                <i class="bi bi-calendar-week me-1"></i>Weeks (hrs)
-                            </th>
-                            <th class="fw-semibold text-center">
-                                <i class="bi bi-calendar-month me-1"></i>Months (hrs)
-                            </th>
-                            <th class="fw-semibold text-center">
-                                <i class="bi bi-calendar-year me-1"></i>Years (hrs)
-                            </th>
-                            <th class="fw-semibold text-center">
-                                <i class="bi bi-gear me-1"></i>Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="employeeRecordsTableBody">
-                        <tr>
-                            <td colspan="8" class="text-center py-5">
-                                <div class="spinner-border text-primary" role="status"></div>
-                                <p class="mt-3 text-muted fw-medium">Loading employee records...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-responsive">
+            <table class="table-modern" id="employeeRecordsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 20%;">Employee Name</th>
+                        <th style="width: 15%;">Department</th>
+                        <th style="width: 20%;">Email</th>
+                        <th class="text-center" style="width: 12%;">Days (hrs)</th>
+                        <th class="text-center" style="width: 12%;">Weeks (hrs)</th>
+                        <th class="text-center" style="width: 12%;">Months (hrs)</th>
+                        <th class="text-center" style="width: 12%;">Years (hrs)</th>
+                        <th class="text-center" style="width: 12%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeeRecordsTableBody">
+                    <tr>
+                        <td colspan="8" class="text-center py-5">
+                            <div class="loading-spinner"></div>
+                            <p class="mt-3 text-muted">Loading employee records...</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="card-footer bg-light d-flex justify-content-between align-items-center">
-            <small class="text-muted fw-medium">
-                <i class="bi bi-info-circle me-1"></i>Showing <span id="employeeCount" class="fw-bold text-primary">0</span> employee records
-            </small>
+        <div class="pagination-container-modern">
+            <div class="pagination-info-modern">
+                Showing <span id="employeeCount">0</span> employee records
+            </div>
             <nav aria-label="Employee records pagination">
-                <ul class="pagination pagination-sm mb-0" id="employeeRecordsPagination"></ul>
+                <ul class="pagination-modern" id="employeeRecordsPagination"></ul>
             </nav>
         </div>
     </div>
@@ -371,14 +206,14 @@
 <!-- Employee Time Details Modal -->
 <div class="modal fade" id="timeDetailsModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-gradient-primary text-white">
-                <h5 class="modal-title text-white fw-semibold">
-                    <i class="bi bi-person-lines-fill me-2"></i>Employee Details
+        <div class="modal-content modal-content-modern">
+            <div class="modal-header modal-header-modern">
+                <h5 class="modal-title modal-title-modern">
+                    <i class="bi bi-person-lines-fill"></i>Employee Details
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body bg-light">
+            <div class="modal-body modal-body-modern">
                 <div id="timeDetailsContent">
                     <!-- Populated by JavaScript -->
                 </div>
@@ -471,44 +306,25 @@ function loadEmployeeRecords(page = 1) {
 
         if (data.success && data.employees && data.employees.length > 0) {
             tbody.innerHTML = data.employees.map(emp => `
-                <tr class="hover-scale">
-                    <td class="fw-semibold">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar-fallback me-2" style="width: 32px; height: 32px; font-size: 12px;">
-                                ${emp.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                            </div>
-                            ${emp.name}
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge bg-info-modern px-3 py-2">
-                            <i class="bi bi-building me-1"></i>${emp.department || 'General'}
-                        </span>
-                    </td>
-                    <td class="text-muted">${emp.email}</td>
+                <tr>
+                    <td class="fw-medium">${emp.name}</td>
+                    <td><span class="badge-modern badge-department">${(emp.department || 'General').toUpperCase()}</span></td>
+                    <td>${emp.email}</td>
                     <td class="text-center">
-                        <span class="badge bg-primary-modern px-3 py-2">
-                            <i class="bi bi-calendar-day me-1"></i>${emp.days_hours || '0'} hrs
-                        </span>
+                        <span class="badge-modern badge-active">${emp.days_hours || '0'} hrs</span>
                     </td>
                     <td class="text-center">
-                        <span class="badge bg-success-modern px-3 py-2">
-                            <i class="bi bi-calendar-week me-1"></i>${emp.weeks_hours || '0'} hrs
-                        </span>
+                        <span class="badge-modern badge-active">${emp.weeks_hours || '0'} hrs</span>
                     </td>
                     <td class="text-center">
-                        <span class="badge bg-warning-modern px-3 py-2">
-                            <i class="bi bi-calendar-month me-1"></i>${emp.months_hours || '0'} hrs
-                        </span>
+                        <span class="badge-modern badge-active">${emp.months_hours || '0'} hrs</span>
                     </td>
                     <td class="text-center">
-                        <span class="badge bg-danger-modern px-3 py-2">
-                            <i class="bi bi-calendar-year me-1"></i>${emp.years_hours || '0'} hrs
-                        </span>
+                        <span class="badge-modern badge-active">${emp.years_hours || '0'} hrs</span>
                     </td>
                     <td class="text-center">
-                        <button class="btn btn-info-modern btn-modern btn-sm" onclick="viewEmployeeDetails(${emp.id})" title="View Details">
-                            <i class="bi bi-eye-fill me-1"></i>View
+                        <button class="btn btn-table-action btn-edit" onclick="viewEmployeeDetails(${emp.id})" title="View Details">
+                            <i class="bi bi-eye"></i>
                         </button>
                     </td>
                 </tr>
@@ -532,44 +348,25 @@ function loadEmployeeRecords(page = 1) {
         
         const tbody = document.getElementById('employeeRecordsTableBody');
         tbody.innerHTML = demo.map(emp => `
-            <tr class="hover-scale">
-                <td class="fw-semibold">
-                    <div class="d-flex align-items-center">
-                        <div class="avatar-fallback me-2" style="width: 32px; height: 32px; font-size: 12px;">
-                            ${emp.name.split(' ').map(n => n[0]).join('').toUpperCase()}
-                        </div>
-                        ${emp.name}
-                    </div>
-                </td>
-                <td>
-                    <span class="badge bg-info-modern px-3 py-2">
-                        <i class="bi bi-building me-1"></i>${emp.department}
-                    </span>
-                </td>
-                <td class="text-muted">${emp.email}</td>
+            <tr>
+                <td class="fw-medium">${emp.name}</td>
+                <td><span class="badge-modern badge-department">${emp.department.toUpperCase()}</span></td>
+                <td>${emp.email}</td>
                 <td class="text-center">
-                    <span class="badge bg-primary-modern px-3 py-2">
-                        <i class="bi bi-calendar-day me-1"></i>${emp.days_hours} hrs
-                    </span>
+                    <span class="badge-modern badge-active">${emp.days_hours} hrs</span>
                 </td>
                 <td class="text-center">
-                    <span class="badge bg-success-modern px-3 py-2">
-                        <i class="bi bi-calendar-week me-1"></i>${emp.weeks_hours} hrs
-                    </span>
+                    <span class="badge-modern badge-active">${emp.weeks_hours} hrs</span>
                 </td>
                 <td class="text-center">
-                    <span class="badge bg-warning-modern px-3 py-2">
-                        <i class="bi bi-calendar-month me-1"></i>${emp.months_hours} hrs
-                    </span>
+                    <span class="badge-modern badge-active">${emp.months_hours} hrs</span>
                 </td>
                 <td class="text-center">
-                    <span class="badge bg-danger-modern px-3 py-2">
-                        <i class="bi bi-calendar-year me-1"></i>${emp.years_hours} hrs
-                    </span>
+                    <span class="badge-modern badge-active">${emp.years_hours} hrs</span>
                 </td>
                 <td class="text-center">
-                    <button class="btn btn-info-modern btn-modern btn-sm" onclick="viewEmployeeDetails(${emp.id})" title="View Details">
-                        <i class="bi bi-eye-fill me-1"></i>View
+                    <button class="btn btn-table-action btn-edit" onclick="viewEmployeeDetails(${emp.id})" title="View Details">
+                        <i class="bi bi-eye"></i>
                     </button>
                 </td>
             </tr>
@@ -615,34 +412,34 @@ function updateSummary(period) {
                 const summary = data.summary;
                 summaryContainer.innerHTML = `
                     <div class="col-md-3">
-                        <div class="card bg-primary text-white">
+                        <div class="card border-0 shadow-sm">
                             <div class="card-body text-center">
-                                <h3 class="mb-1">${summary.total_employees || 0}</h3>
-                                <p class="mb-0">Total Employees</p>
+                                <h3 class="mb-1 text-primary">${summary.total_employees || 0}</h3>
+                                <p class="mb-0 text-muted">Total Employees</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card bg-success text-white">
+                        <div class="card border-0 shadow-sm">
                             <div class="card-body text-center">
-                                <h3 class="mb-1">${summary.total_hours || 0}</h3>
-                                <p class="mb-0">Total Hours (${period})</p>
+                                <h3 class="mb-1 text-success">${summary.total_hours || 0}</h3>
+                                <p class="mb-0 text-muted">Total Hours (${period})</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card bg-warning text-white">
+                        <div class="card border-0 shadow-sm">
                             <div class="card-body text-center">
-                                <h3 class="mb-1">${summary.average_hours || 0}</h3>
-                                <p class="mb-0">Average Hours</p>
+                                <h3 class="mb-1 text-warning">${summary.average_hours || 0}</h3>
+                                <p class="mb-0 text-muted">Average Hours</p>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3">
-                        <div class="card bg-info text-white">
+                        <div class="card border-0 shadow-sm">
                             <div class="card-body text-center">
-                                <h3 class="mb-1">${summary.active_employees || 0}</h3>
-                                <p class="mb-0">Active Employees</p>
+                                <h3 class="mb-1 text-info">${summary.active_employees || 0}</h3>
+                                <p class="mb-0 text-muted">Active Employees</p>
                             </div>
                         </div>
                     </div>
@@ -656,34 +453,34 @@ function updateSummary(period) {
             const summaryContainer = document.getElementById('hoursSummary');
             summaryContainer.innerHTML = `
                 <div class="col-md-3">
-                    <div class="card bg-primary text-white">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <h3 class="mb-1">15</h3>
-                            <p class="mb-0">Total Employees</p>
+                            <h3 class="mb-1 text-primary">15</h3>
+                            <p class="mb-0 text-muted">Total Employees</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-success text-white">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <h3 class="mb-1">120</h3>
-                            <p class="mb-0">Total Hours (${period})</p>
+                            <h3 class="mb-1 text-success">120</h3>
+                            <p class="mb-0 text-muted">Total Hours (${period})</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-warning text-white">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <h3 class="mb-1">8.0</h3>
-                            <p class="mb-0">Average Hours</p>
+                            <h3 class="mb-1 text-warning">8.0</h3>
+                            <p class="mb-0 text-muted">Average Hours</p>
                         </div>
                     </div>
                 </div>
                 <div class="col-md-3">
-                    <div class="card bg-info text-white">
+                    <div class="card border-0 shadow-sm">
                         <div class="card-body text-center">
-                            <h3 class="mb-1">12</h3>
-                            <p class="mb-0">Active Employees</p>
+                            <h3 class="mb-1 text-info">12</h3>
+                            <p class="mb-0 text-muted">Active Employees</p>
                         </div>
                     </div>
                 </div>

@@ -19,10 +19,10 @@
                             <p class="mb-2 opacity-75">{{ $user->email }}</p>
                             <div class="d-flex align-items-center">
                                 <span class="badge bg-light text-dark me-2">
-                                    <i class="fas fa-shield-alt me-1"></i>{{ $user->getDisplayRole() }}
+                                    <i class="bi bi-shield-check me-1"></i>{{ $user->getDisplayRole() }}
                                 </span>
                                 <span class="badge bg-light text-dark">
-                                    <i class="fas fa-calendar me-1"></i>Member since {{ $user->created_at->format('M Y') }}
+                                    <i class="bi bi-calendar me-1"></i>Member since {{ $user->created_at->format('M Y') }}
                                 </span>
                             </div>
                         </div>
@@ -49,7 +49,7 @@
                 <div class="card-header bg-white border-bottom">
                     <div class="d-flex align-items-center">
                         <div class="icon-circle bg-primary text-white me-3">
-                            <i class="fas fa-user-edit"></i>
+                            <i class="bi bi-person-circle"></i>
                         </div>
                         <div>
                             <h5 class="mb-0 fw-bold">Profile Information</h5>
@@ -73,7 +73,7 @@
                                            placeholder="Full Name"
                                            required>
                                     <label for="name">
-                                        <i class="fas fa-user me-2 text-muted"></i>Full Name
+                                        <i class="bi bi-person me-2 text-muted"></i>Full Name
                                     </label>
                                     @error('name')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -91,7 +91,7 @@
                                            placeholder="Email Address"
                                            required>
                                     <label for="email">
-                                        <i class="fas fa-envelope me-2 text-muted"></i>Email Address
+                                        <i class="bi bi-envelope me-2 text-muted"></i>Email Address
                                     </label>
                                     @error('email')
                                         <div class="invalid-feedback">{{ $message }}</div>
@@ -102,7 +102,7 @@
                         
                         <div class="d-flex justify-content-end mt-4 pt-3 border-top">
                             <button type="submit" class="btn btn-primary btn-lg px-4">
-                                <i class="fas fa-save me-2"></i>Save Changes
+                                <i class="bi bi-save me-2"></i>Save Changes
                             </button>
                         </div>
                     </form>
@@ -116,7 +116,7 @@
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-header bg-white border-bottom">
                     <h6 class="mb-0 fw-bold">
-                        <i class="fas fa-camera me-2 text-primary"></i>Profile Photo
+                        <i class="bi bi-camera me-2 text-primary"></i>Profile Photo
                     </h6>
                 </div>
                 <div class="card-body text-center p-4">
@@ -136,11 +136,11 @@
                     
                     <div class="d-flex gap-2 justify-content-center">
                         <button type="button" class="btn btn-outline-primary btn-sm" onclick="document.getElementById('photo-input').click()">
-                            <i class="fas fa-upload me-2"></i>Upload Photo
+                            <i class="bi bi-upload me-2"></i>Upload Photo
                         </button>
                         @if($user->profile_photo)
                         <button type="button" class="btn btn-outline-danger btn-sm" onclick="deletePhoto()">
-                            <i class="fas fa-trash me-2"></i>Remove
+                            <i class="bi bi-trash me-2"></i>Remove
                         </button>
                         @endif
                     </div>

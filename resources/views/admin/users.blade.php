@@ -326,7 +326,11 @@ function loadUsers() {
         if (data.success && data.users && data.users.length > 0) {
             data.users.forEach(u => {
                 const row = `<tr>
-                    <td class="fw-medium">${u.name}</td>
+                    <td class="fw-medium">
+                        <a href="/profile/${u.id}" class="text-decoration-none text-primary fw-medium profile-link" title="View Profile">
+                            <i class="bi bi-person-circle me-1"></i>${u.name}
+                        </a>
+                    </td>
                     <td>${u.email}</td>
                     <td><span class="badge-modern ${u.role === 'admin' ? 'badge-admin' : 'badge-employee'}">${u.role.toUpperCase()}</span></td>
                     <td><span class="badge-modern badge-department">${(u.department || 'General').toUpperCase()}</span></td>
@@ -363,7 +367,11 @@ function loadUsers() {
             tbody.innerHTML = '';
             demo.forEach(u => {
                 const row = `<tr>
-                    <td class="fw-medium">${u.name}</td>
+                    <td class="fw-medium">
+                        <a href="/profile/${u.id}" class="text-decoration-none text-primary fw-medium profile-link" title="View Profile">
+                            <i class="bi bi-person-circle me-1"></i>${u.name}
+                        </a>
+                    </td>
                     <td>${u.email}</td>
                     <td><span class="badge-modern ${u.role === 'admin' ? 'badge-admin' : 'badge-employee'}">${u.role}</span></td>
                     <td><span class="badge-modern badge-department">${u.department || 'General'}</span></td>
@@ -807,6 +815,28 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {}
 });
 </script>
+
+<style>
+.profile-link {
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    padding: 2px 4px;
+}
+
+.profile-link:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    transform: translateY(-1px);
+    text-decoration: none !important;
+}
+
+.profile-link i {
+    opacity: 0.7;
+}
+
+.profile-link:hover i {
+    opacity: 1;
+}
+</style>
 @endpush
 </div>
 @endsection
