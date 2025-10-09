@@ -59,7 +59,7 @@
 </div>
 
 <!-- Statistics Cards -->
-<div class="row g-4 mb-4">
+<div class="row g-4 mb-4 p-3">
     <div class="col-md-3">
         <div class="card border-0 shadow-sm h-100 bg-gradient-1 card-gradient">
             <div class="card-body text-white text-center p-4">

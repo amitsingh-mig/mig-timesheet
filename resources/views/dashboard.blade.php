@@ -5,7 +5,7 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
 <!-- Page Header -->
-<div class="d-flex justify-content-between align-items-center mb-5">
+<div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h1 class="h2 fw-bold text-dark mb-1">🚀 Employee Dashboard</h1>
         <p class="text-muted mb-0">Welcome back to your workspace</p>
@@ -17,7 +17,7 @@
 </div>
 
 <!-- Summary Cards -->
-<div class="row g-4 mb-5">
+<div class="row g-3 mb-4">
     <!-- Today's Hours Card -->
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="card border-0 shadow-lg h-100 bg-gradient-1 card-gradient transition-all">
@@ -68,7 +68,7 @@
 </div>
 
 <!-- Main Content Row -->
-<div class="row g-4 mt-1">
+<div class="row g-4">
 
     <!-- Work Time Chart Section -->
     <div class="col-12 col-lg-8">
@@ -170,8 +170,8 @@
     .progress-bar-custom { border-radius: 9999px; transition: width .5s ease; }
 
     /* Chart Styling */
-    .chart-container { height: 360px; max-width: 100%; overflow: hidden; }
-    canvas#clockInChart { display: block; max-width: 100% !important; }
+    .chart-container { height: 360px; max-width: 100%; overflow: hidden; margin: 0; }
+    canvas#clockInChart { display: block; max-width: 100% !important; margin: 0; }
     .loading-spinner { height: 100%; width: 100%; background: rgba(255, 255, 255, 0.7); z-index: 10; }
 
     /* Buttons active state for chart toggles */
@@ -195,6 +195,25 @@
         box-shadow: 0 4px 15px rgba(78, 84, 200, 0.4);
         min-width: 150px;
         text-align: center;
+    }
+
+    /* Additional margin fixes */
+    .main-content {
+        padding: 1.5rem !important;
+    }
+    
+    .card {
+        margin-bottom: 0 !important;
+    }
+    
+    .row {
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    .col-12, .col-sm-6, .col-lg-3, .col-lg-4, .col-lg-8 {
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
     }
 </style>
 @endpush

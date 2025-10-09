@@ -1,4 +1,4 @@
-@props(['title' => config('app.name', 'Employee Timesheet')])
+@props(['title' => config('app.name', 'MiG-HRM')])
 
 <x-layouts.guest>
     {{ $slot }}

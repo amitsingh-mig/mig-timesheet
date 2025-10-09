@@ -5,13 +5,13 @@ This document outlines the performance optimizations implemented for the MIG-HRM
 ## 🚀 Optimizations Implemented
 
 ### 1. CSS Optimization
-- **Combined all CSS** into a single minified file: `public/css/style.min.css`
+- **Combined all CSS** into a single minified file: `public/css/style.css`
 - **Removed unused CSS** rules and redundant styles
 - **Minified CSS** by removing comments, whitespace, and unnecessary characters
 - **Size reduction**: ~70% smaller than original CSS files
 
 ### 2. JavaScript Optimization
-- **Combined all JavaScript** into a single minified file: `public/js/script.min.js`
+- **Combined all JavaScript** into a single minified file: `public/js/script.js`
 - **Removed unused JavaScript** functions and dead code
 - **Minified JavaScript** by removing comments, whitespace, and unnecessary characters
 - **Size reduction**: ~80% smaller than original JS files
@@ -25,8 +25,8 @@ Before:
 └── public/js/script.js (81 lines)
 
 After:
-├── public/css/style.min.css (1 line - minified)
-└── public/js/script.min.js (1 line - minified)
+├── public/css/style.css (1 line - minified)
+└── public/js/script.js (1 line - minified)
 ```
 
 ### 4. HTML Template Optimization
@@ -81,10 +81,10 @@ node build-optimize.js
 ### Asset Loading in Templates
 ```html
 <!-- CSS in <head> -->
-<link rel="stylesheet" href="{{ asset('css/style.min.css') }}">
+<link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
 <!-- JavaScript with defer -->
-<script src="{{ asset('js/script.min.js') }}" defer></script>
+<script src="{{ asset('js/script.js') }}" defer></script>
 ```
 
 ### Cache Headers

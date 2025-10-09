@@ -11,11 +11,11 @@ const path = require('path');
 const config = {
     css: {
         input: 'public/css/style.css',
-        output: 'public/css/style.min.css'
+        output: 'public/css/style.css'
     },
     js: {
         input: 'public/js/script.js',
-        output: 'public/js/script.min.js'
+        output: 'public/js/script.js'
     }
 };
 

@@ -337,7 +337,8 @@ class TimesheetController extends Controller
             $query->whereBetween('date', [$request->get('start_date'), $request->get('end_date')]);
         }
 
-        $entries = $query->paginate(25)->withQueryString();
+        $perPage = $request->get('per_page', 10);
+        $entries = $query->paginate($perPage)->withQueryString();
         return view('timesheet.admin', [
             'entries' => $entries,
         ]);

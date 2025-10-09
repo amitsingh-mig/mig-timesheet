@@ -583,7 +583,7 @@ class UserController extends Controller
     }
 
     /**
-     * Export Employee Time Overview to CSV honoring filters
+     * Export Employee Records to CSV with working hours summary
      */
     public function exportTimeCsv(Request $request)
     {
@@ -593,33 +593,61 @@ class UserController extends Controller
         }
 
         $employeeId = $request->get('employee_id');
+        $department = $request->get('department');
+        $timePeriod = $request->get('time_period', 'days');
         $startDate = $request->get('start_date');
-        $endDate   = $request->get('end_date');
+        $endDate = $request->get('end_date');
 
-        $query = \App\Models\Timesheet::with('user');
-        if ($employeeId) $query->where('user_id', $employeeId);
-        if ($startDate)  $query->whereDate('date', '>=', $startDate);
-        if ($endDate)    $query->whereDate('date', '<=', $endDate);
+        // Get employees with filters
+        $query = User::with('role')->whereHas('role', function($q) {
+            $q->where('name', '!=', 'admin');
+        });
 
-        $rows = $query->orderBy('date', 'desc')->get();
+        if ($employeeId) {
+            $query->where('id', $employeeId);
+        }
+
+        if ($department) {
+            $query->where('department', $department);
+        }
+
+        $employees = $query->get();
 
         $headers = [
             'Content-Type' => 'text/csv',
-            'Content-Disposition' => 'attachment; filename="employee_time_export_' . now()->format('Ymd_His') . '.csv"',
+            'Content-Disposition' => 'attachment; filename="employee_records_export_' . now()->format('Ymd_His') . '.csv"',
         ];
 
-        $callback = function () use ($rows) {
+        $callback = function () use ($employees, $timePeriod, $startDate, $endDate) {
             $out = fopen('php://output', 'w');
-            fputcsv($out, ['Employee','Email','Date','Clock In','Clock Out','Total Hours','Description']);
-            foreach ($rows as $r) {
+            
+            // CSV Headers
+            fputcsv($out, [
+                'Employee Name',
+                'Email', 
+                'Department',
+                'Days Hours',
+                'Weeks Hours', 
+                'Months Hours',
+                'Years Hours',
+                'Status',
+                'Export Date'
+            ]);
+
+            foreach ($employees as $employee) {
+                // Calculate working hours for different periods
+                $hoursData = $this->calculateEmployeeHours($employee->id, $timePeriod, $startDate, $endDate);
+                
                 fputcsv($out, [
-                    optional($r->user)->name,
-                    optional($r->user)->email,
-                    (string) $r->date,
-                    $r->start_time,
-                    $r->end_time,
-                    (float) ($r->hours_worked ?? 0),
-                    $r->description ?? $r->task ?? '',
+                    $employee->name,
+                    $employee->email,
+                    $employee->department ?? 'General',
+                    $hoursData['days'],
+                    $hoursData['weeks'],
+                    $hoursData['months'],
+                    $hoursData['years'],
+                    $employee->email_verified_at ? 'Active' : 'Inactive',
+                    now()->format('Y-m-d H:i:s')
                 ]);
             }
             fclose($out);
@@ -757,5 +785,213 @@ class UserController extends Controller
                 'message' => 'Failed to load time details: ' . $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Get employee records with working hours calculations
+     */
+    public function getEmployeeRecords(Request $request)
+    {
+        // Check if user is admin
+        if (!Auth::user() || !Auth::user()->role || Auth::user()->role->name !== 'admin') {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+
+        try {
+            $query = User::with('role')->whereHas('role', function($q) {
+                $q->where('name', '!=', 'admin');
+            });
+
+            // Apply filters
+            if ($request->get('employee_id')) {
+                $query->where('id', $request->get('employee_id'));
+            }
+
+            if ($request->get('department')) {
+                $query->where('department', $request->get('department'));
+            }
+
+            $page = $request->get('page', 1);
+            $perPage = 10;
+            
+            $employees = $query->paginate($perPage, ['*'], 'page', $page);
+
+            $formattedEmployees = collect($employees->items())->map(function($employee) use ($request) {
+                $timePeriod = $request->get('time_period', 'days');
+                $startDate = $request->get('start_date');
+                $endDate = $request->get('end_date');
+
+                // Calculate working hours for different periods
+                $hoursData = $this->calculateEmployeeHours($employee->id, $timePeriod, $startDate, $endDate);
+
+                return [
+                    'id' => $employee->id,
+                    'name' => $employee->name,
+                    'email' => $employee->email,
+                    'department' => $employee->department ?? 'General',
+                    'days_hours' => $hoursData['days'],
+                    'weeks_hours' => $hoursData['weeks'],
+                    'months_hours' => $hoursData['months'],
+                    'years_hours' => $hoursData['years']
+                ];
+            });
+
+            return response()->json([
+                'success' => true,
+                'employees' => $formattedEmployees,
+                'current_page' => $employees->currentPage(),
+                'total_pages' => $employees->lastPage(),
+                'total' => $employees->total()
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load employee records: ' . $e->getMessage(),
+                'employees' => [],
+                'current_page' => 1,
+                'total_pages' => 1,
+                'total' => 0
+            ]);
+        }
+    }
+
+    /**
+     * Get working hours summary
+     */
+    public function getWorkingHoursSummary(Request $request)
+    {
+        // Check if user is admin
+        if (!Auth::user() || !Auth::user()->role || Auth::user()->role->name !== 'admin') {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+
+        try {
+            $period = $request->get('period', 'day');
+            $employeeId = $request->get('employee_id');
+            $department = $request->get('department');
+            $startDate = $request->get('start_date');
+            $endDate = $request->get('end_date');
+
+            $query = User::with('role')->whereHas('role', function($q) {
+                $q->where('name', '!=', 'admin');
+            });
+
+            if ($employeeId) {
+                $query->where('id', $employeeId);
+            }
+
+            if ($department) {
+                $query->where('department', $department);
+            }
+
+            $employees = $query->get();
+            $totalEmployees = $employees->count();
+            $activeEmployees = $employees->where('email_verified_at', '!=', null)->count();
+
+            $totalHours = 0;
+            $employeeHours = [];
+
+            foreach ($employees as $employee) {
+                $hoursData = $this->calculateEmployeeHours($employee->id, $period, $startDate, $endDate);
+                $employeeHours[] = $hoursData[$period . 's']; // days, weeks, months, years
+                $totalHours += $hoursData[$period . 's'];
+            }
+
+            $averageHours = $totalEmployees > 0 ? round($totalHours / $totalEmployees, 1) : 0;
+
+            $summary = [
+                'total_employees' => $totalEmployees,
+                'active_employees' => $activeEmployees,
+                'total_hours' => round($totalHours, 1),
+                'average_hours' => $averageHours
+            ];
+
+            return response()->json([
+                'success' => true,
+                'summary' => $summary
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load summary: ' . $e->getMessage(),
+                'summary' => [
+                    'total_employees' => 0,
+                    'active_employees' => 0,
+                    'total_hours' => 0,
+                    'average_hours' => 0
+                ]
+            ]);
+        }
+    }
+
+    /**
+     * Calculate working hours for an employee across different periods
+     */
+    private function calculateEmployeeHours($employeeId, $timePeriod = 'days', $startDate = null, $endDate = null)
+    {
+        $now = now();
+        
+        // Set default date ranges if not provided
+        if (!$startDate) {
+            switch ($timePeriod) {
+                case 'days':
+                    $startDate = $now->copy()->startOfDay();
+                    break;
+                case 'weeks':
+                    $startDate = $now->copy()->startOfWeek();
+                    break;
+                case 'months':
+                    $startDate = $now->copy()->startOfMonth();
+                    break;
+                case 'years':
+                    $startDate = $now->copy()->startOfYear();
+                    break;
+            }
+        }
+
+        if (!$endDate) {
+            $endDate = $now->copy()->endOfDay();
+        }
+
+        // Calculate hours for different periods
+        $daysHours = $this->getHoursForPeriod($employeeId, $now->copy()->startOfDay(), $now->copy()->endOfDay());
+        $weeksHours = $this->getHoursForPeriod($employeeId, $now->copy()->startOfWeek(), $now->copy()->endOfWeek());
+        $monthsHours = $this->getHoursForPeriod($employeeId, $now->copy()->startOfMonth(), $now->copy()->endOfMonth());
+        $yearsHours = $this->getHoursForPeriod($employeeId, $now->copy()->startOfYear(), $now->copy()->endOfYear());
+
+        return [
+            'days' => round($daysHours, 1),
+            'weeks' => round($weeksHours, 1),
+            'months' => round($monthsHours, 1),
+            'years' => round($yearsHours, 1)
+        ];
+    }
+
+    /**
+     * Get hours for a specific period
+     */
+    private function getHoursForPeriod($employeeId, $startDate, $endDate)
+    {
+        $timesheets = \App\Models\Timesheet::where('user_id', $employeeId)
+            ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
+            ->get();
+
+        $totalHours = 0;
+        foreach ($timesheets as $timesheet) {
+            if ($timesheet->hours_worked) {
+                $totalHours += (float)$timesheet->hours_worked;
+            } elseif ($timesheet->hours) {
+                // Convert HH:MM format to decimal hours
+                if (preg_match('/^(\d+):(\d+)$/', $timesheet->hours, $matches)) {
+                    $totalHours += intval($matches[1]) + (intval($matches[2]) / 60);
+                } elseif (is_numeric($timesheet->hours)) {
+                    $totalHours += (float)$timesheet->hours;
+                }
+            }
+        }
+
+        return $totalHours;
     }
 }

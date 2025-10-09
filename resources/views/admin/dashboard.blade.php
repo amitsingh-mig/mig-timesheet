@@ -23,7 +23,7 @@
     </div>
 
     <!-- Quick Stats Cards -->
-    <div class="row g-3 mb-4">
+    <div class="row g-4 mb-4 p-3">
         <div class="col-12 col-sm-6 col-lg-3">
             <div class="card h-100 bg-gradient-1 card-gradient text-white">
                 <div class="card-body d-flex justify-content-between align-items-center">

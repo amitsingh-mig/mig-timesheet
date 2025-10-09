@@ -146,6 +146,8 @@ Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
     Route::prefix('employees/time')->name('admin.employees.time.')->group(function () {
         Route::get('/', [AdminUserController::class, 'employeeTimeOverview'])->name('index');
         Route::get('/view', function () { return view('admin.employees_time'); })->name('view');
+        Route::get('/records', [AdminUserController::class, 'getEmployeeRecords'])->name('records');
+        Route::get('/summary', [AdminUserController::class, 'getWorkingHoursSummary'])->name('summary');
         Route::get('/chart', [AdminUserController::class, 'getTimeChartData'])->name('chart');
         Route::get('/{id}/details', [AdminUserController::class, 'getTimeDetails'])->name('details');
         Route::get('/export', [AdminUserController::class, 'exportTimeCsv'])->name('export');
