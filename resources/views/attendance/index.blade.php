@@ -1,97 +1,71 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Modern Attendance Page -->
-<div class="container-fluid px-0">
-    <!-- Modern Header -->
-    <div class="attendance-header-modern">
-        <div class="container">
-            <div class="row align-items-center py-4">
-                <div class="col-md-8">
-                    <div class="header-content-modern">
-                        <h1 class="page-title-modern">
-                            <i class="bi bi-calendar-check me-3"></i>
-                            Attendance Management
-                        </h1>
-                        <p class="page-subtitle-modern">Track your daily attendance and manage work hours efficiently</p>
-    </div>
-</div>
-                <div class="col-md-4 text-md-end">
-                    <div class="current-time-display-modern">
-                        <div class="time-display">
-                            <span id="currentTime" class="time-text">{{ now()->format('H:i') }}</span>
+<div class="container-fluid px-4 attendance-page">
+    <!-- Modern Employee Header -->
+    <div class="employee-header">
+        <div class="employee-header-content">
+            <div class="employee-title-section">
+                <h1 class="employee-title">Attendance Management</h1>
+                <p class="employee-subtitle">Track your daily attendance and manage work hours efficiently</p>
             </div>
-                        <div class="date-display">
-                            <span class="date-text">{{ now()->format('M j, Y') }}</span>
-            </div>
-            </div>
-            </div>
+            <div class="employee-time-display">
+                <div class="current-time">{{ now()->format('H:i') }}</div>
+                <div class="current-date">{{ now()->format('M j, Y') }}</div>
             </div>
         </div>
     </div>
-</div>
 
 <div class="container">
-    <div class="row g-4">
-        <!-- Main Content -->
-        <div class="col-12">
-            <!-- Quick Stats Cards -->
-            <div class="row g-4 mb-4">
-    <div class="col-md-3">
-                    <div class="stat-card-modern present-stat">
-                        <div class="stat-icon-modern">
-                            <i class="bi bi-check-circle"></i>
-                        </div>
-                        <div class="stat-content-modern">
-                            <div class="stat-number-modern" id="presentDays">0</div>
-                            <div class="stat-label-modern">Present Days</div>
+            <!-- Modern Summary Cards -->
+            <div class="employee-stats-grid">
+                <div class="employee-stat-card employee-stat-success">
+                    <div class="employee-stat-icon">
+                        <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="employee-stat-content">
+                        <h3 class="employee-stat-number" id="presentDays">0</h3>
+                        <p class="employee-stat-label">Present Days</p>
+                    </div>
+                </div>
+                <div class="employee-stat-card employee-stat-warning">
+                    <div class="employee-stat-icon">
+                        <i class="bi bi-x-circle"></i>
+                    </div>
+                    <div class="employee-stat-content">
+                        <h3 class="employee-stat-number" id="absentDays">0</h3>
+                        <p class="employee-stat-label">Absent Days</p>
+                    </div>
+                </div>
+                <div class="employee-stat-card employee-stat-info">
+                    <div class="employee-stat-icon">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <div class="employee-stat-content">
+                        <h3 class="employee-stat-number" id="totalHours">0h</h3>
+                        <p class="employee-stat-label">Total Hours</p>
+                    </div>
+                </div>
+                <div class="employee-stat-card employee-stat-primary">
+                    <div class="employee-stat-icon">
+                        <i class="bi bi-percent"></i>
+                    </div>
+                    <div class="employee-stat-content">
+                        <h3 class="employee-stat-number" id="attendanceRate">0%</h3>
+                        <p class="employee-stat-label">Attendance Rate</p>
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-                    <div class="stat-card-modern absent-stat">
-                        <div class="stat-icon-modern">
-                            <i class="bi bi-x-circle"></i>
-                        </div>
-                        <div class="stat-content-modern">
-                            <div class="stat-number-modern" id="absentDays">0</div>
-                            <div class="stat-label-modern">Absent Days</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-                    <div class="stat-card-modern hours-stat">
-                        <div class="stat-icon-modern">
-                            <i class="bi bi-clock"></i>
-                        </div>
-                        <div class="stat-content-modern">
-                            <div class="stat-number-modern" id="totalHours">0h</div>
-                            <div class="stat-label-modern">Total Hours</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-3">
-                    <div class="stat-card-modern rate-stat">
-                        <div class="stat-icon-modern">
-                            <i class="bi bi-percent"></i>
-                        </div>
-                        <div class="stat-content-modern">
-                            <div class="stat-number-modern" id="attendanceRate">0%</div>
-                            <div class="stat-label-modern">Attendance Rate</div>
-            </div>
-        </div>
-    </div>
-</div>
 
             <!-- Filter Section -->
-            <div class="card-modern mb-4">
-                <div class="card-header-modern">
-                    <h3 class="card-title-modern">
-                        <i class="bi bi-funnel me-2"></i>
+            <div class="employee-card mb-4">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-funnel"></i>
                         Filter Records
-                    </h3>
+                    </div>
                 </div>
-                <div class="card-body-modern">
+                <div class="employee-card-body">
                     <div class="filter-grid-modern">
                         <div class="form-group-modern">
                             <label class="form-label-modern">
@@ -129,32 +103,27 @@
     </div>
     
             <!-- Attendance Records Table -->
-            <div class="card-modern">
-                <div class="card-header-modern">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <h3 class="card-title-modern">
-                                <i class="bi bi-table me-2"></i>
-                                Attendance Records
-                            </h3>
-                            <p class="card-subtitle-modern">View and manage all your attendance entries</p>
-                        </div>
-                        <div class="table-actions-modern">
-                            <button class="btn-action-modern" onclick="exportAttendance('excel')">
-                                <i class="bi bi-file-excel"></i>
-                                Excel
-                    </button>
-                            <button class="btn-action-modern" onclick="exportAttendance('pdf')">
-                                <i class="bi bi-file-pdf"></i>
-                                PDF
-                    </button>
+            <div class="employee-card">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-table"></i>
+                        Attendance Records
+                    </div>
+                    <div class="employee-actions">
+                        <button class="btn-employee-secondary" onclick="exportAttendance('excel')">
+                            <i class="bi bi-file-excel"></i>
+                            Excel
+                        </button>
+                        <button class="btn-employee-secondary" onclick="exportAttendance('pdf')">
+                            <i class="bi bi-file-pdf"></i>
+                            PDF
+                        </button>
+                    </div>
                 </div>
-            </div>
-                </div>
-                <div class="card-body-modern p-0">
-                    <div class="table-responsive-modern">
-                        <table class="table-modern">
-                            <thead class="table-header-modern">
+                <div class="employee-card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table employee-table">
+                            <thead>
                                 <tr>
                                     <th class="text-start">Date</th>
                                     <th class="text-center">Status</th>
@@ -177,22 +146,19 @@
                     </table>
                 </div>
             </div>
-            </div>
-        </div>
-    </div>
     
     <!-- Clock In/Out and Today's Summary Section -->
     <div class="row g-4 mt-4">
         <div class="col-lg-6">
             <!-- Clock In/Out Card -->
-            <div class="card-modern mb-4">
-                <div class="card-header-modern">
-                    <h3 class="card-title-modern">
-                        <i class="bi bi-stopwatch me-2"></i>
+            <div class="employee-card mb-4">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-stopwatch"></i>
                         Clock In/Out
-                    </h3>
+                    </div>
                 </div>
-                <div class="card-body-modern text-center">
+                <div class="employee-card-body text-center">
                     <div class="clock-status-modern" id="clockStatus">
                     </div>
                     
@@ -224,14 +190,14 @@
 
         <div class="col-lg-6">
             <!-- Today's Summary -->
-            <div class="card-modern mb-4">
-                <div class="card-header-modern">
-                    <h3 class="card-title-modern">
-                        <i class="bi bi-calendar-day me-2"></i>
+            <div class="employee-card mb-4">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-calendar-day"></i>
                         Today's Summary
-                    </h3>
+                    </div>
                 </div>
-                <div class="card-body-modern">
+                <div class="employee-card-body">
                     <div class="summary-grid-modern">
                         <div class="summary-item-modern">
                             <div class="summary-icon-modern">

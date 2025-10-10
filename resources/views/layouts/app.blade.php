@@ -34,9 +34,9 @@
         <!-- Sidebar with Fixed Scrolling -->
         <div class="d-none d-md-flex flex-column flex-shrink-0 text-white position-fixed sidebar" id="sidebar">
             <!-- Toggle Button -->
-            <button type="button" class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Toggle sidebar">
+            {{-- <button type="button" class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Toggle sidebar">
                 <i class="bi bi-chevron-left" id="toggle-icon"></i>
-            </button>
+            </button> --}}
 
             <!-- Fixed Header Section -->
             <div class="sidebar-header flex-shrink-0">
@@ -62,21 +62,23 @@
             <div class="sidebar-footer flex-shrink-0">
                 <div class="user-info">
                     @if(Auth::check() && !request()->is('profile/*'))
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="user-avatar me-3">
-                            <img src="{{ Auth::user()->getProfilePhotoUrl() }}" 
-                                 alt="{{ Auth::user()->name }}" 
-                                 class="profile-avatar-img"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="avatar-fallback" style="display: none;">
-                                {{ substr(Auth::user()->name, 0, 2) }}
+                    <a href="{{ route('profile') }}" class="user-profile-link">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="user-avatar me-3">
+                                <img src="{{ Auth::user()->getProfilePhotoUrl() }}" 
+                                     alt="{{ Auth::user()->name }}" 
+                                     class="profile-avatar-img"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="avatar-fallback" style="display: none;">
+                                    {{ substr(Auth::user()->name, 0, 2) }}
+                                </div>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name">{{ Auth::user()->name }}</div>
+                                <div class="user-email">{{ Auth::user()->email }}</div>
                             </div>
                         </div>
-                        <div class="user-details">
-                            <div class="user-name">{{ Auth::user()->name }}</div>
-                            <div class="user-email">{{ Auth::user()->email }}</div>
-                        </div>
-                    </div>
+                    </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">
@@ -115,21 +117,23 @@
                 
                     
                     @if(Auth::check() && !request()->is('profile/*'))
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="user-avatar me-3">
-                            <img src="{{ Auth::user()->getProfilePhotoUrl() }}" 
-                                 alt="{{ Auth::user()->name }}" 
-                                 class="profile-avatar-img"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="avatar-fallback" style="display: none;">
-                                {{ substr(Auth::user()->name, 0, 2) }}
+                    <a href="{{ route('profile') }}" class="user-profile-link">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="user-avatar me-3">
+                                <img src="{{ Auth::user()->getProfilePhotoUrl() }}" 
+                                     alt="{{ Auth::user()->name }}" 
+                                     class="profile-avatar-img"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="avatar-fallback" style="display: none;">
+                                    {{ substr(Auth::user()->name, 0, 2) }}
+                                </div>
+                            </div>
+                            <div class="user-details">
+                                <div class="user-name">{{ Auth::user()->name }}</div>
+                                <div class="user-email">{{ Auth::user()->email }}</div>
                             </div>
                         </div>
-                        <div class="user-details">
-                            <div class="user-name">{{ Auth::user()->name }}</div>
-                            <div class="user-email">{{ Auth::user()->email }}</div>
-                        </div>
-                    </div>
+                    </a>
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">

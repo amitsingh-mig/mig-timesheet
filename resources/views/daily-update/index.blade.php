@@ -1,46 +1,34 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Modern Daily Update Page -->
-<div class="container-fluid px-0">
-    <!-- Modern Header -->
-    <div class="attendance-header-modern">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-8">
-                    <div class="header-content-modern">
-                        <h1 class="page-title-modern">📝 Daily Update</h1>
-                        <p class="page-subtitle-modern">Record your daily work summary and accomplishments</p>
-                    </div>
-                </div>
-                <div class="col-lg-4">
-                    <div class="current-time-display-modern">
-                        <div class="time-display">
-                            <span class="time-text">{{ date('H:i') }}</span>
-                        </div>
-                        <div class="date-display">
-                            <span class="date-text">{{ date('l, F j, Y') }}</span>
-                        </div>
-                    </div>
-                </div>
+<div class="container-fluid px-4">
+    <!-- Modern Employee Header -->
+    <div class="employee-header">
+        <div class="employee-header-content">
+            <div class="employee-title-section">
+                <h1 class="employee-title">📝 Daily Update</h1>
+                <p class="employee-subtitle">Record your daily work summary and accomplishments</p>
+            </div>
+            <div class="employee-time-display">
+                <div class="current-time">{{ date('H:i') }}</div>
+                <div class="current-date">{{ date('l, F j, Y') }}</div>
             </div>
         </div>
     </div>
-</div>
 
 <div class="container py-5">
     <div class="row g-5">
 
         <!-- Today's Daily Update Form -->
         <div class="col-12">
-            <div class="card-modern">
-                <div class="card-header-modern">
-                    <h3 class="card-title-modern">
-                        <i class="bi bi-pencil-square me-2"></i>
+            <div class="employee-card">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-pencil-square"></i>
                         {{ $todaySummary ? 'Update Today\'s Summary' : 'Add Today\'s Summary' }}
-                    </h3>
+                    </div>
                 </div>
-                <div class="card-body-modern p-5">
+                <div class="employee-card-body p-5">
                     <form method="POST" action="{{ route('daily-update.store') }}">
                         @csrf
                         <input type="hidden" name="date" value="{{ $date }}">
@@ -84,18 +72,18 @@
 
         <!-- Recent Daily Updates -->
         <div class="col-12">
-            <div class="card-modern">
-                <div class="card-header-modern">
-                    <h3 class="card-title-modern">
-                        <i class="bi bi-clock-history me-2"></i>
+            <div class="employee-card">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-clock-history"></i>
                         Recent Daily Updates
-                    </h3>
+                    </div>
                 </div>
-                <div class="card-body-modern p-4">
+                <div class="employee-card-body p-4">
                     @if($summaries->count() > 0)
-                        <div class="table-responsive-modern">
-                            <table class="table-modern">
-                                <thead class="table-header-modern">
+                        <div class="table-responsive">
+                            <table class="table employee-table">
+                                <thead>
                                     <tr>
                                         <th class="text-start" width="120">Date</th>
                                         <th class="text-start">Summary</th>
@@ -148,12 +136,12 @@
                             </div>
                         @endif
                     @else
-                        <div class="empty-state-modern py-5">
-                            <div class="empty-icon-modern">
+                        <div class="employee-loading py-5">
+                            <div class="empty-icon">
                                 <i class="bi bi-journal-text"></i>
                             </div>
-                            <h5 class="empty-title-modern">No Daily Updates Yet</h5>
-                            <p class="empty-text-modern">Start by adding your first daily work summary above.</p>
+                            <h5>No Daily Updates Yet</h5>
+                            <p>Start by adding your first daily work summary above.</p>
                         </div>
                     @endif
                 </div>

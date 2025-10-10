@@ -118,37 +118,6 @@
         </a>
     </li>
 
-    {{-- System Tools Section --}}
-    <li class="nav-item-modern">
-        <div class="nav-section-header">
-            <i class="bi bi-tools me-2"></i>
-            <span>System Tools</span>
-        </div>
-    </li>
-    
-    <li class="nav-item-modern">
-        <a href="#" class="nav-link-modern" onclick="showSystemStatus()">
-            <div class="nav-link-icon">
-                <i class="bi bi-activity"></i>
-            </div>
-            <div class="nav-link-content">
-                <span class="nav-link-title">System Status</span>
-                <span class="nav-link-subtitle">Monitor system health</span>
-            </div>
-        </a>
-    </li>
-    
-    <li class="nav-item-modern">
-        <a href="#" class="nav-link-modern" onclick="showQuickReports()">
-            <div class="nav-link-icon">
-                <i class="bi bi-bar-chart-fill"></i>
-            </div>
-            <div class="nav-link-content">
-                <span class="nav-link-title">Quick Reports</span>
-                <span class="nav-link-subtitle">Generate reports</span>
-            </div>
-        </a>
-    </li>
 
 @elseif($isOnAdminRoute)
     <!-- Non-Admin attempting to view Admin routes -->

@@ -1,123 +1,141 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Header -->
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h2 class="mb-1">Admin Dashboard</h2>
-                    <p class="text-muted mb-0">Manage your employee time tracking system</p>
-                </div>
-                <div class="d-flex gap-2">
-                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                        <i class="bi bi-person-plus"></i> Add Employee
-                    </button>
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-outline-primary">
-                        <i class="bi bi-people"></i> Manage Users
+<div class="container-fluid px-4">
+    <!-- Modern Admin Header -->
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-title-section">
+                <h1 class="admin-title">Admin Dashboard</h1>
+                <p class="admin-subtitle">Manage your employee time tracking system</p>
+            </div>
+            <div class="admin-actions">
+                <button class="btn-admin-primary" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                    <i class="bi bi-person-plus"></i>
+                    Add Employee
+                </button>
+                <a href="{{ route('admin.users.index') }}" class="btn-admin-secondary">
+                    <i class="bi bi-people"></i>
+                    Manage Users
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Stats Cards -->
+    <div class="admin-stats-grid">
+        <div class="stat-card stat-card-primary">
+            <div class="stat-icon">
+                <i class="bi bi-people"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="total-employees">--</h3>
+                <p class="stat-label">Total Employees</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-card-success">
+            <div class="stat-icon">
+                <i class="bi bi-person-check"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="present-today">--</h3>
+                <p class="stat-label">Present Today</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-card-info">
+            <div class="stat-icon">
+                <i class="bi bi-clock"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="total-hours">--</h3>
+                <p class="stat-label">Hours This Month</p>
+            </div>
+        </div>
+        
+        <div class="stat-card stat-card-warning">
+            <div class="stat-icon">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number" id="avg-attendance">--</h3>
+                <p class="stat-label">Avg Attendance</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="admin-content-grid">
+        <!-- Chart Section -->
+        <div class="admin-chart-section">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-title">
+                        <i class="bi bi-bar-chart-line"></i>
+                        Team Work Hours (Weekly)
+                    </div>
+                    <a href="{{ route('admin.employees.time.view') }}" class="btn-admin-link">
+                        Open Overview
+                        <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Stats Cards -->
-    <div class="row g-4 mb-4 p-3">
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card h-100 bg-gradient-1 card-gradient text-white">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <h3 class="mb-1" id="total-employees">--</h3>
-                        <small class="opacity-90">Total Employees</small>
-                    </div>
-                    <i class="bi bi-people fs-1 opacity-75"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card h-100 bg-gradient-2 card-gradient text-white">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <h3 class="mb-1" id="present-today">--</h3>
-                        <small class="opacity-90">Present Today</small>
-                    </div>
-                    <i class="bi bi-person-check fs-1 opacity-75"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card h-100 bg-gradient-3 card-gradient text-white">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <h3 class="mb-1" id="total-hours">--</h3>
-                        <small class="opacity-90">Hours This Month</small>
-                    </div>
-                    <i class="bi bi-clock fs-1 opacity-75"></i>
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-sm-6 col-lg-3">
-            <div class="card h-100 bg-gradient-5 card-gradient text-white">
-                <div class="card-body d-flex justify-content-between align-items-center">
-                    <div class="me-3">
-                        <h3 class="mb-1" id="avg-attendance">--</h3>
-                        <small class="opacity-90">Avg Attendance</small>
-                    </div>
-                    <i class="bi bi-graph-up fs-1 opacity-75"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Quick Actions, Work Time Chart & Recent Activity -->
-    <div class="row">
-        <div class="col-12 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0"><i class="bi bi-bar-chart-line me-2"></i>Team Work Hours (Weekly)</h5>
-                    <a href="{{ route('admin.employees.time.view') }}" class="btn btn-sm btn-outline-primary">Open Overview</a>
-                </div>
-                <div class="card-body" style="height: 340px;">
+                <div class="admin-card-body">
                     <canvas id="adminWorkChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-8 mb-4">
-            <div class="card h-100">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Recent Employee Activity</h5>
-                    <a href="{{ route('attendance.index') }}" class="btn btn-sm btn-outline-primary">View All</a>
+        
+        <!-- Recent Activity -->
+        <div class="admin-activity-section">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-title">
+                        <i class="bi bi-activity"></i>
+                        Recent Employee Activity
+                    </div>
+                    <a href="{{ route('attendance.index') }}" class="btn-admin-link">
+                        View All
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
                 </div>
-                <div class="card-body">
+                <div class="admin-card-body">
                     <div id="recent-activity">
-                        <div class="text-center py-4">
-                            <div class="spinner-border text-primary" role="status">
-                                <span class="visually-hidden">Loading...</span>
-                            </div>
+                        <div class="admin-loading">
+                            <div class="admin-spinner"></div>
+                            <p>Loading activity...</p>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-12 col-lg-4 mb-4">
-            <div class="card h-100">
-                <div class="card-header">
-                    <h5 class="mb-0">Quick Actions</h5>
+        
+        <!-- Quick Actions -->
+        <div class="admin-actions-section">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div class="admin-card-title">
+                        <i class="bi bi-lightning"></i>
+                        Quick Actions
+                    </div>
                 </div>
-                <div class="card-body">
-                    <div class="d-grid gap-2">
-                        <a href="{{ route('admin.users.index') }}" class="btn btn-outline-primary text-start">
-                            <i class="bi bi-people me-2"></i>Manage Users
+                <div class="admin-card-body">
+                    <div class="admin-actions-grid">
+                        <a href="{{ route('admin.users.index') }}" class="admin-action-btn admin-action-primary">
+                            <i class="bi bi-people"></i>
+                            <span>Manage Users</span>
                         </a>
-                        <a href="{{ route('attendance.index') }}" class="btn btn-outline-success text-start">
-                            <i class="bi bi-calendar-check me-2"></i>View Attendance
+                        <a href="{{ route('attendance.index') }}" class="admin-action-btn admin-action-success">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>View Attendance</span>
                         </a>
-                        <a href="{{ route('timesheet.admin.index') }}" class="btn btn-outline-info text-start">
-                            <i class="bi bi-clock-history me-2"></i>View Timesheets
+                        <a href="{{ route('timesheet.admin.index') }}" class="admin-action-btn admin-action-info">
+                            <i class="bi bi-clock-history"></i>
+                            <span>View Timesheets</span>
                         </a>
-                        <button class="btn btn-outline-warning text-start" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
-                            <i class="bi bi-person-plus me-2"></i>Add Employee
+                        <button class="admin-action-btn admin-action-warning" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                            <i class="bi bi-person-plus"></i>
+                            <span>Add Employee</span>
                         </button>
                     </div>
                 </div>
@@ -129,60 +147,75 @@
 
 <!-- Add Employee Modal -->
 <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-1 text-white">
-                <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Add New Employee</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content admin-modal">
+            <div class="admin-modal-header">
+                <div class="admin-modal-title">
+                    <i class="bi bi-person-plus"></i>
+                    Add New Employee
+                </div>
+                <button type="button" class="admin-modal-close" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x"></i>
+                </button>
             </div>
             <form id="addEmployeeForm">
                 @csrf
-                <div class="modal-body">
-                    <div id="errorAlert" class="alert alert-danger d-none"></div>
-                    <div class="mb-3">
-                        <label class="form-label">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" placeholder="Enter full name" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" name="email" class="form-control" placeholder="Enter email address" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Role <span class="text-danger">*</span></label>
-                        <select name="role" class="form-select" required>
-                            <option value="">Select Role</option>
-                            <option value="employee">Employee</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Department</label>
-                        <select name="department" class="form-select">
-                            <option value="">Select Department</option>
-                            <option value="Web">Web Development</option>
-                            <option value="Graphic">Graphic Design</option>
-                            <option value="Editorial">Editorial</option>
-                            <option value="Multimedia">Multimedia</option>
-                            <option value="Sales">Sales</option>
-                            <option value="Marketing">Marketing</option>
-                            <option value="Intern">Internship</option>
-                            <option value="General">General</option>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password" class="form-control" placeholder="Create a password" required minlength="8" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Confirm Password <span class="text-danger">*</span></label>
-                        <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm password" required />
+                <div class="admin-modal-body">
+                    <div id="errorAlert" class="admin-alert admin-alert-danger d-none"></div>
+                    
+                    <div class="admin-form-grid">
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Full Name <span class="required">*</span></label>
+                            <input type="text" name="name" class="admin-form-input" placeholder="Enter full name" required />
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Email Address <span class="required">*</span></label>
+                            <input type="email" name="email" class="admin-form-input" placeholder="Enter email address" required />
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Role <span class="required">*</span></label>
+                            <select name="role" class="admin-form-select" required>
+                                <option value="">Select Role</option>
+                                <option value="employee">Employee</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Department</label>
+                            <select name="department" class="admin-form-select">
+                                <option value="">Select Department</option>
+                                <option value="Web">Web Development</option>
+                                <option value="Graphic">Graphic Design</option>
+                                <option value="Editorial">Editorial</option>
+                                <option value="Multimedia">Multimedia</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Intern">Internship</option>
+                                <option value="General">General</option>
+                            </select>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Password <span class="required">*</span></label>
+                            <input type="password" name="password" class="admin-form-input" placeholder="Create a password" required minlength="8" />
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label class="admin-form-label">Confirm Password <span class="required">*</span></label>
+                            <input type="password" name="password_confirmation" class="admin-form-input" placeholder="Confirm password" required />
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
-                        <i class="bi bi-person-plus"></i> Create Employee
+                
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-admin-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn-admin-submit">
+                        <span class="admin-spinner d-none"></span>
+                        <i class="bi bi-person-plus"></i>
+                        Create Employee
                     </button>
                 </div>
             </form>
@@ -288,7 +321,7 @@ function setFallbackValues() {
 function loadRecentActivity() {
     console.log('Loading recent activity...');
     
-    fetch('/attendance/data?limit=10', {
+    fetch('/attendance/data?limit=5', {
         headers: {
             'Accept': 'application/json',
             'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content

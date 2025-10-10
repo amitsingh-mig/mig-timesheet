@@ -1,106 +1,87 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Modern Timesheet Page -->
-<div class="container-fluid px-0">
-    <!-- Modern Header -->
-    <div class="timesheet-header-modern">
-        <div class="container">
-            <div class="row align-items-center py-4">
-                <div class="col-md-8">
-                    <div class="header-content-modern">
-                        <h1 class="page-title-modern">
-                            <i class="bi bi-calendar-check me-3"></i>
-                            Timesheet Management
-                        </h1>
-                        <p class="page-subtitle-modern">Track your daily work hours and manage your tasks efficiently</p>
-                    </div>
-                </div>
-                <div class="col-md-4 text-md-end">
-                    <button class="btn-add-entry-modern" data-bs-toggle="modal" data-bs-target="#timesheetModal">
-                        <i class="bi bi-plus-circle"></i>
-                        Add New Entry
-                    </button>
-                </div>
+<!-- Cache busting for development -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<div class="container-fluid px-4">
+    <!-- Modern Employee Header -->
+    <div class="employee-header">
+        <div class="employee-header-content">
+            <div class="employee-title-section">
+                <h1 class="employee-title">Timesheet Management</h1>
+                <p class="employee-subtitle">Track your daily work hours and manage your tasks efficiently</p>
+            </div>
+                <div class="employee-actions">
+                <button class="btn-employee-primary" data-bs-toggle="modal" data-bs-target="#timesheetModal" onclick="testForm()">
+                    <i class="bi bi-plus-circle"></i>
+                    Add New Entry
+                </button>
             </div>
         </div>
     </div>
-</div>
 
-<div class="container">
-    <!-- Quick Stats Cards -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="stat-card-modern today-stat">
-                <div class="stat-icon-modern">
-                    <i class="bi bi-calendar-day"></i>
-                </div>
-                <div class="stat-content-modern">
-                    <div class="stat-number-modern" id="todayHours">0h</div>
-                    <div class="stat-label-modern">Today's Hours</div>
-                </div>
+    <!-- Modern Summary Cards -->
+    <div class="employee-stats-grid">
+        <div class="employee-stat-card employee-stat-primary">
+            <div class="employee-stat-icon">
+                <i class="bi bi-calendar-day"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="todayHours">0h</h3>
+                <p class="employee-stat-label">Today's Hours</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card-modern week-stat">
-                <div class="stat-icon-modern">
-                    <i class="bi bi-calendar-week"></i>
-                </div>
-                <div class="stat-content-modern">
-                    <div class="stat-number-modern" id="weekHours">0h</div>
-                    <div class="stat-label-modern">This Week</div>
-                </div>
+        <div class="employee-stat-card employee-stat-success">
+            <div class="employee-stat-icon">
+                <i class="bi bi-calendar-week"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="weekHours">0h</h3>
+                <p class="employee-stat-label">This Week</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card-modern month-stat">
-                <div class="stat-icon-modern">
-                    <i class="bi bi-calendar-month"></i>
-                </div>
-                <div class="stat-content-modern">
-                    <div class="stat-number-modern" id="monthHours">0h</div>
-                    <div class="stat-label-modern">This Month</div>
-                </div>
+        <div class="employee-stat-card employee-stat-info">
+            <div class="employee-stat-icon">
+                <i class="bi bi-calendar-month"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="monthHours">0h</h3>
+                <p class="employee-stat-label">This Month</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="stat-card-modern total-stat">
-                <div class="stat-icon-modern">
-                    <i class="bi bi-graph-up"></i>
-                </div>
-                <div class="stat-content-modern">
-                    <div class="stat-number-modern" id="totalEntries">0</div>
-                    <div class="stat-label-modern">Total Entries</div>
-                </div>
+        <div class="employee-stat-card employee-stat-warning">
+            <div class="employee-stat-icon">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="totalEntries">0</h3>
+                <p class="employee-stat-label">Total Entries</p>
             </div>
         </div>
     </div>
 
     <!-- Weekly Calendar View -->
-    <div class="card-modern mb-4">
-        <div class="card-header-modern">
-            <div class="d-flex justify-content-between align-items-center">
-                <div>
-                    <h3 class="card-title-modern">
-                        <i class="bi bi-calendar-week me-2"></i>
-                        Weekly Calendar
-                    </h3>
-                    <p class="card-subtitle-modern">Click on any day to add or view entries</p>
-                </div>
-                <div class="calendar-controls-modern">
-                    <span id="weekRange" class="week-range-modern">Loading...</span>
-                    <div class="btn-group-modern">
-                        <button class="btn-nav-modern" onclick="navigateWeek(-1)">
-                            <i class="bi bi-chevron-left"></i>
-                        </button>
-                        <button class="btn-nav-modern" onclick="navigateWeek(1)">
-                            <i class="bi bi-chevron-right"></i>
-                        </button>
-                    </div>
+    <div class="employee-card mb-4">
+        <div class="employee-card-header">
+            <div class="employee-card-title">
+                <i class="bi bi-calendar-week"></i>
+                Weekly Calendar
+            </div>
+            <div class="calendar-controls">
+                <span id="weekRange" class="week-range">Loading...</span>
+                <div class="btn-group">
+                    <button class="btn-employee-secondary btn-sm" onclick="navigateWeek(-1)">
+                        <i class="bi bi-chevron-left"></i>
+                    </button>
+                    <button class="btn-employee-secondary btn-sm" onclick="navigateWeek(1)">
+                        <i class="bi bi-chevron-right"></i>
+                    </button>
                 </div>
             </div>
         </div>
-        <div class="card-body-modern p-0">
+        <div class="employee-card-body p-0">
             <div class="row g-0" id="weeklyCalendar">
                 <!-- Calendar populated by JavaScript -->
             </div>
@@ -126,10 +107,10 @@
                 </div>
             </div>
         </div>
-        <div class="card-body-modern p-0">
-            <div class="table-responsive-modern">
-                <table class="table-modern">
-                    <thead class="table-header-modern">
+        <div class="employee-card-body p-0">
+            <div class="table-responsive">
+                <table class="table employee-table">
+                    <thead>
                         <tr>
                             <th class="text-start">Date</th>
                             <th class="text-center">Clock In</th>
@@ -142,9 +123,9 @@
                     <tbody id="timesheetTableBody">
                         <tr>
                             <td colspan="6" class="text-center py-5">
-                                <div class="loading-state-modern">
-                                    <div class="spinner-modern"></div>
-                                    <p class="loading-text-modern">Loading timesheet data...</p>
+                                <div class="employee-loading">
+                                    <div class="employee-spinner"></div>
+                                    <p>Loading timesheet data...</p>
                                 </div>
                             </td>
                         </tr>
@@ -158,19 +139,19 @@
 <!-- Modern Timesheet Entry Modal -->
 <div class="modal fade" id="timesheetModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content-modern">
-            <div class="modal-header-modern">
-                <h5 class="modal-title-modern" id="modalTitle">
-                    <i class="bi bi-clock me-2"></i>Add Timesheet Entry
+        <div class="employee-modal-content">
+            <div class="employee-modal-header">
+                <h5 class="employee-modal-title" id="modalTitle">
+                    <i class="bi bi-clock"></i>Add Timesheet Entry
                 </h5>
-                <button type="button" class="btn-close-modern" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="employee-btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <i class="bi bi-x"></i>
                 </button>
             </div>
-            <form id="timesheetForm">
+            <form id="timesheetForm" method="POST" action="{{ route('timesheet.storeOrUpdate') }}">
                 @csrf
                 <input type="hidden" id="entryId" name="id" value="">
-                <div class="modal-body-modern">
+                <div class="employee-modal-body">
                     <div id="formAlert" class="alert-modern d-none"></div>
                     
                     <div class="form-grid-modern">
@@ -215,13 +196,13 @@
                         <textarea name="task_description" id="taskDescription" class="form-textarea-modern" rows="4" placeholder="Describe what you worked on today..." required></textarea>
                     </div>
                 </div>
-                <div class="modal-footer-modern">
-                    <button type="button" class="btn-cancel-modern" data-bs-dismiss="modal">
+                <div class="employee-modal-footer">
+                    <button type="button" class="btn-employee-secondary" data-bs-dismiss="modal">
                         <i class="bi bi-x-circle me-1"></i>
                         Cancel
                     </button>
-                    <button type="submit" class="btn-save-modern">
-                        <span class="spinner-modern d-none" role="status"></span>
+                    <button type="submit" class="btn-employee-primary">
+                        <span class="employee-spinner d-none" role="status"></span>
                         <i class="bi bi-check2" id="submitIcon"></i>
                         <span id="submitText">Save Entry</span>
                     </button>
@@ -241,24 +222,72 @@ currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() 
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Timesheet page loaded');
+    
+    // Clear any cached form data
+    if (typeof(Storage) !== "undefined") {
+        localStorage.removeItem('timesheetFormData');
+        sessionStorage.removeItem('timesheetFormData');
+    }
+    
     renderWeeklyCalendar();
     loadTimesheetData();
     setupEventListeners();
     
     // Set default date to today
-    document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+    const dateField = document.getElementById('entryDate');
+    if (dateField) {
+        dateField.value = new Date().toISOString().split('T')[0];
+        console.log('Default date set to:', dateField.value);
+    } else {
+        console.error('Date field not found!');
+    }
+    
+    // Debug: Check if all form elements exist
+    console.log('Form elements check:');
+    console.log('Form:', document.getElementById('timesheetForm'));
+    console.log('Date field:', document.getElementById('entryDate'));
+    console.log('Clock In field:', document.getElementById('clockIn'));
+    console.log('Clock Out field:', document.getElementById('clockOut'));
+    console.log('Task Description field:', document.getElementById('taskDescription'));
 });
 
 function setupEventListeners() {
     // Form submission
-    document.getElementById('timesheetForm').addEventListener('submit', handleFormSubmit);
+    const form = document.getElementById('timesheetForm');
+    if (form) {
+        form.addEventListener('submit', handleFormSubmit);
+        console.log('Timesheet form event listener added');
+    } else {
+        console.error('Timesheet form not found!');
+    }
     
     // Auto-calculate duration when time changes
-    document.getElementById('clockIn').addEventListener('change', calculateDuration);
-    document.getElementById('clockOut').addEventListener('change', calculateDuration);
+    const clockInField = document.getElementById('clockIn');
+    const clockOutField = document.getElementById('clockOut');
+    
+    if (clockInField) {
+        clockInField.addEventListener('change', calculateDuration);
+        console.log('Clock In field found and event listener added');
+    } else {
+        console.error('Clock In field not found!');
+    }
+    
+    if (clockOutField) {
+        clockOutField.addEventListener('change', calculateDuration);
+        console.log('Clock Out field found and event listener added');
+    } else {
+        console.error('Clock Out field not found!');
+    }
     
     // Reset form when modal is hidden
-    document.getElementById('timesheetModal').addEventListener('hidden.bs.modal', resetForm);
+    const modal = document.getElementById('timesheetModal');
+    if (modal) {
+        modal.addEventListener('hidden.bs.modal', resetForm);
+        console.log('Modal event listener added');
+    } else {
+        console.error('Modal not found!');
+    }
 }
 
 function renderWeeklyCalendar() {
@@ -557,8 +586,27 @@ function handleFormSubmit(e) {
     
     const formData = new FormData(e.target);
     const submitBtn = e.target.querySelector('button[type="submit"]');
-    const spinner = submitBtn.querySelector('.spinner-modern');
+    const spinner = submitBtn.querySelector('.employee-spinner');
     const alertEl = document.getElementById('formAlert');
+    
+    // Basic validation
+    const date = formData.get('date');
+    const clockIn = formData.get('clock_in');
+    const clockOut = formData.get('clock_out');
+    const taskDescription = formData.get('task_description');
+    
+    if (!date || !clockIn || !clockOut || !taskDescription) {
+        alertEl.className = 'alert-modern alert-danger';
+        alertEl.textContent = 'Please fill in all required fields';
+        alertEl.classList.remove('d-none');
+        return;
+    }
+    
+    // Debug: Log form data
+    console.log('Form data being submitted:');
+    for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+    }
     
     // Show loading state
     submitBtn.disabled = true;
@@ -575,8 +623,15 @@ function handleFormSubmit(e) {
         },
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
             // Close modal and refresh data
             bootstrap.Modal.getInstance(document.getElementById('timesheetModal')).hide();
@@ -597,7 +652,7 @@ function handleFormSubmit(e) {
     .catch(error => {
         console.error('Error:', error);
         alertEl.className = 'alert-modern alert-danger';
-        alertEl.textContent = 'An error occurred while saving the entry';
+        alertEl.textContent = 'An error occurred while saving the entry: ' + error.message;
         alertEl.classList.remove('d-none');
     })
     .finally(() => {
@@ -646,6 +701,37 @@ function exportTimesheet() {
     const start = new Date(currentWeekStart).toISOString().split('T')[0];
     const end = new Date(currentWeekStart.getTime() + 6 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
     window.open(`{{ route('timesheet.export') }}?start_date=${start}&end_date=${end}`, '_blank');
+}
+
+function testForm() {
+    console.log('Testing form elements...');
+    const form = document.getElementById('timesheetModal');
+    if (form) {
+        console.log('Modal found:', form);
+        const formElement = document.getElementById('timesheetForm');
+        if (formElement) {
+            console.log('Form element found:', formElement);
+            console.log('Form action:', formElement.action);
+            console.log('Form method:', formElement.method);
+            
+            // Check all form fields
+            const fields = ['entryDate', 'clockIn', 'clockOut', 'taskDescription'];
+            fields.forEach(fieldId => {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    console.log(`${fieldId} field found:`, field);
+                    console.log(`${fieldId} name:`, field.name);
+                    console.log(`${fieldId} type:`, field.type);
+                } else {
+                    console.error(`${fieldId} field NOT found!`);
+                }
+            });
+        } else {
+            console.error('Form element NOT found!');
+        }
+    } else {
+        console.error('Modal NOT found!');
+    }
 }
 
 function showToast(message, type = 'success') {

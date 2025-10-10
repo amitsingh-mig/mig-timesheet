@@ -2,50 +2,44 @@
 
 @section('content')
 <!-- Modern Clean Profile Page -->
-<div class="container-fluid px-0">
-    <!-- Simplified Header -->
-    <div class="profile-header-modern">
-        <div class="container">
-            <div class="row align-items-center py-4">
-                <div class="col-md-8">
-                    <div class="d-flex align-items-center">
-                        <!-- Clean Profile Avatar -->
-                        <div class="profile-avatar-modern me-4">
-                            <img src="{{ $user->getProfilePhotoUrl() }}" 
-                                 alt="{{ $user->name }}" 
-                                 class="avatar-modern"
-                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="avatar-fallback-modern">
-                                {{ substr($user->name, 0, 2) }}
-                            </div>
-                        </div>
-                        
-                        <!-- User Info -->
-                        <div class="user-info-modern">
-                            <h1 class="user-name-modern">{{ $user->name }}</h1>
-                            <p class="user-email-modern">{{ $user->email }}</p>
-                            <div class="user-badges-modern">
-                                <span class="badge-modern role-badge">
-                                    <i class="bi bi-shield-check"></i>
-                                    {{ $user->getDisplayRole() }}
-                                </span>
-                                <span class="badge-modern dept-badge">
-                                    <i class="bi bi-building"></i>
-                                    {{ $user->getDepartment() }}
-                                </span>
-                            </div>
-                        </div>
+<div class="container-fluid px-4">
+    <!-- Modern Profile Header -->
+    <div class="profile-header">
+        <div class="profile-info">
+            <img src="{{ $user->getProfilePhotoUrl() }}" 
+                 alt="{{ $user->name }}" 
+                 class="profile-img"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.style.alignItems='center'; this.nextElementSibling.style.justifyContent='center';">
+            <div class="profile-img-fallback">
+                {{ substr($user->name, 0, 2) }}
+            </div>
+
+            <div class="profile-details">
+                <h2 class="profile-name">{{ $user->name }}</h2>
+                <p class="profile-email">{{ $user->email }}</p>
+
+                <div class="badges">
+                    <div class="badge">
+                        <i class="bi bi-shield-check"></i>
+                        {{ $user->getDisplayRole() }}
+                    </div>
+                    <div class="badge">
+                        <i class="bi bi-building"></i>
+                        {{ $user->getDepartment() }}
                     </div>
                 </div>
-                
-                <!-- Action Button -->
-                <div class="col-md-4 text-md-end">
-                    <a href="{{ url()->previous() }}" class="btn-back-modern">
-                        <i class="bi bi-arrow-left"></i>
-                        Back
-                    </a>
-                </div>
             </div>
+        </div>
+
+        <div class="action-buttons">
+            <a href="{{ route('profile.edit') }}" class="btn-profile">
+                <i class="bi bi-pencil"></i>
+                Edit Profile
+            </a>
+            <a href="{{ url()->previous() }}" class="btn-profile">
+                <i class="bi bi-arrow-left"></i>
+                Back
+            </a>
         </div>
     </div>
 </div>

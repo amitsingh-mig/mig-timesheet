@@ -4,121 +4,125 @@
 <!-- Ensure Chart.js is loaded -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
 
-<!-- Page Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h2 fw-bold text-dark mb-1">🚀 Employee Dashboard</h1>
-        <p class="text-muted mb-0">Welcome back to your workspace</p>
+<div class="container-fluid px-4">
+    <!-- Modern Employee Dashboard Header -->
+    <div class="employee-header">
+        <div class="employee-header-content">
+            <div class="employee-title-section">
+                <h1 class="employee-title">Employee Dashboard</h1>
+                <p class="employee-subtitle">Welcome back to your workspace</p>
+            </div>
+            <div class="employee-time-display">
+                <div class="current-time" id="currentTime">{{ now()->format('H:i') }}</div>
+                <div class="current-date">{{ now()->format('l, F j, Y') }}</div>
+            </div>
+        </div>
     </div>
-    <div class="text-end current-time-display d-none d-md-block">
-        <h5 class="fw-bold mb-0 text-dark" id="currentTime">{{ now()->format('H:i') }}</h5>
-        <small class="text-dark-50">{{ now()->format('l, F j, Y') }}</small>
-    </div>
-</div>
 
-<!-- Summary Cards -->
-<div class="row g-3 mb-4">
-    <!-- Today's Hours Card -->
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-0 shadow-lg h-100 bg-gradient-1 card-gradient transition-all">
-            <div class="card-body text-white text-center py-4">
-                <i class="bi bi-clock-fill text-2_5xl d-block mb-2"></i>
-                <h2 class="h1 fw-bold mb-1" id="todayHours">0.0h</h2>
-                <p class="mb-0 fs-6">Today's Hours</p>
-                <small class="opacity-75" id="todayDurationLabel">Loading...</small>
+    <!-- Modern Summary Cards -->
+    <div class="employee-stats-grid">
+        <!-- Today's Hours Card -->
+        <div class="employee-stat-card employee-stat-primary">
+            <div class="employee-stat-icon">
+                <i class="bi bi-clock-fill"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="todayHours">0.0h</h3>
+                <p class="employee-stat-label">Today's Hours</p>
+                <small class="employee-stat-subtitle" id="todayDurationLabel">Loading...</small>
+            </div>
+        </div>
+        
+        <!-- Weekly Hours Card -->
+        <div class="employee-stat-card employee-stat-success">
+            <div class="employee-stat-icon">
+                <i class="bi bi-calendar-week-fill"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="weeklyHours">0.0h</h3>
+                <p class="employee-stat-label">Weekly Hours</p>
+                <small class="employee-stat-subtitle">This week</small>
+            </div>
+        </div>
+        
+        <!-- Monthly Hours Card -->
+        <div class="employee-stat-card employee-stat-info">
+            <div class="employee-stat-icon">
+                <i class="bi bi-calendar"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="monthlyHours">0.0h</h3>
+                <p class="employee-stat-label">Monthly Hours</p>
+                <small class="employee-stat-subtitle">This month</small>
+            </div>
+        </div>
+        
+        <!-- Tasks Done Card -->
+        <div class="employee-stat-card employee-stat-warning">
+            <div class="employee-stat-icon">
+                <i class="bi bi-check-circle-fill"></i>
+            </div>
+            <div class="employee-stat-content">
+                <h3 class="employee-stat-number" id="tasksDone">0</h3>
+                <p class="employee-stat-label">Tasks Done</p>
+                <small class="employee-stat-subtitle">Today's count</small>
             </div>
         </div>
     </div>
-    
-    <!-- Weekly Hours Card -->
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-0 shadow-lg h-100 bg-gradient-2 card-gradient transition-all">
-            <div class="card-body text-white text-center py-4">
-                <i class="bi bi-calendar-week-fill text-2_5xl d-block mb-2"></i>
-                <h2 class="h1 fw-bold mb-1" id="weeklyHours">0.0h</h2>
-                <p class="mb-0 fs-6">Weekly Hours</p>
-                <small class="opacity-75">This week</small>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Monthly Hours Card -->
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-0 shadow-lg h-100 bg-gradient-3 card-gradient transition-all">
-            <div class="card-body text-white text-center py-4">
-                <i class="bi bi-calendar text-2_5xl d-block mb-2"></i>
-                <h2 class="h1 fw-bold mb-1" id="monthlyHours">0.0h</h2>
-                <p class="mb-0 fs-6">Monthly Hours</p>
-                <small class="opacity-75">This month</small>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Tasks Done Card -->
-    <div class="col-12 col-sm-6 col-lg-3">
-        <div class="card border-0 shadow-lg h-100 bg-gradient-5 card-gradient transition-all">
-            <div class="card-body text-white text-center py-4">
-                <i class="bi bi-check-circle-fill text-2_5xl d-block mb-2"></i>
-                <h2 class="h1 fw-bold mb-1" id="tasksDone">0</h2>
-                <p class="mb-0 fs-6">Tasks Done</p>
-                <small class="opacity-75">Today's count</small>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Main Content Row -->
-<div class="row g-4">
-
-    <!-- Work Time Chart Section -->
-    <div class="col-12 col-lg-8">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3 border-bottom">
-                <h5 class="mb-0 fw-semibold">
-                <i class="bi bi-bar-chart-line me-2 text-primary"></i>Work Time Distribution
-                </h5>
-                <div class="btn-group chart-toggle-group" role="group" aria-label="Chart period">
-                    <button type="button" class="btn btn-outline-primary btn-sm chart-toggle" data-period="day">Last 7 Days</button>
-                    <button type="button" class="btn btn-outline-primary btn-sm chart-toggle active" data-period="week">Last 4 Weeks</button>
-                    <button type="button" class="btn btn-outline-primary btn-sm chart-toggle" data-period="month">Month View</button>
-                    <button type="button" class="btn btn-outline-primary btn-sm chart-toggle" data-period="year">Year View</button>
-                </div>
-            </div>
-            <div class="card-body py-4 position-relative">
-                <div id="chart-loading" class="text-center position-absolute top-50 start-50 translate-middle d-none loading-spinner">
-                    <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+    <!-- Main Content Grid -->
+    <div class="employee-content-grid">
+        <!-- Work Time Chart Section -->
+        <div class="employee-chart-section">
+            <div class="employee-card">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-bar-chart-line"></i>
+                        Work Time Distribution
+                    </div>
+                    <div class="employee-chart-controls">
+                        <button type="button" class="employee-chart-btn" data-period="day">Last 7 Days</button>
+                        <button type="button" class="employee-chart-btn active" data-period="week">Last 4 Weeks</button>
+                        <button type="button" class="employee-chart-btn" data-period="month">Month View</button>
+                        <button type="button" class="employee-chart-btn" data-period="year">Year View</button>
                     </div>
                 </div>
-                <div class="position-relative chart-container" id="chart-content">
-                    <canvas id="clockInChart"></canvas>
+                <div class="employee-card-body">
+                    <div id="chart-loading" class="employee-loading d-none">
+                        <div class="employee-spinner"></div>
+                        <p>Loading chart...</p>
+                    </div>
+                    <div class="employee-chart-container" id="chart-content">
+                        <canvas id="clockInChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Today's Progress Section -->
-    <div class="col-12 col-lg-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white border-bottom-0 py-3">
-                <h5 class="mb-0 fw-semibold">
-                    <i class="bi bi-target me-2 text-muted"></i>Daily Goal Target
-                </h5>
-            </div>
-            <div class="card-body text-center d-flex flex-column justify-content-center">
-                <div class="mb-4">
-                    <div class="text-display-4 fw-bolder mb-2" style="color: #4e54c8; font-size: 3rem;" id="progressPercentage">0%</div>
+        <!-- Daily Goal Progress Section -->
+        <div class="employee-progress-section">
+            <div class="employee-card">
+                <div class="employee-card-header">
+                    <div class="employee-card-title">
+                        <i class="bi bi-target"></i>
+                        Daily Goal Target
+                    </div>
                 </div>
-                <p class="text-muted mb-4">Daily Goal Completion</p>
-                <div class="progress mb-4 progress-custom">
-                    <div class="progress-bar progress-bar-custom" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="progressBar"></div>
-                </div>
-                <div class="d-flex justify-content-between text-sm text-muted mb-4">
-                    <span id="currentHoursLabel" class="fw-bold">0 hours</span>
-                    <span id="targetHoursLabel">8 hours Target</span>
-                </div>
-                <div class="mt-auto pt-3 border-top">
-                    <small class="text-muted">Keep track of your daily work target. 🎯</small>
+                <div class="employee-card-body">
+                    <div class="employee-progress-content">
+                        <div class="employee-progress-percentage" id="progressPercentage">0%</div>
+                        <p class="employee-progress-label">Daily Goal Completion</p>
+                        <div class="employee-progress-bar">
+                            <div class="employee-progress-fill" id="progressBar" style="width: 0%;"></div>
+                        </div>
+                        <div class="employee-progress-details">
+                            <span id="currentHoursLabel" class="employee-progress-current">0 hours</span>
+                            <span id="targetHoursLabel" class="employee-progress-target">8 hours Target</span>
+                        </div>
+                        <div class="employee-progress-footer">
+                            <small>Keep track of your daily work target. 🎯</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -128,16 +132,16 @@
 <!-- Modal for messages (replaces native alerts) -->
 <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="messageModalLabel">Notification</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        <div class="modal-content employee-modal-content">
+            <div class="modal-header employee-modal-header">
+                <h5 class="modal-title employee-modal-title" id="messageModalLabel">Notification</h5>
+                <button type="button" class="btn-close employee-btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body" id="messageModalBody">
+            <div class="modal-body employee-modal-body" id="messageModalBody">
                 ...
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal-footer employee-modal-footer">
+                <button type="button" class="btn-employee-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -399,10 +403,10 @@ document.addEventListener('DOMContentLoaded', function() {
     updateCurrentTimeDisplay();
 
     // Add event listeners to toggle buttons
-    document.querySelectorAll('.chart-toggle').forEach(button => {
+    document.querySelectorAll('.employee-chart-btn').forEach(button => {
         button.addEventListener('click', function() {
             // Update active state
-            document.querySelectorAll('.chart-toggle').forEach(btn => {
+            document.querySelectorAll('.employee-chart-btn').forEach(btn => {
                 btn.classList.remove('active');
             });
             this.classList.add('active');

@@ -1,222 +1,59 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="page-header-modern">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h1 class="page-title-modern">User Management</h1>
-                <p class="page-subtitle-modern">Manage users, roles, and access permissions</p>
+<div class="container-fluid px-4">
+    <!-- Modern Admin Users Header -->
+    <div class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-title-section">
+                <h1 class="admin-title">User Management</h1>
+                <p class="admin-subtitle">Manage users, roles, and access permissions</p>
             </div>
-            <div class="d-flex gap-2">
-                <button class="btn btn-action-modern btn-create-user" data-bs-toggle="modal" data-bs-target="#createUserModal">
-                    <i class="bi bi-person-plus"></i>Create New User
+            <div class="admin-actions">
+                <button class="btn-admin-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+                    <i class="bi bi-person-plus"></i>
+                    Create New User
                 </button>
-                <a href="{{ route('admin.employees.time.view') }}" class="btn btn-action-modern btn-time-overview">
-                    <i class="bi bi-clock-history"></i>Time Overview
+                <a href="{{ route('admin.employees.time.view') }}" class="btn-admin-secondary">
+                    <i class="bi bi-clock-history"></i>
+                    Time Overview
                 </a>
             </div>
         </div>
     </div>
 
-<!-- Search and Filters -->
-<div class="filter-section-modern">
-    <h3 class="filter-title-modern">
-        <i class="bi bi-funnel"></i>Filters
-    </h3>
-    <div class="row g-3">
-        <div class="col-lg-3 col-md-4 col-sm-6">
-            <label class="form-label">Search</label>
-            <div class="input-group">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input type="text" id="searchQuery" class="form-control" placeholder="Search by name or email">
+    <!-- Modern Filters Section -->
+    <div class="admin-filters-section">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <div class="admin-card-title">
+                    <i class="bi bi-funnel"></i>
+                    Filters & Search
+                </div>
             </div>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-            <label class="form-label">Role</label>
-            <select id="roleFilter" class="form-select">
-                <option value="">All Roles</option>
-                <option value="admin">Admin</option>
-                <option value="employee">Employee</option>
-            </select>
-        </div>
-        <div class="col-lg-3 col-md-4 col-sm-6">
-            <label class="form-label">Department</label>
-            <select id="departmentFilter" class="form-select">
-                <option value="">All Departments</option>
-                <option value="Admin">Admin</option>
-                <option value="Web">Web Development</option>
-                <option value="Graphic">Graphic Design</option>
-                <option value="Editorial">Editorial</option>
-                <option value="Multimedia">Multimedia</option>
-                <option value="Sales">Sales</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Intern">Internship</option>
-                <option value="General">General</option>
-            </select>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-            <label class="form-label">Status</label>
-            <select id="statusFilter" class="form-select">
-                <option value="">All Status</option>
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-            </select>
-        </div>
-        <div class="col-lg-2 col-md-4 col-sm-6">
-            <label class="form-label">&nbsp;</label>
-            <div class="d-grid">
-                <button class="btn btn-primary" onclick="loadUsers()">
-                    <i class="bi bi-funnel"></i>Apply Filters
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Users Table -->
-<div class="data-table-modern">
-    <div class="table-header-modern">
-        <h3 class="table-title-modern">
-            <i class="bi bi-people"></i>Users List
-        </h3>
-        <div>
-            <span class="badge badge-modern badge-department">
-                <span id="userCount">0</span> USERS
-            </span>
-        </div>
-    </div>
-    <div class="table-responsive">
-        <table class="table-modern" id="usersTable">
-            <thead>
-                <tr>
-                    <th style="width: 20%;">Name</th>
-                    <th style="width: 25%;">Email</th>
-                    <th style="width: 12%;">Role</th>
-                    <th style="width: 15%;">Department</th>
-                    <th style="width: 12%;">Status</th>
-                    <th class="text-center" style="width: 16%;">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="usersTableBody">
-                <!-- Populated by JavaScript -->
-            </tbody>
-        </table>
-    </div>
-    <div class="pagination-container-modern">
-        <div class="pagination-info-modern">
-            Showing <span id="userCountFooter">0</span> users
-        </div>
-        <nav aria-label="User pagination">
-            <ul class="pagination-modern" id="usersPagination"></ul>
-        </nav>
-    </div>
-</div>
-
-<!-- Role Distribution Chart -->
-{{-- <div class="card border-0 shadow-sm mt-4">
-    <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Role Distribution</h5>
-    </div>
-    <div class="card-body">
-        <canvas id="roleDistributionChart" height="100"></canvas>
-    </div>
-</div> --}}
-
-<!-- Simple Create User Modal -->
-<div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content modal-content-modern">
-            <div class="modal-header modal-header-modern">
-                <h5 class="modal-title modal-title-modern">
-                    <i class="bi bi-person-plus"></i>Create New User
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body modal-body-modern">
-                <form id="createUserForm" class="row g-3">
-                    <div class="col-md-6">
-                        <label class="form-label">Name</label>
-                        <input type="text" class="form-control" id="name" required>
+            <div class="admin-card-body">
+                <div class="admin-filters-grid">
+                    <div class="admin-filter-group">
+                        <label class="admin-form-label">Search</label>
+                        <div class="admin-input-group">
+                            <i class="bi bi-search"></i>
+                            <input type="text" id="searchQuery" class="admin-form-input" placeholder="Search by name or email">
+                        </div>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="email" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Role</label>
-                        <select class="form-select" id="role" required>
-                            <option value="employee">Employee</option>
+                    
+                    <div class="admin-filter-group">
+                        <label class="admin-form-label">Role</label>
+                        <select id="roleFilter" class="admin-form-select">
+                            <option value="">All Roles</option>
                             <option value="admin">Admin</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Department</label>
-                        <select class="form-select" id="department">
-                            <option value="">Select Department</option>
-                            <option value="Web">Web Development</option>
-                            <option value="Graphic">Graphic Design</option>
-                            <option value="Editorial">Editorial</option>
-                            <option value="Multimedia">Multimedia</option>
-                            <option value="Sales">Sales</option>
-                            <option value="Marketing">Marketing</option>
-                            <option value="Intern">Internship</option>
-                            <option value="General">General</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="password_confirmation" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer modal-footer-modern">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" onclick="createUser()">
-                    <i class="bi bi-check2-circle me-1"></i>Create User
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Simple Edit User Modal -->
-<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content modal-content-modern">
-            <div class="modal-header modal-header-modern" style="background: #10b981;">
-                <h5 class="modal-title modal-title-modern">
-                    <i class="bi bi-person-gear"></i>Edit User
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body modal-body-modern">
-                <form id="editUserForm" class="row g-3">
-                    <input type="hidden" id="editUserId">
-                    <div class="col-md-6">
-                        <label class="form-label">Name</label>
-                        <input type="text" class="form-control" id="editName" required>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Email</label>
-                        <input type="email" class="form-control" id="editEmail" required>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Role</label>
-                        <select class="form-select" id="editRole" required>
                             <option value="employee">Employee</option>
-                            <option value="admin">Admin</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Department</label>
-                        <select class="form-select" id="editDepartment">
-                            <option value="">Select Department</option>
+                    
+                    <div class="admin-filter-group">
+                        <label class="admin-form-label">Department</label>
+                        <select id="departmentFilter" class="admin-form-select">
+                            <option value="">All Departments</option>
                             <option value="Admin">Admin</option>
                             <option value="Web">Web Development</option>
                             <option value="Graphic">Graphic Design</option>
@@ -228,40 +65,245 @@
                             <option value="General">General</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Status</label>
-                        <select class="form-select" id="editStatus">
+                    
+                    <div class="admin-filter-group">
+                        <label class="admin-form-label">Status</label>
+                        <select id="statusFilter" class="admin-form-select">
+                            <option value="">All Status</option>
                             <option value="active">Active</option>
                             <option value="inactive">Inactive</option>
                         </select>
                     </div>
-                    <div class="col-12">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="editChangePassword">
-                            <label class="form-check-label" for="editChangePassword">
-                                Change Password
-                            </label>
-                        </div>
+                    
+                    <div class="admin-filter-group">
+                        <label class="admin-form-label">&nbsp;</label>
+                        <button class="btn-admin-filter" onclick="loadUsers()">
+                            <i class="bi bi-funnel"></i>
+                            Apply Filters
+                        </button>
                     </div>
-                    <div class="col-md-6" id="editPasswordField" style="display: none;">
-                        <label class="form-label">New Password</label>
-                        <input type="password" class="form-control" id="editPassword">
-                    </div>
-                    <div class="col-md-6" id="editPasswordConfirmField" style="display: none;">
-                        <label class="form-label">Confirm New Password</label>
-                        <input type="password" class="form-control" id="editPasswordConfirmation">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer modal-footer-modern">
-                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-success" onclick="updateUser()">
-                    <i class="bi bi-check2-circle me-1"></i>Update User
-                </button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Modern Users Table -->
+    <div class="admin-table-section">
+        <div class="admin-card">
+            <div class="admin-card-header">
+                <div class="admin-card-title">
+                    <i class="bi bi-people"></i>
+                    Users List
+                </div>
+                <div class="admin-table-count">
+                    <span class="admin-count-badge">
+                        <span id="userCount">0</span> USERS
+                    </span>
+                </div>
+            </div>
+            <div class="admin-card-body">
+                <div class="admin-table-container">
+                    <table class="admin-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Department</th>
+                                <th>Status</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="admin-pagination">
+                    <div class="admin-pagination-info">
+                        Showing <span id="userCountFooter">0</span> users
+                    </div>
+                    <nav aria-label="User pagination">
+                        <ul class="admin-pagination-list" id="usersPagination"></ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<!-- Role Distribution Chart -->
+{{-- <div class="card border-0 shadow-sm mt-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-pie-chart me-2"></i>Role Distribution</h5>
+    </div>
+    <div class="card-body">
+        <canvas id="roleDistributionChart" height="100"></canvas>
+    </div>
+</div> --}}
+
+    <!-- Modern Create User Modal -->
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content admin-modal">
+                <div class="admin-modal-header">
+                    <div class="admin-modal-title">
+                        <i class="bi bi-person-plus"></i>
+                        Create New User
+                    </div>
+                    <button type="button" class="admin-modal-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="admin-modal-body">
+                    <form id="createUserForm">
+                        <div class="admin-form-grid">
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Name <span class="required">*</span></label>
+                                <input type="text" class="admin-form-input" id="name" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Email <span class="required">*</span></label>
+                                <input type="email" class="admin-form-input" id="email" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Role <span class="required">*</span></label>
+                                <select class="admin-form-select" id="role" required>
+                                    <option value="employee">Employee</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Department</label>
+                                <select class="admin-form-select" id="department">
+                                    <option value="">Select Department</option>
+                                    <option value="Web">Web Development</option>
+                                    <option value="Graphic">Graphic Design</option>
+                                    <option value="Editorial">Editorial</option>
+                                    <option value="Multimedia">Multimedia</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Intern">Internship</option>
+                                    <option value="General">General</option>
+                                </select>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Password <span class="required">*</span></label>
+                                <input type="password" class="admin-form-input" id="password" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Confirm Password <span class="required">*</span></label>
+                                <input type="password" class="admin-form-input" id="password_confirmation" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-admin-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-admin-submit" onclick="createUser()">
+                        <i class="bi bi-check2-circle"></i>
+                        Create User
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modern Edit User Modal -->
+    <div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content admin-modal">
+                <div class="admin-modal-header" style="background: linear-gradient(135deg, #10b981, #059669);">
+                    <div class="admin-modal-title">
+                        <i class="bi bi-person-gear"></i>
+                        Edit User
+                    </div>
+                    <button type="button" class="admin-modal-close" data-bs-dismiss="modal" aria-label="Close">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+                <div class="admin-modal-body">
+                    <form id="editUserForm">
+                        <input type="hidden" id="editUserId">
+                        <div class="admin-form-grid">
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Name <span class="required">*</span></label>
+                                <input type="text" class="admin-form-input" id="editName" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Email <span class="required">*</span></label>
+                                <input type="email" class="admin-form-input" id="editEmail" required>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Role <span class="required">*</span></label>
+                                <select class="admin-form-select" id="editRole" required>
+                                    <option value="employee">Employee</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Department</label>
+                                <select class="admin-form-select" id="editDepartment">
+                                    <option value="">Select Department</option>
+                                    <option value="Admin">Admin</option>
+                                    <option value="Web">Web Development</option>
+                                    <option value="Graphic">Graphic Design</option>
+                                    <option value="Editorial">Editorial</option>
+                                    <option value="Multimedia">Multimedia</option>
+                                    <option value="Sales">Sales</option>
+                                    <option value="Marketing">Marketing</option>
+                                    <option value="Intern">Internship</option>
+                                    <option value="General">General</option>
+                                </select>
+                            </div>
+                            
+                            <div class="admin-form-group">
+                                <label class="admin-form-label">Status</label>
+                                <select class="admin-form-select" id="editStatus">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+                            
+                            <div class="admin-form-group admin-checkbox-group">
+                                <div class="admin-checkbox">
+                                    <input type="checkbox" id="editChangePassword" class="admin-checkbox-input">
+                                    <label for="editChangePassword" class="admin-checkbox-label">
+                                        Change Password
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="admin-form-group" id="editPasswordField" style="display: none;">
+                                <label class="admin-form-label">New Password</label>
+                                <input type="password" class="admin-form-input" id="editPassword">
+                            </div>
+                            
+                            <div class="admin-form-group" id="editPasswordConfirmField" style="display: none;">
+                                <label class="admin-form-label">Confirm New Password</label>
+                                <input type="password" class="admin-form-input" id="editPasswordConfirmation">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-admin-cancel" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn-admin-submit" onclick="updateUser()" style="background: linear-gradient(135deg, #10b981, #059669);">
+                        <i class="bi bi-check2-circle"></i>
+                        Update User
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @push('scripts')
 <script>

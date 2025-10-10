@@ -92,8 +92,9 @@ Route::middleware(['auth'])->group(function () {
 
     // --- 5. PROFILE & SELF-MANAGEMENT ---
     Route::prefix('profile')->group(function () {
-        Route::get('/', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::get('/{id}', [UserController::class, 'showProfile'])->name('profile.show');
+        Route::get('/', [ProfileController::class, 'index'])->name('profile');
+        Route::get('/{id}', [ProfileController::class, 'index'])->name('profile.show');
+        Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
         Route::delete('/photo', [ProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
