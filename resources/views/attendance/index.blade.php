@@ -53,9 +53,9 @@
                     <div class="employee-stat-content">
                         <h3 class="employee-stat-number" id="attendanceRate">0%</h3>
                         <p class="employee-stat-label">Attendance Rate</p>
-                    </div>
-                </div>
-            </div>
+    </div>
+    </div>
+</div>
 
             <!-- Filter Section -->
             <div class="employee-card mb-4">
@@ -64,7 +64,7 @@
                         <i class="bi bi-funnel"></i>
                         Filter Records
                     </div>
-                </div>
+            </div>
                 <div class="employee-card-body">
                     <div class="filter-grid-modern">
                         <div class="form-group-modern">
@@ -73,42 +73,42 @@
                                 Start Date
                             </label>
                             <input type="date" id="startDate" class="form-input-modern" value="{{ now()->startOfMonth()->format('Y-m-d') }}">
-                        </div>
+            </div>
                         <div class="form-group-modern">
                             <label class="form-label-modern">
                                 <i class="bi bi-calendar me-1"></i>
                                 End Date
                             </label>
                             <input type="date" id="endDate" class="form-input-modern" value="{{ now()->format('Y-m-d') }}">
-                        </div>
+            </div>
                         <div class="form-group-modern">
                             <label class="form-label-modern">
                                 <i class="bi bi-circle-fill me-1"></i>
                                 Status
                             </label>
                             <select id="statusFilter" class="form-input-modern">
-                                <option value="">All Status</option>
-                                <option value="present">Present</option>
-                                <option value="absent">Absent</option>
-                            </select>
+                    <option value="">All Status</option>
+                    <option value="present">Present</option>
+                    <option value="absent">Absent</option>
+                </select>
             </div>
                         <div class="form-group-modern">
                             <button class="btn-filter-modern" onclick="filterAttendance()">
                                 <i class="bi bi-search me-2"></i>
                                 Apply Filter
-                            </button>
-                </div>
+                </button>
             </div>
         </div>
     </div>
-    
+</div>
+
             <!-- Attendance Records Table -->
             <div class="employee-card">
                 <div class="employee-card-header">
                     <div class="employee-card-title">
                         <i class="bi bi-table"></i>
                         Attendance Records
-                    </div>
+            </div>
                     <div class="employee-actions">
                         <button class="btn-employee-secondary" onclick="exportAttendance('excel')">
                             <i class="bi bi-file-excel"></i>
@@ -118,8 +118,8 @@
                             <i class="bi bi-file-pdf"></i>
                             PDF
                         </button>
-                    </div>
-                </div>
+        </div>
+    </div>
                 <div class="employee-card-body p-0">
                     <div class="table-responsive">
                         <table class="table employee-table">
@@ -139,13 +139,13 @@
                                         <div class="loading-state-modern">
                                             <div class="spinner-modern"></div>
                                             <p class="loading-text-modern">Loading attendance data...</p>
-                                        </div>
+            </div>
                                     </td>
                                 </tr>
                         </tbody>
                     </table>
-                </div>
-            </div>
+        </div>
+    </div>
     
     <!-- Clock In/Out and Today's Summary Section -->
     <div class="row g-4 mt-4">
@@ -156,8 +156,8 @@
                     <div class="employee-card-title">
                         <i class="bi bi-stopwatch"></i>
                         Clock In/Out
-                    </div>
-                </div>
+            </div>
+        </div>
                 <div class="employee-card-body text-center">
                     <div class="clock-status-modern" id="clockStatus">
                     </div>
@@ -181,12 +181,12 @@
                             </div>
                             <div class="session-details-modern">
                                 <small class="text-muted">Started at: <span id="sessionStartTime">-</span></small>
-                            </div>
+    </div>
                         </div>
-                    </div>
-                </div>
             </div>
         </div>
+    </div>
+</div>
 
         <div class="col-lg-6">
             <!-- Today's Summary -->
@@ -202,12 +202,12 @@
                         <div class="summary-item-modern">
                             <div class="summary-icon-modern">
                                 <i class="bi bi-clock"></i>
-                            </div>
+            </div>
                             <div class="summary-content-modern">
                                 <div class="summary-value-modern" id="todayClockIn">-</div>
                                 <div class="summary-label-modern">Clock In</div>
-                            </div>
-                        </div>
+                </div>
+            </div>
                         <div class="summary-item-modern">
                             <div class="summary-icon-modern">
                                 <i class="bi bi-clock-fill"></i>
@@ -215,8 +215,8 @@
                             <div class="summary-content-modern">
                                 <div class="summary-value-modern" id="todayClockOut">-</div>
                                 <div class="summary-label-modern">Clock Out</div>
-                            </div>
-                        </div>
+        </div>
+    </div>
                         <div class="summary-item-modern">
                             <div class="summary-icon-modern">
                                 <i class="bi bi-stopwatch"></i>
@@ -224,8 +224,8 @@
                             <div class="summary-content-modern">
                                 <div class="summary-value-modern" id="todayHours">0h</div>
                                 <div class="summary-label-modern">Total Hours</div>
-                            </div>
-                        </div>
+                </div>
+            </div>
                         <div class="summary-item-modern">
                             <div class="summary-icon-modern">
                                 <i class="bi bi-graph-up"></i>
