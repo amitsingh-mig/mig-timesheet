@@ -1,233 +1,515 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- Page Header -->
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <div>
-        <h1 class="h2 fw-bold text-dark mb-1">Attendance Overview</h1>
-        <p class="text-muted mb-0">Track your attendance and work patterns</p>
-    </div>
-    <div class="text-end">
-        <small class="text-muted">{{ now()->format('l, F j, Y') }}</small>
+<!-- Modern Attendance Page -->
+<div class="container-fluid px-0">
+    <!-- Modern Header -->
+    <div class="attendance-header-modern">
+        <div class="container">
+            <div class="row align-items-center py-4">
+                <div class="col-md-8">
+                    <div class="header-content-modern">
+                        <h1 class="page-title-modern">
+                            <i class="bi bi-calendar-check me-3"></i>
+                            Attendance Management
+                        </h1>
+                        <p class="page-subtitle-modern">Track your daily attendance and manage work hours efficiently</p>
     </div>
 </div>
-
-<!-- Filter Bar -->
-<div class="card border-0 shadow-sm mb-4">
-    <div class="card-body">
-        <div class="row g-3">
-            <div class="col-md-2">
-                <label for="dateRange" class="form-label fw-medium">Date Range</label>
-                <input type="date" class="form-control" id="startDate" value="{{ now()->startOfMonth()->format('Y-m-d') }}">
+                <div class="col-md-4 text-md-end">
+                    <div class="current-time-display-modern">
+                        <div class="time-display">
+                            <span id="currentTime" class="time-text">{{ now()->format('H:i') }}</span>
             </div>
-            <div class="col-md-2">
-                <label class="form-label fw-medium">&nbsp;</label>
-                <input type="date" class="form-control" id="endDate" value="{{ now()->format('Y-m-d') }}">
+                        <div class="date-display">
+                            <span class="date-text">{{ now()->format('M j, Y') }}</span>
             </div>
-            <div class="col-md-2">
-                <label for="departmentFilter" class="form-label fw-medium">Department</label>
-                <select class="form-select" id="departmentFilter">
-                    <option value="">All Departments</option>
-                    <option value="Web">Web Development</option>
-                    <option value="Graphic">Graphic Design</option>
-                    <option value="Editorial">Editorial</option>
-                    <option value="Multimedia">Multimedia</option>
-                    <option value="Sales">Sales</option>
-                    <option value="Marketing">Marketing</option>
-                    <option value="Intern">Internship</option>
-                    <option value="General">General</option>
-                </select>
             </div>
-            <div class="col-md-2">
-                <label for="statusFilter" class="form-label fw-medium">Status</label>
-                <select class="form-select" id="statusFilter">
-                    <option value="">All Status</option>
-                    <option value="present">Present</option>
-                    <option value="absent">Absent</option>
-                    <option value="late">Late</option>
-                    <option value="leave">Leave</option>
-                </select>
             </div>
-            <div class="col-md-2">
-                <label class="form-label fw-medium">&nbsp;</label>
-                <button class="btn btn-primary w-100" onclick="filterAttendance()">
-                    <i class="bi bi-funnel me-2"></i>Apply Filter
-                </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Statistics Cards -->
-<div class="row g-4 mb-4 p-3">
+<div class="container">
+    <div class="row g-4">
+        <!-- Main Content -->
+        <div class="col-12">
+            <!-- Quick Stats Cards -->
+            <div class="row g-4 mb-4">
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient-1 card-gradient">
-            <div class="card-body text-white text-center p-4">
-                <i class="bi bi-check-circle-fill mb-3 text-2xl opacity-80"></i>
-                <div class="display-6 fw-bold mb-1" id="presentDays">0</div>
-                <p class="mb-0">Present Days</p>
+                    <div class="stat-card-modern present-stat">
+                        <div class="stat-icon-modern">
+                            <i class="bi bi-check-circle"></i>
+                        </div>
+                        <div class="stat-content-modern">
+                            <div class="stat-number-modern" id="presentDays">0</div>
+                            <div class="stat-label-modern">Present Days</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient-2 card-gradient">
-            <div class="card-body text-white text-center p-4">
-                <i class="bi bi-x-circle-fill mb-3 text-2xl opacity-80"></i>
-                <div class="display-6 fw-bold mb-1" id="absentDays">0</div>
-                <p class="mb-0">Absent Days</p>
+                    <div class="stat-card-modern absent-stat">
+                        <div class="stat-icon-modern">
+                            <i class="bi bi-x-circle"></i>
+                        </div>
+                        <div class="stat-content-modern">
+                            <div class="stat-number-modern" id="absentDays">0</div>
+                            <div class="stat-label-modern">Absent Days</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient-3 card-gradient">
-            <div class="card-body text-white text-center p-4">
-                <i class="bi bi-clock-fill mb-3 text-2xl opacity-80"></i>
-                <div class="display-6 fw-bold mb-1" id="totalHours">0h</div>
-                <p class="mb-0">Total Hours</p>
+                    <div class="stat-card-modern hours-stat">
+                        <div class="stat-icon-modern">
+                            <i class="bi bi-clock"></i>
+                        </div>
+                        <div class="stat-content-modern">
+                            <div class="stat-number-modern" id="totalHours">0h</div>
+                            <div class="stat-label-modern">Total Hours</div>
             </div>
         </div>
     </div>
     <div class="col-md-3">
-        <div class="card border-0 shadow-sm h-100 bg-gradient-5 card-gradient">
-            <div class="card-body text-white text-center p-4">
-                <i class="bi bi-percent mb-3 text-2xl opacity-80"></i>
-                <div class="display-6 fw-bold mb-1" id="attendanceRate">0%</div>
-                <p class="mb-0">Attendance Rate</p>
+                    <div class="stat-card-modern rate-stat">
+                        <div class="stat-icon-modern">
+                            <i class="bi bi-percent"></i>
+                        </div>
+                        <div class="stat-content-modern">
+                            <div class="stat-number-modern" id="attendanceRate">0%</div>
+                            <div class="stat-label-modern">Attendance Rate</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Charts and Table Row -->
-<div class="row g-4">
-    <!-- Attendance Distribution Chart -->
-    <div class="col-lg-4">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white py-3">
-                <h5 class="mb-0 fw-semibold">
-                    <i class="bi bi-pie-chart me-2 text-primary"></i>Attendance Distribution
-                </h5>
+            <!-- Filter Section -->
+            <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <h3 class="card-title-modern">
+                        <i class="bi bi-funnel me-2"></i>
+                        Filter Records
+                    </h3>
+                </div>
+                <div class="card-body-modern">
+                    <div class="filter-grid-modern">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-calendar me-1"></i>
+                                Start Date
+                            </label>
+                            <input type="date" id="startDate" class="form-input-modern" value="{{ now()->startOfMonth()->format('Y-m-d') }}">
+                        </div>
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-calendar me-1"></i>
+                                End Date
+                            </label>
+                            <input type="date" id="endDate" class="form-input-modern" value="{{ now()->format('Y-m-d') }}">
+                        </div>
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-circle-fill me-1"></i>
+                                Status
+                            </label>
+                            <select id="statusFilter" class="form-input-modern">
+                                <option value="">All Status</option>
+                                <option value="present">Present</option>
+                                <option value="absent">Absent</option>
+                            </select>
             </div>
-            <div class="card-body">
-                <div class="position-relative h-72">
-                    <canvas id="attendanceChart"></canvas>
+                        <div class="form-group-modern">
+                            <button class="btn-filter-modern" onclick="filterAttendance()">
+                                <i class="bi bi-search me-2"></i>
+                                Apply Filter
+                            </button>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Attendance Table -->
-    <div class="col-lg-8">
-        <div class="card border-0 shadow-sm h-100">
-            <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                <h5 class="mb-0 fw-semibold">
-                    <i class="bi bi-table me-2 text-primary"></i>Attendance Records
-                </h5>
-                <div class="btn-group btn-group-sm">
-                    <button class="btn btn-outline-primary" onclick="exportAttendance('excel')">
-                        <i class="bi bi-file-excel me-1"></i>Excel
+            <!-- Attendance Records Table -->
+            <div class="card-modern">
+                <div class="card-header-modern">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="card-title-modern">
+                                <i class="bi bi-table me-2"></i>
+                                Attendance Records
+                            </h3>
+                            <p class="card-subtitle-modern">View and manage all your attendance entries</p>
+                        </div>
+                        <div class="table-actions-modern">
+                            <button class="btn-action-modern" onclick="exportAttendance('excel')">
+                                <i class="bi bi-file-excel"></i>
+                                Excel
                     </button>
-                    <button class="btn btn-outline-primary" onclick="exportAttendance('pdf')">
-                        <i class="bi bi-file-pdf me-1"></i>PDF
+                            <button class="btn-action-modern" onclick="exportAttendance('pdf')">
+                                <i class="bi bi-file-pdf"></i>
+                                PDF
                     </button>
                 </div>
             </div>
-            <div class="card-body p-0">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover mb-0" id="attendanceTable">
-                        <thead class="table-dark">
-                            <tr>
-                                <th><i class="bi bi-calendar-date me-1"></i>Date</th>
-                                <th><i class="bi bi-circle-fill me-1"></i>Status</th>
-                                <th><i class="bi bi-clock me-1"></i>Clock In</th>
-                                <th><i class="bi bi-clock me-1"></i>Clock Out</th>
-                                <th><i class="bi bi-stopwatch me-1"></i>Total Hours</th>
-                                <th><i class="bi bi-gear me-1"></i>Actions</th>
+                </div>
+                <div class="card-body-modern p-0">
+                    <div class="table-responsive-modern">
+                        <table class="table-modern">
+                            <thead class="table-header-modern">
+                                <tr>
+                                    <th class="text-start">Date</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Clock In</th>
+                                    <th class="text-center">Clock Out</th>
+                                    <th class="text-center">Total Hours</th>
+                                    <th class="text-center">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="attendanceTableBody">
-                            <!-- Data will be loaded via JavaScript -->
+                                <tr>
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="loading-state-modern">
+                                            <div class="spinner-modern"></div>
+                                            <p class="loading-text-modern">Loading attendance data...</p>
+                                        </div>
+                                    </td>
+                                </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="card-footer bg-light">
-                <div class="d-flex justify-content-between align-items-center">
-                    <small class="text-muted">Showing <span id="recordCount">0</span> records</small>
-                    <nav aria-label="Attendance pagination">
-                        <ul class="pagination pagination-sm mb-0" id="attendancePagination">
-                            <!-- Pagination will be generated by JavaScript -->
-                        </ul>
-                    </nav>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Clock In/Out and Today's Summary Section -->
+    <div class="row g-4 mt-4">
+        <div class="col-lg-6">
+            <!-- Clock In/Out Card -->
+            <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <h3 class="card-title-modern">
+                        <i class="bi bi-stopwatch me-2"></i>
+                        Clock In/Out
+                    </h3>
+                </div>
+                <div class="card-body-modern text-center">
+                    <div class="clock-status-modern" id="clockStatus">
+                    </div>
+                    
+                    <div class="clock-actions-modern">
+                        <button class="btn-clock-modern clock-in-btn" id="clockInBtn" onclick="clockIn()">
+                            <i class="bi bi-play-circle"></i>
+                            <span>Clock In</span>
+                        </button>
+                        <button class="btn-clock-modern clock-out-btn" id="clockOutBtn" onclick="clockOut()">
+                            <i class="bi bi-stop-circle"></i>
+                            <span>Clock Out</span>
+                        </button>
+                    </div>
+
+                    <div class="current-session-modern d-none" id="currentSession">
+                        <div class="session-info-modern">
+                            <div class="session-time-modern">
+                                <span class="session-label-modern">Current Session:</span>
+                                <span class="session-duration-modern" id="sessionDuration">00:00:00</span>
+                            </div>
+                            <div class="session-details-modern">
+                                <small class="text-muted">Started at: <span id="sessionStartTime">-</span></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <!-- Today's Summary -->
+            <div class="card-modern mb-4">
+                <div class="card-header-modern">
+                    <h3 class="card-title-modern">
+                        <i class="bi bi-calendar-day me-2"></i>
+                        Today's Summary
+                    </h3>
+                </div>
+                <div class="card-body-modern">
+                    <div class="summary-grid-modern">
+                        <div class="summary-item-modern">
+                            <div class="summary-icon-modern">
+                                <i class="bi bi-clock"></i>
+                            </div>
+                            <div class="summary-content-modern">
+                                <div class="summary-value-modern" id="todayClockIn">-</div>
+                                <div class="summary-label-modern">Clock In</div>
+                            </div>
+                        </div>
+                        <div class="summary-item-modern">
+                            <div class="summary-icon-modern">
+                                <i class="bi bi-clock-fill"></i>
+                            </div>
+                            <div class="summary-content-modern">
+                                <div class="summary-value-modern" id="todayClockOut">-</div>
+                                <div class="summary-label-modern">Clock Out</div>
+                            </div>
+                        </div>
+                        <div class="summary-item-modern">
+                            <div class="summary-icon-modern">
+                                <i class="bi bi-stopwatch"></i>
+                            </div>
+                            <div class="summary-content-modern">
+                                <div class="summary-value-modern" id="todayHours">0h</div>
+                                <div class="summary-label-modern">Total Hours</div>
+                            </div>
+                        </div>
+                        <div class="summary-item-modern">
+                            <div class="summary-icon-modern">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="summary-content-modern">
+                                <div class="summary-value-modern" id="todayStatus">-</div>
+                                <div class="summary-label-modern">Status</div>
+                            </div>
+                </div>
+            </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
 @endsection
 
 @push('scripts')
 <script>
-let attendanceChart;
 let currentPage = 1;
 let recordsPerPage = 10;
+let sessionTimer;
+let sessionStartTime = null;
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
-    initializeAttendanceChart();
+    // Set initial button states
+    document.getElementById('clockInBtn').disabled = false;
+    document.getElementById('clockOutBtn').disabled = true;
+    
     loadAttendanceData();
+    checkClockStatus();
+    updateCurrentTime();
+    loadTodaySummary();
+    
+    // Update time every minute
+    setInterval(updateCurrentTime, 60000);
 });
 
-// Initialize pie chart
-function initializeAttendanceChart() {
-    const ctx = document.getElementById('attendanceChart').getContext('2d');
-    
-    attendanceChart = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: ['Present', 'Absent', 'Late', 'Leave'],
-            datasets: [{
-                data: [0, 0, 0, 0],
-                backgroundColor: [
-                    'rgba(102, 126, 234, 0.8)',
-                    'rgba(245, 87, 108, 0.8)',
-                    'rgba(255, 193, 7, 0.8)',
-                    'rgba(75, 192, 192, 0.8)'
-                ],
-                borderColor: [
-                    'rgba(102, 126, 234, 1)',
-                    'rgba(245, 87, 108, 1)',
-                    'rgba(255, 193, 7, 1)',
-                    'rgba(75, 192, 192, 1)'
-                ],
-                borderWidth: 2
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                    labels: {
-                        padding: 20,
-                        usePointStyle: true
-                    }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    callbacks: {
-                        label: function(context) {
-                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                            const percentage = total > 0 ? ((context.parsed / total) * 100).toFixed(1) : 0;
-                            return context.label + ': ' + context.parsed + ' days (' + percentage + '%)';
-                        }
-                    }
-                }
-            }
+// Update current time display
+function updateCurrentTime() {
+    const now = new Date();
+    const timeString = now.toLocaleTimeString('en-US', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+    document.getElementById('currentTime').textContent = timeString;
+}
+
+
+// Check clock status
+function checkClockStatus() {
+    fetch('{{ route("attendance.status") }}', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
         }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            updateClockStatus(data.status);
+        }
+    })
+    .catch(error => {
+        console.error('Error checking clock status:', error);
+    });
+}
+
+// Update clock status display
+function updateClockStatus(status) {
+    const clockStatus = document.getElementById('clockStatus');
+    const clockInBtn = document.getElementById('clockInBtn');
+    const clockOutBtn = document.getElementById('clockOutBtn');
+    const currentSession = document.getElementById('currentSession');
+    
+    if (status.is_clocked_in) {
+        // User is clocked in
+        clockStatus.innerHTML = `
+            <div class="status-icon-modern clocked-in">
+                <i class="bi bi-play-circle-fill"></i>
+            </div>
+        `;
+        
+        // Both buttons remain visible, but update their states
+        clockInBtn.disabled = true;
+        clockOutBtn.disabled = false;
+        currentSession.classList.remove('d-none');
+        
+        // Start session timer
+        sessionStartTime = new Date(status.clock_in_time);
+        startSessionTimer();
+        
+        // Update session start time display
+        document.getElementById('sessionStartTime').textContent = status.clock_in_time;
+        
+        // Update Today's Summary with current status
+        document.getElementById('todayClockIn').textContent = status.clock_in_time || '-';
+        document.getElementById('todayStatus').textContent = 'present';
+    } else {
+        // User is not clocked in
+        clockStatus.innerHTML = ``;
+        
+        // Both buttons remain visible, but update their states
+        clockInBtn.disabled = false;
+        clockOutBtn.disabled = true;
+        currentSession.classList.add('d-none');
+        
+        // Stop session timer
+        if (sessionTimer) {
+            clearInterval(sessionTimer);
+        }
+        
+        // Update Today's Summary for not clocked in state
+        document.getElementById('todayStatus').textContent = 'Not Started';
+    }
+}
+
+// Start session timer
+function startSessionTimer() {
+    sessionTimer = setInterval(() => {
+        if (sessionStartTime) {
+            const now = new Date();
+            const diff = now - sessionStartTime;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            const timeString = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            document.getElementById('sessionDuration').textContent = timeString;
+            
+            // Update Today's Summary total hours in real-time
+            const totalHours = (diff / (1000 * 60 * 60)).toFixed(1);
+            document.getElementById('todayHours').textContent = `${totalHours}h`;
+        }
+    }, 1000);
+}
+
+// Clock in function
+function clockIn() {
+    fetch('{{ route("attendance.clockin") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show appropriate message based on the response
+            const message = data.message || 'Clocked in successfully!';
+            showToast(message, 'success');
+            
+            // Update Today's Summary immediately
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            document.getElementById('todayClockIn').textContent = timeString;
+            document.getElementById('todayStatus').textContent = 'present';
+            
+            checkClockStatus();
+            loadTodaySummary();
+            loadAttendanceData(); // Refresh the attendance table
+        } else {
+            showToast(data.message || 'Failed to clock in', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error clocking in:', error);
+        showToast('An error occurred while clocking in', 'error');
+    });
+}
+
+// Clock out function
+function clockOut() {
+    fetch('{{ route("attendance.clockout") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showToast('Clocked out successfully!', 'success');
+            
+            // Update Today's Summary immediately
+            const now = new Date();
+            const timeString = now.toLocaleTimeString('en-US', {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+            document.getElementById('todayClockOut').textContent = timeString;
+            document.getElementById('todayStatus').textContent = 'present';
+            
+            checkClockStatus();
+            loadTodaySummary();
+            loadAttendanceData();
+        } else {
+            showToast(data.message || 'Failed to clock out', 'error');
+        }
+    })
+    .catch(error => {
+        console.error('Error clocking out:', error);
+        showToast('An error occurred while clocking out', 'error');
+    });
+}
+
+// Load today's summary
+function loadTodaySummary() {
+    const today = new Date().toISOString().split('T')[0];
+    
+    fetch(`{{ route('attendance.data') }}?start_date=${today}&end_date=${today}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success && data.records.length > 0) {
+            const todayRecord = data.records[0];
+            document.getElementById('todayClockIn').textContent = todayRecord.clock_in || '-';
+            document.getElementById('todayClockOut').textContent = todayRecord.clock_out || '-';
+            document.getElementById('todayHours').textContent = todayRecord.total_hours || '0h';
+            document.getElementById('todayStatus').textContent = todayRecord.status || '-';
+        } else {
+            // No record for today
+            document.getElementById('todayClockIn').textContent = '-';
+            document.getElementById('todayClockOut').textContent = '-';
+            document.getElementById('todayHours').textContent = '0h';
+            document.getElementById('todayStatus').textContent = 'Not Started';
+        }
+    })
+    .catch(error => {
+        console.error('Error loading today summary:', error);
     });
 }
 
@@ -237,7 +519,7 @@ function loadAttendanceData() {
     const endDate = document.getElementById('endDate').value;
     const status = document.getElementById('statusFilter').value;
     
-    fetch(`/attendance/data?start_date=${startDate}&end_date=${endDate}&status=${status}&page=${currentPage}&per_page=${recordsPerPage}`, {
+    fetch(`{{ route('attendance.data') }}?start_date=${startDate}&end_date=${endDate}&status=${status}&page=${currentPage}&per_page=${recordsPerPage}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -249,152 +531,146 @@ function loadAttendanceData() {
     .then(data => {
         if (data.success) {
             updateStatCards(data.statistics);
-            updateAttendanceChart(data.distribution);
             updateAttendanceTable(data.records);
-            updatePagination(data.pagination);
         } else {
             console.error('Failed to load attendance data:', data.message);
-            loadDemoData(); // Load demo data if API fails
+            loadDemoData();
         }
     })
     .catch(error => {
         console.error('Error loading attendance data:', error);
-        loadDemoData(); // Load demo data if API fails
+        loadDemoData();
     });
 }
 
-// Load demo data for demonstration
+// Load demo data
 function loadDemoData() {
     const demoStats = {
-        present_days: 22,
-        absent_days: 2,
-        total_hours: 176,
-        attendance_rate: 91
+        present_days: 11,
+        absent_days: 0,
+        total_hours: 88,
+        attendance_rate: 100
     };
     
-    const demoDistribution = {
-        present: 22,
-        absent: 2,
-        late: 3,
-        leave: 1
-    };
+    // Generate realistic demo records for the last 10 days
+    const demoRecords = [];
+    const today = new Date();
     
-    const demoRecords = [
-        { id: 1, date: '2024-01-15', status: 'present', clock_in: '09:00', clock_out: '17:30', total_hours: '8.5' },
-        { id: 2, date: '2024-01-14', status: 'late', clock_in: '09:15', clock_out: '17:30', total_hours: '8.25' },
-        { id: 3, date: '2024-01-13', status: 'present', clock_in: '08:45', clock_out: '17:30', total_hours: '8.75' },
-        { id: 4, date: '2024-01-12', status: 'absent', clock_in: '-', clock_out: '-', total_hours: '0' },
-        { id: 5, date: '2024-01-11', status: 'present', clock_in: '09:00', clock_out: '17:00', total_hours: '8.0' }
-    ];
+    for (let i = 0; i < 10; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        
+        // Skip weekends for more realistic data
+        if (date.getDay() === 0 || date.getDay() === 6) continue;
+        
+        const clockIn = `0${8 + Math.floor(Math.random() * 2)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`;
+        const clockOut = `1${7 + Math.floor(Math.random() * 2)}:${Math.floor(Math.random() * 60).toString().padStart(2, '0')}`;
+        
+        // Calculate hours
+        const startTime = new Date(`2000-01-01T${clockIn}:00`);
+        const endTime = new Date(`2000-01-01T${clockOut}:00`);
+        const diffMs = endTime - startTime;
+        const hours = (diffMs / (1000 * 60 * 60)).toFixed(1);
+        
+        demoRecords.push({
+            id: i + 1,
+            date: date.toISOString().split('T')[0],
+            status: 'present',
+            clock_in: clockIn,
+            clock_out: clockOut,
+            total_hours: hours
+        });
+    }
     
     updateStatCards(demoStats);
-    updateAttendanceChart(demoDistribution);
     updateAttendanceTable(demoRecords);
-    updatePagination({ current_page: 1, total_pages: 1 });
 }
 
 // Update statistics cards
 function updateStatCards(stats) {
-    document.getElementById('presentDays').textContent = stats.present_days;
-    document.getElementById('absentDays').textContent = stats.absent_days;
-    document.getElementById('totalHours').textContent = stats.total_hours + 'h';
-    document.getElementById('attendanceRate').textContent = stats.attendance_rate + '%';
+    document.getElementById('presentDays').textContent = stats.present_days || 0;
+    document.getElementById('absentDays').textContent = stats.absent_days || 0;
+    document.getElementById('totalHours').textContent = (stats.total_hours || 0) + 'h';
+    document.getElementById('attendanceRate').textContent = (stats.attendance_rate || 0) + '%';
 }
 
-// Update attendance chart
-function updateAttendanceChart(distribution) {
-    attendanceChart.data.datasets[0].data = [
-        distribution.present,
-        distribution.absent,
-        distribution.late,
-        distribution.leave
-    ];
-    attendanceChart.update();
-}
 
 // Update attendance table
 function updateAttendanceTable(records) {
     const tbody = document.getElementById('attendanceTableBody');
-    tbody.innerHTML = '';
     
-    records.forEach(record => {
+    if (!records.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted py-4">No attendance records found</td></tr>';
+        return;
+    }
+    
+    tbody.innerHTML = records.map(record => {
         const statusBadge = getStatusBadge(record.status);
-        const actionButtons = getActionButtons(record);
+        const totalHours = formatHours(record.total_hours);
         
-        const row = `
+        return `
             <tr>
-                <td class="fw-medium">${record.date}</td>
-                <td>${statusBadge}</td>
-                <td>${record.clock_in || '-'}</td>
-                <td>${record.clock_out || '-'}</td>
-                <td class="fw-medium">${record.total_hours || '-'}</td>
-                <td>${actionButtons}</td>
+                <td class="fw-medium">${new Date(record.date).toLocaleDateString()}</td>
+                <td class="text-center">${statusBadge}</td>
+                <td class="text-center fw-medium">${record.clock_in || '-'}</td>
+                <td class="text-center fw-medium">${record.clock_out || '-'}</td>
+                <td class="text-center">
+                    <span class="badge bg-success hours-badge">${totalHours}</span>
+                </td>
+                <td class="text-center">
+                    <div class="btn-group btn-group-sm">
+                        <button class="btn btn-outline-primary" onclick="viewDetails('${record.id}')" title="View Details">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="editRecord('${record.id}')" title="Edit Record">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                    </div>
+                </td>
             </tr>
         `;
-        tbody.innerHTML += row;
-    });
+    }).join('');
+}
+
+// Format hours display
+function formatHours(hours) {
+    if (!hours || hours === '0' || hours === 0) return '0h';
     
-    document.getElementById('recordCount').textContent = records.length;
+    // If it's already a string with 'h', return as is
+    if (typeof hours === 'string' && hours.includes('h')) {
+        return hours;
+    }
+    
+    // Convert to number and format
+    const numHours = parseFloat(hours);
+    if (isNaN(numHours)) return '0h';
+    
+    // If hours are more than 24, show in HH:MM format
+    if (numHours >= 24) {
+        const days = Math.floor(numHours / 24);
+        const remainingHours = numHours % 24;
+        if (days > 0 && remainingHours > 0) {
+            return `${days}d ${remainingHours.toFixed(1)}h`;
+        } else if (days > 0) {
+            return `${days}d`;
+        }
+    }
+    
+    return `${numHours.toFixed(1)}h`;
 }
 
 // Get status badge
 function getStatusBadge(status) {
     const badges = {
         'present': '<span class="badge bg-success"><i class="bi bi-check-circle me-1"></i>Present</span>',
-        'absent': '<span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Absent</span>',
-        'late': '<span class="badge bg-warning text-dark"><i class="bi bi-clock me-1"></i>Late</span>',
-        'leave': '<span class="badge bg-info"><i class="bi bi-calendar-x me-1"></i>Leave</span>'
+        'absent': '<span class="badge bg-danger"><i class="bi bi-x-circle me-1"></i>Absent</span>'
     };
     return badges[status] || '<span class="badge bg-secondary">Unknown</span>';
-}
-
-// Get action buttons
-function getActionButtons(record) {
-    return `
-        <div class="btn-group btn-group-sm">
-            <button class="btn btn-outline-primary" onclick="viewDetails('${record.id}')">
-                <i class="bi bi-eye"></i>
-            </button>
-            <button class="btn btn-outline-secondary" onclick="editRecord('${record.id}')">
-                <i class="bi bi-pencil"></i>
-            </button>
-        </div>
-    `;
-}
-
-// Update pagination
-function updatePagination(pagination) {
-    const paginationEl = document.getElementById('attendancePagination');
-    paginationEl.innerHTML = '';
-    
-    if (pagination.total_pages > 1) {
-        // Previous button
-        if (pagination.current_page > 1) {
-            paginationEl.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${pagination.current_page - 1})">Previous</a></li>`;
-        }
-        
-        // Page numbers
-        for (let i = Math.max(1, pagination.current_page - 2); i <= Math.min(pagination.total_pages, pagination.current_page + 2); i++) {
-            const active = i === pagination.current_page ? 'active' : '';
-            paginationEl.innerHTML += `<li class="page-item ${active}"><a class="page-link" href="#" onclick="changePage(${i})">${i}</a></li>`;
-        }
-        
-        // Next button
-        if (pagination.current_page < pagination.total_pages) {
-            paginationEl.innerHTML += `<li class="page-item"><a class="page-link" href="#" onclick="changePage(${pagination.current_page + 1})">Next</a></li>`;
-        }
-    }
 }
 
 // Filter attendance
 function filterAttendance() {
     currentPage = 1;
-    loadAttendanceData();
-}
-
-// Change page
-function changePage(page) {
-    currentPage = page;
     loadAttendanceData();
 }
 
@@ -416,7 +692,23 @@ function exportAttendance(format) {
     
     window.open(`/attendance/export?format=${format}&start_date=${startDate}&end_date=${endDate}&status=${status}`);
 }
+
+// Show toast notification
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+    toast.setAttribute('role', 'alert');
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    new bootstrap.Toast(toast).show();
+    
+    setTimeout(() => toast.remove(), 5000);
+}
 </script>
 @endpush
-
-

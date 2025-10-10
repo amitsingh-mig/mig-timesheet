@@ -39,8 +39,8 @@
             </button>
 
             <!-- Fixed Header Section -->
-            <div class="sidebar-header flex-shrink-0 p-3">
-                <div class="sidebar-brand mb-3 text-white text-decoration-none">
+            <div class="sidebar-header flex-shrink-0">
+                <div class="sidebar-brand text-white text-decoration-none">
                     <div class="brand-text">MIG-HRM</div>
                 </div>
             </div>
@@ -61,7 +61,7 @@
             <!-- Fixed Footer Section -->
             <div class="sidebar-footer flex-shrink-0">
                 <div class="user-info">
-                    @if(Auth::check())
+                    @if(Auth::check() && !request()->is('profile/*'))
                     <div class="d-flex align-items-center mb-3">
                         <div class="user-avatar me-3">
                             <img src="{{ Auth::user()->getProfilePhotoUrl() }}" 
@@ -77,6 +77,14 @@
                             <div class="user-email">{{ Auth::user()->email }}</div>
                         </div>
                     </div>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button class="btn btn-outline-light w-100 btn-logout">
+                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        </button>
+                    </form>
+                    @elseif(Auth::check() && request()->is('profile/*'))
+                    <!-- Simplified logout button when viewing profiles -->
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">
@@ -106,7 +114,7 @@
                 </div>
                 
                     
-                    @if(Auth::check())
+                    @if(Auth::check() && !request()->is('profile/*'))
                     <div class="d-flex align-items-center mb-3">
                         <div class="user-avatar me-3">
                             <img src="{{ Auth::user()->getProfilePhotoUrl() }}" 
@@ -122,6 +130,14 @@
                             <div class="user-email">{{ Auth::user()->email }}</div>
                         </div>
                     </div>
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button class="btn btn-outline-light w-100 btn-logout">
+                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                        </button>
+                    </form>
+                    @elseif(Auth::check() && request()->is('profile/*'))
+                    <!-- Simplified logout button when viewing profiles -->
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">

@@ -18,7 +18,7 @@
     </li>
 
     <!-- Modern Clock Status Display -->
-    <li class="nav-item-modern mb-3">
+    <li class="nav-item-modern">
         <div class="clock-status-modern">
             <div class="clock-status-header">
                 <div class="clock-status-icon">
@@ -122,7 +122,6 @@
                 </div>
                 <div class="btn-clock-content">
                     <span class="btn-clock-title">Clock In</span>
-                    <span class="btn-clock-subtitle">Start your day</span>
                 </div>
             </button>
             
@@ -132,22 +131,19 @@
                 </div>
                 <div class="btn-clock-content">
                     <span class="btn-clock-title">Clock Out</span>
-                    <span class="btn-clock-subtitle">End your day</span>
                 </div>
             </button>
         </div>
     </li>
 
     <li class="nav-item-modern">
-        <a href="#" class="nav-link-modern quick-action-link" onclick="quickAddTimesheet()">
+        <a href="#" class="nav-link-modern" onclick="quickAddTimesheet()">
             <div class="nav-link-icon">
                 <i class="bi bi-plus-circle-fill"></i>
             </div>
             <div class="nav-link-content">
                 <span class="nav-link-title">Add Timesheet Entry</span>
-                <span class="nav-link-subtitle">Quick time entry</span>
             </div>
-            <div class="nav-link-badge new-badge">QUICK</div>
         </a>
     </li>
 

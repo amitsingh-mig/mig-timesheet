@@ -50,12 +50,9 @@ class AttendanceService
             $activeSession = $this->attendanceRepository->getActiveSession($user->id);
             
             if ($activeSession) {
-                return [
-                    'success' => false,
-                    'message' => 'Already clocked in at ' . $activeSession->formatted_clock_in,
-                    'status' => 'already_clocked_in',
-                    'attendance' => $activeSession
-                ];
+                // Automatically clock out the previous session
+                $activeSession->clock_out = Carbon::now();
+                $activeSession->save();
             }
 
             // Check for maximum daily sessions (business rule)

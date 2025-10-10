@@ -74,7 +74,7 @@
 
         <!-- Data Table -->
         <div class="data-table">
-            <div class="table-header">
+            <div class="table-header-modern">
                 <h3 class="table-title">Timesheet Entries</h3>
                 <div>
                     <a href="{{ route('timesheet.admin.index', array_merge(request()->all(), ['export' => 'csv'])) }}" class="btn btn-export">

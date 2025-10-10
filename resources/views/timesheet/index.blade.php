@@ -1,71 +1,151 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div>
-            <h1 class="h2 fw-bold text-dark mb-1">Timesheet Calendar</h1>
-            <p class="text-muted mb-0">Manage your daily work hours and tasks</p>
-        </div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#timesheetModal">
-                <i class="bi bi-plus-circle me-2"></i>Add New Entry
-            </button>
-        </div>
-    </div>
-
-    <!-- Weekly Calendar View -->
-    <div class="card border-0 shadow-sm mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i>Weekly Calendar</h5>
-            <div class="d-flex gap-2">
-                <span id="weekRange" class="badge bg-light text-dark">Loading...</span>
-                <div class="btn-group btn-group-sm">
-                    <button class="btn btn-outline-primary" onclick="navigateWeek(-1)">
-                        <i class="bi bi-chevron-left"></i>
-                    </button>
-                    <button class="btn btn-outline-primary" onclick="navigateWeek(1)">
-                        <i class="bi bi-chevron-right"></i>
+<!-- Modern Timesheet Page -->
+<div class="container-fluid px-0">
+    <!-- Modern Header -->
+    <div class="timesheet-header-modern">
+        <div class="container">
+            <div class="row align-items-center py-4">
+                <div class="col-md-8">
+                    <div class="header-content-modern">
+                        <h1 class="page-title-modern">
+                            <i class="bi bi-calendar-check me-3"></i>
+                            Timesheet Management
+                        </h1>
+                        <p class="page-subtitle-modern">Track your daily work hours and manage your tasks efficiently</p>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <button class="btn-add-entry-modern" data-bs-toggle="modal" data-bs-target="#timesheetModal">
+                        <i class="bi bi-plus-circle"></i>
+                        Add New Entry
                     </button>
                 </div>
             </div>
         </div>
-        <div class="card-body p-0">
+    </div>
+</div>
+
+<div class="container">
+    <!-- Quick Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card-modern today-stat">
+                <div class="stat-icon-modern">
+                    <i class="bi bi-calendar-day"></i>
+                </div>
+                <div class="stat-content-modern">
+                    <div class="stat-number-modern" id="todayHours">0h</div>
+                    <div class="stat-label-modern">Today's Hours</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card-modern week-stat">
+                <div class="stat-icon-modern">
+                    <i class="bi bi-calendar-week"></i>
+                </div>
+                <div class="stat-content-modern">
+                    <div class="stat-number-modern" id="weekHours">0h</div>
+                    <div class="stat-label-modern">This Week</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card-modern month-stat">
+                <div class="stat-icon-modern">
+                    <i class="bi bi-calendar-month"></i>
+                </div>
+                <div class="stat-content-modern">
+                    <div class="stat-number-modern" id="monthHours">0h</div>
+                    <div class="stat-label-modern">This Month</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card-modern total-stat">
+                <div class="stat-icon-modern">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <div class="stat-content-modern">
+                    <div class="stat-number-modern" id="totalEntries">0</div>
+                    <div class="stat-label-modern">Total Entries</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weekly Calendar View -->
+    <div class="card-modern mb-4">
+        <div class="card-header-modern">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="card-title-modern">
+                        <i class="bi bi-calendar-week me-2"></i>
+                        Weekly Calendar
+                    </h3>
+                    <p class="card-subtitle-modern">Click on any day to add or view entries</p>
+                </div>
+                <div class="calendar-controls-modern">
+                    <span id="weekRange" class="week-range-modern">Loading...</span>
+                    <div class="btn-group-modern">
+                        <button class="btn-nav-modern" onclick="navigateWeek(-1)">
+                            <i class="bi bi-chevron-left"></i>
+                        </button>
+                        <button class="btn-nav-modern" onclick="navigateWeek(1)">
+                            <i class="bi bi-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body-modern p-0">
             <div class="row g-0" id="weeklyCalendar">
                 <!-- Calendar populated by JavaScript -->
             </div>
         </div>
     </div>
 
-
-    <!-- Timesheet Records Table -->
-    <div class="card border-0 shadow-sm">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-table me-2"></i>Timesheet Records</h5>
-            <div class="d-flex gap-2">
-                <button class="btn btn-sm btn-outline-primary" onclick="exportTimesheet()">
-                    <i class="bi bi-download"></i> Export
-                </button>
+    <!-- Timesheet Records -->
+    <div class="card-modern">
+        <div class="card-header-modern">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h3 class="card-title-modern">
+                        <i class="bi bi-table me-2"></i>
+                        Timesheet Records
+                    </h3>
+                    <p class="card-subtitle-modern">View and manage all your timesheet entries</p>
+                </div>
+                <div class="table-actions-modern">
+                    <button class="btn-action-modern" onclick="exportTimesheet()">
+                        <i class="bi bi-download"></i>
+                        Export
+                    </button>
+                </div>
             </div>
         </div>
-        <div class="card-body p-0">
-            <div class="table-responsive">
-                <table class="table table-hover mb-0">
-                    <thead class="table-light">
+        <div class="card-body-modern p-0">
+            <div class="table-responsive-modern">
+                <table class="table-modern">
+                    <thead class="table-header-modern">
                         <tr>
-                            <th>Date</th>
-                            <th>Clock In</th>
-                            <th>Clock Out</th>
-                            <th>Duration</th>
-                            <th>Tasks</th>
-                            <th class="text-center">Actions</th>
+                            <th class="text-start">Date</th>
+                            <th class="text-center">Clock In</th>
+                            <th class="text-center">Clock Out</th>
+                            <th class="text-center">Duration</th>
+                            <th class="text-center">Tasks</th>
+                            <th class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody id="timesheetTableBody">
                         <tr>
-                            <td colspan="6" class="text-center py-4">
-                                <div class="spinner-border text-primary" role="status"></div>
+                            <td colspan="6" class="text-center py-5">
+                                <div class="loading-state-modern">
+                                    <div class="spinner-modern"></div>
+                                    <p class="loading-text-modern">Loading timesheet data...</p>
+                                </div>
                             </td>
                         </tr>
                     </tbody>
@@ -74,50 +154,74 @@
         </div>
     </div>
 </div>
-<!-- Timesheet Entry Modal -->
+
+<!-- Modern Timesheet Entry Modal -->
 <div class="modal fade" id="timesheetModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header bg-gradient-admin text-white">
-                <h5 class="modal-title" id="modalTitle"><i class="bi bi-clock me-2"></i>Add Timesheet Entry</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content-modern">
+            <div class="modal-header-modern">
+                <h5 class="modal-title-modern" id="modalTitle">
+                    <i class="bi bi-clock me-2"></i>Add Timesheet Entry
+                </h5>
+                <button type="button" class="btn-close-modern" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="bi bi-x"></i>
+                </button>
             </div>
             <form id="timesheetForm">
                 @csrf
                 <input type="hidden" id="entryId" name="id" value="">
-                <div class="modal-body">
-                    <div id="formAlert" class="alert d-none"></div>
-                    <div class="mb-3">
-                        <label class="form-label">Date <span class="text-danger">*</span></label>
-                        <input type="date" name="date" id="entryDate" class="form-control" required>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Clock In <span class="text-danger">*</span></label>
-                                <input type="time" name="clock_in" id="clockIn" class="form-control" required>
-                            </div>
+                <div class="modal-body-modern">
+                    <div id="formAlert" class="alert-modern d-none"></div>
+                    
+                    <div class="form-grid-modern">
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-calendar me-1"></i>
+                                Date <span class="required-mark">*</span>
+                            </label>
+                            <input type="date" name="date" id="entryDate" class="form-input-modern" required>
                         </div>
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label class="form-label">Clock Out <span class="text-danger">*</span></label>
-                                <input type="time" name="clock_out" id="clockOut" class="form-control" required>
-                            </div>
+                        
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-clock me-1"></i>
+                                Clock In <span class="required-mark">*</span>
+                            </label>
+                            <input type="time" name="clock_in" id="clockIn" class="form-input-modern" required>
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-clock-fill me-1"></i>
+                                Clock Out <span class="required-mark">*</span>
+                            </label>
+                            <input type="time" name="clock_out" id="clockOut" class="form-input-modern" required>
+                        </div>
+                        
+                        <div class="form-group-modern">
+                            <label class="form-label-modern">
+                                <i class="bi bi-hourglass me-1"></i>
+                                Duration (Auto-calculated)
+                            </label>
+                            <input type="text" id="durationDisplay" class="form-input-modern" readonly placeholder="0.0 hours">
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Task Description <span class="text-danger">*</span></label>
-                        <textarea name="task_description" id="taskDescription" class="form-control" rows="3" placeholder="Describe what you worked on..." required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Duration (Auto-calculated)</label>
-                        <input type="text" id="durationDisplay" class="form-control" readonly placeholder="0.0 hours">
+                    
+                    <div class="form-group-modern">
+                        <label class="form-label-modern">
+                            <i class="bi bi-list-task me-1"></i>
+                            Task Description <span class="required-mark">*</span>
+                        </label>
+                        <textarea name="task_description" id="taskDescription" class="form-textarea-modern" rows="4" placeholder="Describe what you worked on today..." required></textarea>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary">
-                        <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+                <div class="modal-footer-modern">
+                    <button type="button" class="btn-cancel-modern" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-1"></i>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn-save-modern">
+                        <span class="spinner-modern d-none" role="status"></span>
                         <i class="bi bi-check2" id="submitIcon"></i>
                         <span id="submitText">Save Entry</span>
                     </button>
@@ -126,6 +230,7 @@
         </div>
     </div>
 </div>
+
 
 @endsection
 
@@ -178,7 +283,7 @@ function renderWeeklyCalendar() {
         const col = document.createElement('div');
         col.className = 'col';
         col.innerHTML = `
-            <div class="card shadow-sm h-100 h-30 ${isToday ? 'border-primary' : ''}" style="cursor: pointer;" onclick="openEntryModal('${isoDate}')">
+            <div class="card shadow-sm h-100 ${isToday ? 'border-primary' : ''}" style="cursor: pointer;" onclick="openEntryModal('${isoDate}')">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="fw-bold ${isToday ? 'text-primary' : ''}">${dayNames[i]}</span>
@@ -229,6 +334,7 @@ function loadTimesheetData() {
         if (data.success) {
             updateCalendarEntries(data.records || []);
             updateTimesheetTable(data.records || []);
+            updateStats(data.records || []);
         } else {
             console.error('Server returned error:', data.message);
             showNoDataMessage();
@@ -240,14 +346,48 @@ function loadTimesheetData() {
     });
 }
 
+function updateStats(records) {
+    const today = new Date().toISOString().split('T')[0];
+    const weekStart = new Date(currentWeekStart);
+    const monthStart = new Date();
+    monthStart.setDate(1);
+    
+    let todayHours = 0;
+    let weekHours = 0;
+    let monthHours = 0;
+    
+    records.forEach(record => {
+        const recordDate = new Date(record.date);
+        const hours = parseFloat(record.duration) || 0;
+        
+        if (record.date === today) {
+            todayHours += hours;
+        }
+        
+        if (recordDate >= weekStart && recordDate <= new Date(weekStart.getTime() + 6 * 24 * 60 * 60 * 1000)) {
+            weekHours += hours;
+        }
+        
+        if (recordDate >= monthStart) {
+            monthHours += hours;
+        }
+    });
+    
+    document.getElementById('todayHours').textContent = `${todayHours.toFixed(1)}h`;
+    document.getElementById('weekHours').textContent = `${weekHours.toFixed(1)}h`;
+    document.getElementById('monthHours').textContent = `${monthHours.toFixed(1)}h`;
+    document.getElementById('totalEntries').textContent = records.length;
+}
+
 function showNoDataMessage() {
     // Show empty state with helpful message
     const tbody = document.getElementById('timesheetTableBody');
     tbody.innerHTML = `
         <tr>
-            <td colspan="6" class="text-center py-4">
+            <td colspan="6" class="text-center py-5">
                 <div class="text-muted">
-                    <i class="bi bi-calendar-x mb-2" style="font-size: 2rem;"></i>
+                    <i class="bi bi-calendar-x mb-3" style="font-size: 3rem; opacity: 0.5;"></i>
+                    <h5 class="mb-2">No timesheet entries found</h5>
                     <p class="mb-1">No timesheet entries found for this week.</p>
                     <small>Click "Add New Entry" to create your first timesheet entry.</small>
                 </div>
@@ -265,6 +405,12 @@ function showNoDataMessage() {
             dayEl.innerHTML = '<div class="text-muted">No entries</div>';
         }
     }
+    
+    // Reset stats
+    document.getElementById('todayHours').textContent = '0h';
+    document.getElementById('weekHours').textContent = '0h';
+    document.getElementById('monthHours').textContent = '0h';
+    document.getElementById('totalEntries').textContent = '0';
 }
 
 function updateCalendarEntries(records) {
@@ -322,21 +468,45 @@ function updateTimesheetTable(records) {
         return;
     }
     
-    tbody.innerHTML = records.map(record => `
-        <tr>
-            <td class="fw-medium">${new Date(record.date).toLocaleDateString()}</td>
-            <td>${record.clock_in || '-'}</td>
-            <td>${record.clock_out || '-'}</td>
-            <td><span class="badge bg-primary">${record.duration || '0'}h</span></td>
-            <td class="text-truncate" style="max-width: 200px;" title="${record.task_description || ''}">
-                ${record.task_description || 'No description'}
-            </td>
-            <td class="text-center">
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="editEntry(${record.id}, '${record.date}', '${record.clock_in}', '${record.clock_out}', '${(record.task_description || '').replace(/'/g, "\\'")}')"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${record.id})"><i class="bi bi-trash"></i></button>
-            </td>
-        </tr>
-    `).join('');
+    tbody.innerHTML = records.map(record => {
+        // Calculate duration from clock_in and clock_out
+        let duration = '0.0h';
+        if (record.clock_in && record.clock_out) {
+            const start = new Date(`2000-01-01T${record.clock_in}:00`);
+            const end = new Date(`2000-01-01T${record.clock_out}:00`);
+            const diffMs = end - start;
+            
+            if (diffMs > 0) {
+                const hours = (diffMs / (1000 * 60 * 60)).toFixed(1);
+                duration = `${hours}h`;
+            }
+        } else if (record.duration) {
+            // Fallback to provided duration if available
+            duration = `${parseFloat(record.duration).toFixed(1)}h`;
+        }
+        
+        return `
+            <tr>
+                <td class="fw-medium">${new Date(record.date).toLocaleDateString()}</td>
+                <td class="text-center">${record.clock_in || '-'}</td>
+                <td class="text-center">${record.clock_out || '-'}</td>
+                <td class="text-center">
+                    <span class="badge bg-success">${duration}</span>
+                </td>
+                <td class="text-truncate" style="max-width: 200px;" title="${record.task_description || ''}">
+                    ${record.task_description || 'No description'}
+                </td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-primary me-1" onclick="editEntry(${record.id}, '${record.date}', '${record.clock_in}', '${record.clock_out}', '${(record.task_description || '').replace(/'/g, "\\'")}')" title="Edit Entry">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteEntry(${record.id})" title="Delete Entry">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    }).join('');
 }
 
 function openEntryModal(date = null) {
@@ -387,7 +557,7 @@ function handleFormSubmit(e) {
     
     const formData = new FormData(e.target);
     const submitBtn = e.target.querySelector('button[type="submit"]');
-    const spinner = submitBtn.querySelector('.spinner-border');
+    const spinner = submitBtn.querySelector('.spinner-modern');
     const alertEl = document.getElementById('formAlert');
     
     // Show loading state
@@ -419,14 +589,14 @@ function handleFormSubmit(e) {
             
             showToast('Timesheet entry saved successfully!', 'success');
         } else {
-            alertEl.className = 'alert alert-danger';
+            alertEl.className = 'alert-modern alert-danger';
             alertEl.textContent = data.message || 'Failed to save entry';
             alertEl.classList.remove('d-none');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alertEl.className = 'alert alert-danger';
+        alertEl.className = 'alert-modern alert-danger';
         alertEl.textContent = 'An error occurred while saving the entry';
         alertEl.classList.remove('d-none');
     })

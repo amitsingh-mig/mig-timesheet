@@ -203,14 +203,27 @@ class AttendanceController extends Controller
                 ], 200);
             }
 
-            // If already clocked in and not clocked out (active session)
+            // If already clocked in and not clocked out (active session), 
+            // automatically clock out the previous session and start a new one
             if ($latestAttendance->clock_in && !$latestAttendance->clock_out) {
+                // Clock out the previous session
+                $latestAttendance->clock_out = Carbon::now();
+                $latestAttendance->save();
+                
+                // Create new attendance record for new session
+                $attendance = Attendance::create([
+                    'user_id' => $user_id,
+                    'date' => $today,
+                    'clock_in' => Carbon::now(),
+                ]);
+
                 return response()->json([
-                    'success' => false,
-                    'message' => 'Already clocked in today at ' . $latestAttendance->clock_in->format('H:i:s'),
-                    'status' => 'already_clocked_in',
-                    'attendance' => $latestAttendance
-                ], 400);
+                    'success' => true,
+                    'message' => 'Previous session ended. New session started successfully',
+                    'status' => 'clocked_in',
+                    'time' => $attendance->clock_in->format('H:i:s'),
+                    'attendance' => $attendance
+                ], 200);
             }
 
             // If there's an attendance record without clock_in, update it
