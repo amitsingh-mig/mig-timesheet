@@ -4355,6 +4355,7 @@ h2 {
 .employee-card-header {
     padding: 24px 24px 0 24px;
     display: flex;
+    border-bottom: 1px solid #e2e8f0;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
