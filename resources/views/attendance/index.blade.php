@@ -145,6 +145,18 @@
                         </tbody>
                     </table>
         </div>
+        
+        <!-- Pagination Controls -->
+        <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light">
+            <div class="pagination-info">
+                <span id="paginationInfo" class="text-muted">Loading...</span>
+            </div>
+            <nav aria-label="Attendance pagination">
+                <ul class="pagination pagination-sm mb-0" id="paginationControls">
+                    <!-- Pagination buttons will be inserted here -->
+                </ul>
+            </nav>
+        </div>
     </div>
     
     <!-- Clock In/Out and Today's Summary Section -->
@@ -247,7 +259,7 @@
 @push('scripts')
 <script>
 let currentPage = 1;
-let recordsPerPage = 10;
+let recordsPerPage = 5;
 let sessionTimer;
 let sessionStartTime = null;
 
@@ -498,6 +510,11 @@ function loadAttendanceData() {
         if (data.success) {
             updateStatCards(data.statistics);
             updateAttendanceTable(data.records);
+            
+            // Update pagination info
+            if (data.pagination) {
+                updatePaginationControls(data.pagination);
+            }
         } else {
             console.error('Failed to load attendance data:', data.message);
             loadDemoData();
@@ -596,6 +613,90 @@ function updateAttendanceTable(records) {
             </tr>
         `;
     }).join('');
+}
+
+// Update pagination controls
+function updatePaginationControls(pagination) {
+    const paginationInfo = document.getElementById('paginationInfo');
+    const paginationControls = document.getElementById('paginationControls');
+    
+    // Update pagination info
+    if (paginationInfo) {
+        const from = (pagination.current_page - 1) * recordsPerPage + 1;
+        const to = Math.min(pagination.current_page * recordsPerPage, pagination.total);
+        paginationInfo.textContent = `Showing ${from} to ${to} of ${pagination.total} entries`;
+    }
+    
+    // Update pagination controls
+    if (paginationControls) {
+        let paginationHTML = '';
+        
+        // Previous button
+        if (pagination.current_page > 1) {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${pagination.current_page - 1}); return false;">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+            `;
+        } else {
+            paginationHTML += `
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="fas fa-chevron-left"></i>
+                    </span>
+                </li>
+            `;
+        }
+        
+        // Page numbers
+        const startPage = Math.max(1, pagination.current_page - 2);
+        const endPage = Math.min(pagination.total_pages, pagination.current_page + 2);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === pagination.current_page) {
+                paginationHTML += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>
+                `;
+            } else {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="changePage(${i}); return false;">${i}</a>
+                    </li>
+                `;
+            }
+        }
+        
+        // Next button
+        if (pagination.current_page < pagination.total_pages) {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="changePage(${pagination.current_page + 1}); return false;">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+            `;
+        } else {
+            paginationHTML += `
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="fas fa-chevron-right"></i>
+                    </span>
+                </li>
+            `;
+        }
+        
+        paginationControls.innerHTML = paginationHTML;
+    }
+}
+
+// Change page function
+function changePage(page) {
+    currentPage = page;
+    loadAttendanceData();
 }
 
 // Format hours display

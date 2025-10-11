@@ -11,6 +11,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
@@ -23,7 +25,7 @@
     <nav class="navbar navbar-fixed-mobile d-md-none">
         <div class="container-fluid">
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
-                <i class="bi bi-list text-white fs-4"></i>
+                <i class="fas fa-bars text-white fs-4"></i>
             </button>
             <span class="navbar-brand ms-1 text-white fw-bold">MIG-HRM</span>
         </div>
@@ -35,7 +37,7 @@
         <div class="d-none d-md-flex flex-column flex-shrink-0 text-white position-fixed sidebar" id="sidebar">
             <!-- Toggle Button -->
             {{-- <button type="button" class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Toggle sidebar" title="Toggle sidebar">
-                <i class="bi bi-chevron-left" id="toggle-icon"></i>
+                <i class="fas fa-chevron-left" id="toggle-icon"></i>
             </button> --}}
 
             <!-- Fixed Header Section -->
@@ -82,7 +84,7 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </button>
                     </form>
                     @elseif(Auth::check() && request()->is('profile/*'))
@@ -90,7 +92,7 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </button>
                     </form>
                     @endif
@@ -137,7 +139,7 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </button>
                     </form>
                     @elseif(Auth::check() && request()->is('profile/*'))
@@ -145,7 +147,7 @@
                     <form action="{{ route('logout') }}" method="POST">
                         @csrf
                         <button class="btn btn-outline-light w-100 btn-logout">
-                            <i class="bi bi-box-arrow-right me-2"></i>Logout
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
                         </button>
                     </form>
                     @endif

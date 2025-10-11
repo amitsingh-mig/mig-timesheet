@@ -105,6 +105,11 @@ class TimesheetController extends Controller
     public function storeOrUpdate(Request $request)
     {
         try {
+            \Log::info('Timesheet storeOrUpdate called', [
+                'user_id' => Auth::id(),
+                'request_data' => $request->all()
+            ]);
+
             $validated = $request->validate([
                 'date' => 'required|date',
                 'clock_in' => 'required|date_format:H:i',
@@ -127,6 +132,8 @@ class TimesheetController extends Controller
                 'hours' => $hoursFormatted
             ];
 
+            \Log::info('Prepared data for timesheet', $data);
+
             if ($request->filled('id')) {
                 // Update existing entry
                 $timesheet = Timesheet::where('id', $validated['id'])
@@ -135,6 +142,7 @@ class TimesheetController extends Controller
                     
                 $timesheet->update($data);
                 $message = 'Timesheet entry updated successfully';
+                \Log::info('Updated existing timesheet entry', ['id' => $timesheet->id]);
             } else {
                 // Check if entry already exists for this date
                 $existing = Timesheet::where('user_id', $user->id)
@@ -145,11 +153,13 @@ class TimesheetController extends Controller
                     // Update existing entry
                     $existing->update($data);
                     $message = 'Existing timesheet entry updated successfully';
+                    \Log::info('Updated existing timesheet entry for date', ['date' => $validated['date']]);
                 } else {
                     // Create new entry
                     $data['user_id'] = $user->id;
-                    Timesheet::create($data);
+                    $timesheet = Timesheet::create($data);
                     $message = 'New timesheet entry created successfully';
+                    \Log::info('Created new timesheet entry', ['id' => $timesheet->id]);
                 }
             }
 
@@ -166,7 +176,9 @@ class TimesheetController extends Controller
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            \Log::error('Timesheet save error: ' . $e->getMessage());
+            \Log::error('Timesheet save error: ' . $e->getMessage(), [
+                'stack_trace' => $e->getTraceAsString()
+            ]);
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to save timesheet entry: ' . $e->getMessage()
@@ -247,10 +259,23 @@ class TimesheetController extends Controller
      */
     private function calculateDuration($clockIn, $clockOut)
     {
-        $start = Carbon::createFromFormat('H:i', $clockIn);
-        $end = Carbon::createFromFormat('H:i', $clockOut);
+        try {
+            // Handle both HH:MM and HH:MM:SS formats
+            $start = Carbon::createFromFormat('H:i:s', $clockIn) ?? Carbon::createFromFormat('H:i', $clockIn);
+            $end = Carbon::createFromFormat('H:i:s', $clockOut) ?? Carbon::createFromFormat('H:i', $clockOut);
+            
+            if ($end->lessThan($start)) {
+                $end->addDay(); // Handle overnight work
+            }
         
         return $end->diffInMinutes($start) / 60;
+        } catch (\Exception $e) {
+            \Log::error('Duration calculation error: ' . $e->getMessage(), [
+                'clock_in' => $clockIn,
+                'clock_out' => $clockOut
+            ]);
+            return 0;
+        }
     }
 
     /**
@@ -274,10 +299,11 @@ class TimesheetController extends Controller
     private function calculateHoursFromTimes($startTime, $endTime)
     {
         if (!$startTime || !$endTime) {
-            return 8.0; // Default 8 hours
+            return 0.0; // Return 0 if no times provided
         }
         
         try {
+            // Handle both HH:MM and HH:MM:SS formats
             $start = Carbon::createFromFormat('H:i:s', $startTime) ?? Carbon::createFromFormat('H:i', $startTime);
             $end = Carbon::createFromFormat('H:i:s', $endTime) ?? Carbon::createFromFormat('H:i', $endTime);
             
@@ -287,7 +313,11 @@ class TimesheetController extends Controller
             
             return round($end->diffInMinutes($start) / 60, 2);
         } catch (\Exception $e) {
-            return 8.0; // Default fallback
+            \Log::error('Hours calculation error: ' . $e->getMessage(), [
+                'start_time' => $startTime,
+                'end_time' => $endTime
+            ]);
+            return 0.0; // Return 0 on error
         }
     }
 
@@ -347,186 +377,116 @@ class TimesheetController extends Controller
     public function summary(Request $request)
     {
         $user = $request->user();
-        $queryUserId = $request->query('user_id');
-        $forUserId = $queryUserId && $user->role && $user->role->name === 'admin' ? (int) $queryUserId : $user->id;
+        $startDate = $request->get('start_date');
+        $endDate = $request->get('end_date');
+        $page = $request->get('page', 1);
+        $perPage = $request->get('per_page', 10);
 
-        $today = Carbon::today();
-        $monthStart = $today->copy()->startOfMonth();
-        $monthEnd = $today->copy()->endOfMonth();
-        $weekStart = $today->copy()->startOfWeek();
-        $weekEnd = $today->copy()->endOfWeek();
-        $yearStart = $today->copy()->startOfYear();
-        $yearEnd = $today->copy()->endOfYear();
+        try {
+            \Log::info('TimesheetController summary called', [
+                'user_id' => $user->id,
+                'user_name' => $user->name,
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+                'page' => $page,
+                'per_page' => $perPage
+            ]);
 
-        // Get timesheet entries for different periods
-        $monthEntries = Timesheet::where('user_id', $forUserId)
-            ->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()])
-            ->orderBy('date', 'asc')
-            ->get(['date','hours', 'task']);
-
-        $weekEntries = Timesheet::where('user_id', $forUserId)
-            ->whereBetween('date', [$weekStart->toDateString(), $weekEnd->toDateString()])
-            ->get(['hours']);
+            $query = Timesheet::where('user_id', $user->id);
             
-        $todayEntries = Timesheet::where('user_id', $forUserId)
-            ->where('date', $today->toDateString())
-            ->get(['hours', 'task']);
-            
-        $yearEntries = Timesheet::where('user_id', $forUserId)
-            ->whereBetween('date', [$yearStart->toDateString(), $yearEnd->toDateString()])
-            ->get(['hours']);
-
-        // Check if this is a request for last 7 days (day range)
-        $range = $request->query('range', 'month');
-        
-        $labels = [];
-        $data = [];
-        
-        if ($range === 'day') {
-            // Build data for last 7 days
-            $sevenDaysAgo = $today->copy()->subDays(6); // 6 days ago + today = 7 days
-            $cursor = $sevenDaysAgo->copy();
-            
-            // Get entries for last 7 days
-            $weekEntries = Timesheet::where('user_id', $forUserId)
-                ->whereBetween('date', [$sevenDaysAgo->toDateString(), $today->toDateString()])
-                ->get(['date', 'hours']);
-                
-            while ($cursor->lte($today)) {
-                $labels[] = $cursor->format('Y-m-d');
-                $dayEntries = $weekEntries->where('date', $cursor->toDateString());
-                $minutes = $this->sumTimeInMinutes($dayEntries->pluck('hours')->all());
-                $data[] = round($minutes/60, 2);
-                $cursor->addDay();
+            if ($startDate && $endDate) {
+                $query->whereBetween('date', [$startDate, $endDate]);
+                \Log::info('Using provided date range', [
+                    'start_date' => $startDate,
+                    'end_date' => $endDate
+                ]);
+            } else {
+                // Default to current week if no dates provided
+                $now = now();
+                $weekStart = $now->copy()->startOfWeek();
+                $weekEnd = $now->copy()->endOfWeek();
+                $query->whereBetween('date', [$weekStart->format('Y-m-d'), $weekEnd->format('Y-m-d')]);
+                \Log::info('Using default week range', [
+                    'week_start' => $weekStart->format('Y-m-d'),
+                    'week_end' => $weekEnd->format('Y-m-d')
+                ]);
             }
-        } elseif ($range === 'week') {
-            // Build data for weeks in current month
-            $monthStart = $today->copy()->startOfMonth();
-            $monthEnd = $today->copy()->endOfMonth();
-            $weekEntries = Timesheet::where('user_id', $forUserId)
-                ->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()])
-                ->get(['date', 'hours']);
-                
-            // Group by week
-            $weekNum = 1;
-            $cursor = $monthStart->copy()->startOfWeek();
-            while ($cursor->lte($monthEnd)) {
-                $weekStart = $cursor->copy();
-                $weekEnd = $cursor->copy()->endOfWeek();
-                if ($weekEnd->greaterThan($monthEnd)) {
-                    $weekEnd = $monthEnd->copy();
+            
+
+            // Get paginated results
+            $paginatedRecords = $query->orderBy('date', 'desc')->paginate($perPage, ['*'], 'page', $page);
+            $records = $paginatedRecords->items();
+            
+            \Log::info('Timesheet records found', [
+                'count' => $paginatedRecords->total(),
+                'current_page' => $paginatedRecords->currentPage(),
+                'per_page' => $paginatedRecords->perPage(),
+                'last_page' => $paginatedRecords->lastPage()
+            ]);
+
+            $formattedRecords = collect($records)->map(function($record) {
+                // Calculate duration properly
+                $duration = 0;
+                if ($record->start_time && $record->end_time) {
+                    $duration = $this->calculateHoursFromTimes($record->start_time, $record->end_time);
+                } elseif ($record->hours_worked) {
+                    $duration = $record->hours_worked;
                 }
                 
-                $labels[] = "W{$weekNum}";
-                $weeklyEntries = $weekEntries->whereBetween('date', [$weekStart->toDateString(), $weekEnd->toDateString()]);
-                $minutes = $this->sumTimeInMinutes($weeklyEntries->pluck('hours')->all());
-                $data[] = round($minutes/60, 2);
+                // Handle date formatting safely
+                $dateFormatted = $record->date;
+                if ($dateFormatted instanceof \Carbon\Carbon) {
+                    $dateFormatted = $dateFormatted->format('Y-m-d');
+                } else if (is_string($dateFormatted) && strpos($dateFormatted, 'T') !== false) {
+                    $dateFormatted = \Carbon\Carbon::parse($dateFormatted)->format('Y-m-d');
+                }
                 
-                $cursor->addWeek();
-                $weekNum++;
-                
-                if ($weekNum > 5) break; // Max 5 weeks in a month
-            }
-        } elseif ($range === 'year') {
-            // Build data for months in current year
-            $yearStart = $today->copy()->startOfYear();
-            $yearEnd = $today->copy()->endOfYear();
-            $yearEntries = Timesheet::where('user_id', $forUserId)
-                ->whereBetween('date', [$yearStart->toDateString(), $yearEnd->toDateString()])
-                ->get(['date', 'hours']);
-            
-            for ($month = 1; $month <= 12; $month++) {
-                $monthStart = Carbon::create($today->year, $month, 1);
-                $monthEnd = $monthStart->copy()->endOfMonth();
-                
-                $labels[] = $monthStart->format('M');
-                $monthlyEntries = $yearEntries->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()]);
-                $minutes = $this->sumTimeInMinutes($monthlyEntries->pluck('hours')->all());
-                $data[] = round($minutes/60, 2);
-            }
-        } else {
-            // Build arrays for chart (by day for current month)
-            $cursor = $monthStart->copy();
-            
-            while ($cursor->lte($monthEnd)) {
-                $labels[] = $cursor->format('Y-m-d');
-                $dayEntries = $monthEntries->where('date', $cursor->toDateString());
-                $minutes = $this->sumTimeInMinutes($dayEntries->pluck('hours')->all());
-                $data[] = round($minutes/60, 2);
-                $cursor->addDay();
-            }
+                return [
+                    'id' => $record->id,
+                    'date' => $dateFormatted,
+                    'clock_in' => $record->start_time ?: '09:00',
+                    'clock_out' => $record->end_time ?: '17:00', 
+                    'duration' => $duration,
+                    'task_description' => $record->description ?: $record->task ?: 'No description',
+                    'tasks' => $record->description ?: $record->task ?: 'No description'
+                ];
+            });
+
+            \Log::info('Formatted records prepared', ['records' => $formattedRecords->toArray()]);
+
+            // Calculate stats for all user records (not just current page)
+            $stats = $this->calculateUserStats($user->id);
+
+            return response()->json([
+                'success' => true,
+                'records' => $formattedRecords,
+                'pagination' => [
+                    'current_page' => $paginatedRecords->currentPage(),
+                    'last_page' => $paginatedRecords->lastPage(),
+                    'per_page' => $paginatedRecords->perPage(),
+                    'total' => $paginatedRecords->total(),
+                    'from' => $paginatedRecords->firstItem(),
+                    'to' => $paginatedRecords->lastItem(),
+                    'has_more_pages' => $paginatedRecords->hasMorePages()
+                ],
+                'stats' => $stats,
+                'debug' => [
+                    'total_records' => $paginatedRecords->total(),
+                    'user_id' => $user->id,
+                    'date_range' => [$startDate, $endDate]
+                ]
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Timesheet summary error: ' . $e->getMessage(), [
+                'user_id' => $user->id ?? 'unknown',
+                'stack_trace' => $e->getTraceAsString()
+            ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load timesheet data: ' . $e->getMessage()
+            ], 500);
         }
-
-        // Calculate totals
-        $todayMinutes = $this->sumTimeInMinutes($todayEntries->pluck('hours')->all());
-        $weekMinutes = $this->sumTimeInMinutes($weekEntries->pluck('hours')->all());
-        $monthMinutes = $this->sumTimeInMinutes($monthEntries->pluck('hours')->all());
-        $yearMinutes = $this->sumTimeInMinutes($yearEntries->pluck('hours')->all());
-
-        // Check for missing data and provide appropriate messages
-        $hasTimesheetData = $monthEntries->count() > 0;
-        $hasAttendanceData = $monthEntries->count() > 0; // Using timesheet as proxy for attendance
-        $todayTasksCount = $todayEntries->count();
-        
-        // Get attendance data (using timesheet entries as proxy)
-        $attendanceDays = $monthEntries->map(function($entry) {
-            return $entry->date;
-        })->unique()->values();
-
-        // Calculate appropriate total based on range
-        $rangeTotal = 0;
-        if ($range === 'day') {
-            // For day view, total should be sum of last 7 days
-            $sevenDaysAgo = $today->copy()->subDays(6);
-            $dayRangeEntries = Timesheet::where('user_id', $forUserId)
-                ->whereBetween('date', [$sevenDaysAgo->toDateString(), $today->toDateString()])
-                ->get(['hours']);
-            $rangeTotal = $this->sumTimeInMinutes($dayRangeEntries->pluck('hours')->all());
-        } elseif ($range === 'week') {
-            // For week view, total should be current month total
-            $rangeTotal = $monthMinutes;
-        } elseif ($range === 'year') {
-            // For year view, total should be current year total
-            $rangeTotal = $yearMinutes;
-        } else {
-            // For month view, total should be current month total
-            $rangeTotal = $monthMinutes;
-        }
-
-        // Build response with proper error handling
-        $response = [
-            'success' => true,
-            'labels' => $labels,
-            'data' => $data,
-            'range_total_minutes' => $rangeTotal, // Add range-specific total
-            'totals' => [
-                'daily' => $this->minutesToHhMm($todayMinutes),
-                'weekly' => $this->minutesToHhMm($weekMinutes),
-                'monthly' => $this->minutesToHhMm($monthMinutes),
-                'yearly' => $this->minutesToHhMm($yearMinutes),
-            ],
-            'today' => [
-                'done_hours' => round($todayMinutes/60, 2),
-                'target_hours' => 8,
-                'tasks_count' => $todayTasksCount,
-                'progress_percent' => min(100, round(($todayMinutes/60 / 8) * 100, 1))
-            ],
-            'attendance' => $attendanceDays,
-            'data_status' => [
-                'has_timesheet_data' => $hasTimesheetData,
-                'has_attendance_data' => $hasAttendanceData,
-                'timesheet_message' => $hasTimesheetData ? null : 'No tasks recorded for this period.',
-                'attendance_message' => $hasAttendanceData ? null : 'No attendance data available.',
-            ],
-            'summary' => [
-                'total_work_days' => $attendanceDays->count(),
-                'avg_hours_per_day' => $attendanceDays->count() > 0 ? round($monthMinutes / 60 / $attendanceDays->count(), 1) : 0,
-                'most_productive_day' => $this->getMostProductiveDay($monthEntries),
-                'tasks_completed_today' => $todayTasksCount,
-            ],
-        ];
-
-        return response()->json($response);
     }
 
     private function parseHhMmToMinutes(string $hhmm): int
@@ -773,6 +733,61 @@ class TimesheetController extends Controller
                 return (int)$hours + ((int)$minutes / 60);
             })
         ]);
+    }
+
+    private function calculateUserStats($userId)
+    {
+        $now = now();
+        $today = $now->format('Y-m-d');
+        $weekStart = $now->copy()->startOfWeek()->format('Y-m-d');
+        $weekEnd = $now->copy()->endOfWeek()->format('Y-m-d');
+        $monthStart = $now->copy()->startOfMonth()->format('Y-m-d');
+        $monthEnd = $now->copy()->endOfMonth()->format('Y-m-d');
+
+        // Get all timesheets for the user
+        $allTimesheets = Timesheet::where('user_id', $userId)->get();
+
+        $todayHours = 0;
+        $weekHours = 0;
+        $monthHours = 0;
+        $totalEntries = $allTimesheets->count();
+
+        foreach ($allTimesheets as $timesheet) {
+            $recordDate = $timesheet->date;
+            if ($recordDate instanceof \Carbon\Carbon) {
+                $recordDate = $recordDate->format('Y-m-d');
+            }
+
+            // Calculate duration for this record
+            $duration = 0;
+            if ($timesheet->start_time && $timesheet->end_time) {
+                $duration = $this->calculateHoursFromTimes($timesheet->start_time, $timesheet->end_time);
+            } elseif ($timesheet->hours_worked) {
+                $duration = $timesheet->hours_worked;
+            }
+
+            // Add to today's hours
+            if ($recordDate === $today) {
+                $todayHours += $duration;
+            }
+
+            // Add to week's hours
+            if ($recordDate >= $weekStart && $recordDate <= $weekEnd) {
+                $weekHours += $duration;
+            }
+
+            // Add to month's hours
+            if ($recordDate >= $monthStart && $recordDate <= $monthEnd) {
+                $monthHours += $duration;
+            }
+        }
+
+        return [
+            'today_hours' => round($todayHours, 1),
+            'week_hours' => round($weekHours, 1),
+            'month_hours' => round($monthHours, 1),
+            'total_entries' => $totalEntries
+        ];
     }
 }
 

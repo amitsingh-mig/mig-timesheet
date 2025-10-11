@@ -71,7 +71,7 @@ Route::middleware(['auth'])->group(function () {
     // --- 3. TIMESHEET (Employee CRUD & Summary) ---
     Route::prefix('timesheet')->group(function () {
         Route::get('/', [TimesheetController::class, 'index'])->name('timesheet.index');
-        Route::get('/summary', [TimesheetController::class, 'getSummaryData'])->name('timesheet.summary');
+        Route::get('/summary', [TimesheetController::class, 'summary'])->name('timesheet.summary');
         Route::get('/export', [TimesheetController::class, 'export'])->name('timesheet.export');
         Route::get('/load-more', [TimesheetController::class, 'loadMore'])->name('timesheet.loadMore');
         Route::get('/day-tasks', [TimesheetController::class, 'dayTasks'])->name('timesheet.dayTasks');
@@ -93,8 +93,8 @@ Route::middleware(['auth'])->group(function () {
     // --- 5. PROFILE & SELF-MANAGEMENT ---
     Route::prefix('profile')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('profile');
-        Route::get('/{id}', [ProfileController::class, 'index'])->name('profile.show');
         Route::get('/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::get('/{id}', [ProfileController::class, 'index'])->name('profile.show')->where('id', '[0-9]+');
         Route::patch('/', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
         Route::delete('/photo', [ProfileController::class, 'deletePhoto'])->name('profile.photo.delete');
@@ -118,6 +118,8 @@ Route::middleware(['auth'])->group(function () {
 
     // Debug routes removed for security - only enable in development environment
 });
+
+// Debug route removed - no longer needed
 
 /*
 |--------------------------------------------------------------------------

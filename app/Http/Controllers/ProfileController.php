@@ -20,10 +20,15 @@ class ProfileController extends Controller
     /**
      * Display the user's profile view.
      */
-    public function index(Request $request, $id = null): View
+    public function index(Request $request, $id = null): View|RedirectResponse
     {
         // If ID is provided, get that user, otherwise get current user
         if ($id) {
+            // Only accept numeric IDs, reject strings like 'edit'
+            if (!is_numeric($id)) {
+                abort(404);
+            }
+            
             $user = User::with('role')->find($id);
             if (!$user) {
                 return redirect()->back()->with('error', 'User not found');

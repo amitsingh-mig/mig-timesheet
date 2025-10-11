@@ -132,6 +132,18 @@
                     </tbody>
                 </table>
             </div>
+            
+            <!-- Pagination Controls -->
+            <div class="d-flex justify-content-between align-items-center p-3 border-top bg-light">
+                <div class="pagination-info">
+                    <span id="paginationInfo" class="text-muted">Loading...</span>
+                </div>
+                <nav aria-label="Timesheet pagination">
+                    <ul class="pagination pagination-sm mb-0" id="paginationControls">
+                        <!-- Pagination buttons will be inserted here -->
+                    </ul>
+                </nav>
+            </div>
         </div>
     </div>
 </div>
@@ -139,71 +151,74 @@
 <!-- Modern Timesheet Entry Modal -->
 <div class="modal fade" id="timesheetModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="employee-modal-content">
-            <div class="employee-modal-header">
-                <h5 class="employee-modal-title" id="modalTitle">
-                    <i class="bi bi-clock"></i>Add Timesheet Entry
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-primary text-white border-0">
+                <h5 class="modal-title d-flex align-items-center" id="modalTitle">
+                    <i class="bi bi-clock me-2"></i>
+                    Add Timesheet Entry
                 </h5>
-                <button type="button" class="employee-btn-close" data-bs-dismiss="modal" aria-label="Close">
-                    <i class="bi bi-x"></i>
-                </button>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="timesheetForm" method="POST" action="{{ route('timesheet.storeOrUpdate') }}">
                 @csrf
                 <input type="hidden" id="entryId" name="id" value="">
-                <div class="employee-modal-body">
-                    <div id="formAlert" class="alert-modern d-none"></div>
+                <div class="modal-body p-4">
+                    <div id="formAlert" class="alert alert-danger d-none" role="alert"></div>
                     
-                    <div class="form-grid-modern">
-                        <div class="form-group-modern">
-                            <label class="form-label-modern">
-                                <i class="bi bi-calendar me-1"></i>
-                                Date <span class="required-mark">*</span>
+                    <!-- Date and Time Row -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="entryDate" class="form-label fw-semibold">
+                                <i class="bi bi-calendar3 me-1 text-primary"></i>
+                                Date <span class="text-danger">*</span>
                             </label>
-                            <input type="date" name="date" id="entryDate" class="form-input-modern" required>
+                            <input type="date" name="date" id="entryDate" class="form-control form-control-lg" required>
                         </div>
-                        
-                        <div class="form-group-modern">
-                            <label class="form-label-modern">
-                                <i class="bi bi-clock me-1"></i>
-                                Clock In <span class="required-mark">*</span>
+                        <div class="col-md-3">
+                            <label for="clockIn" class="form-label fw-semibold">
+                                <i class="bi bi-clock me-1 text-success"></i>
+                                Clock In <span class="text-danger">*</span>
                             </label>
-                            <input type="time" name="clock_in" id="clockIn" class="form-input-modern" required>
+                            <input type="time" name="clock_in" id="clockIn" class="form-control form-control-lg" required>
                         </div>
-                        
-                        <div class="form-group-modern">
-                            <label class="form-label-modern">
-                                <i class="bi bi-clock-fill me-1"></i>
-                                Clock Out <span class="required-mark">*</span>
+                        <div class="col-md-3">
+                            <label for="clockOut" class="form-label fw-semibold">
+                                <i class="bi bi-clock-fill me-1 text-danger"></i>
+                                Clock Out <span class="text-danger">*</span>
                             </label>
-                            <input type="time" name="clock_out" id="clockOut" class="form-input-modern" required>
+                            <input type="time" name="clock_out" id="clockOut" class="form-control form-control-lg" required>
                         </div>
-                        
-                        <div class="form-group-modern">
-                            <label class="form-label-modern">
-                                <i class="bi bi-hourglass me-1"></i>
+                    </div>
+                    
+                    <!-- Duration Display -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label for="durationDisplay" class="form-label fw-semibold">
+                                <i class="bi bi-hourglass-split me-1 text-info"></i>
                                 Duration (Auto-calculated)
                             </label>
-                            <input type="text" id="durationDisplay" class="form-input-modern" readonly placeholder="0.0 hours">
+                            <input type="text" id="durationDisplay" class="form-control form-control-lg bg-light" readonly placeholder="0.0 hours">
                         </div>
                     </div>
                     
-                    <div class="form-group-modern">
-                        <label class="form-label-modern">
-                            <i class="bi bi-list-task me-1"></i>
-                            Task Description <span class="required-mark">*</span>
+                    <!-- Task Description -->
+                    <div class="mb-4">
+                        <label for="taskDescription" class="form-label fw-semibold">
+                            <i class="bi bi-list-task me-1 text-warning"></i>
+                            Task Description <span class="text-danger">*</span>
                         </label>
-                        <textarea name="task_description" id="taskDescription" class="form-textarea-modern" rows="4" placeholder="Describe what you worked on today..." required></textarea>
+                        <textarea name="task_description" id="taskDescription" class="form-control" rows="4" placeholder="Describe what you worked on today..." required></textarea>
+                        <div class="form-text">Provide a detailed description of the tasks you completed during this time period.</div>
                     </div>
                 </div>
-                <div class="employee-modal-footer">
-                    <button type="button" class="btn-employee-secondary" data-bs-dismiss="modal">
-                        <i class="bi bi-x-circle me-1"></i>
+                <div class="modal-footer border-0 p-4 bg-light">
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle me-2"></i>
                         Cancel
                     </button>
-                    <button type="submit" class="btn-employee-primary">
-                        <span class="employee-spinner d-none" role="status"></span>
-                        <i class="bi bi-check2" id="submitIcon"></i>
+                    <button type="submit" class="btn btn-primary btn-lg px-4">
+                        <span class="spinner-border spinner-border-sm d-none me-2" role="status" aria-hidden="true"></span>
+                        <i class="bi bi-check2-circle me-2" id="submitIcon"></i>
                         <span id="submitText">Save Entry</span>
                     </button>
                 </div>
@@ -215,10 +230,163 @@
 
 @endsection
 
+@push('styles')
+<style>
+/* Custom Timesheet Form Styles */
+.modal-content {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    padding: 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.form-label {
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.form-control-lg {
+    padding: 1rem 1.25rem;
+    font-size: 1rem;
+}
+
+.bg-light {
+    background-color: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
+.modal-footer {
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+}
+
+.btn-lg {
+    padding: 0.75rem 2rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-outline-secondary {
+    border: 2px solid #d1d5db;
+    color: #6b7280;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f3f4f6;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+    padding: 1rem 1.25rem;
+}
+
+.form-text {
+    color: #6b7280;
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+}
+
+/* Icon colors */
+.text-primary { color: #667eea !important; }
+.text-success { color: #10b981 !important; }
+.text-danger { color: #ef4444 !important; }
+.text-info { color: #06b6d4 !important; }
+.text-warning { color: #f59e0b !important; }
+
+/* Animation for form elements */
+.form-control:focus {
+    transform: translateY(-1px);
+}
+
+/* Spinner styling */
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+/* Pagination styling */
+.pagination {
+    margin-bottom: 0;
+}
+
+.pagination .page-link {
+    color: #667eea;
+    border: 1px solid #e5e7eb;
+    padding: 0.5rem 0.75rem;
+    margin: 0 2px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+    transform: translateY(-1px);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
+.pagination .page-item.disabled .page-link {
+    color: #9ca3af;
+    background-color: #f9fafb;
+    border-color: #e5e7eb;
+}
+
+.pagination-info {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
 let currentWeekStart = new Date();
-currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1); // Monday as start
+// Set to Monday of current week (Laravel's startOfWeek uses Monday)
+currentWeekStart.setDate(currentWeekStart.getDate() - currentWeekStart.getDay() + 1);
+console.log('Initial week start:', currentWeekStart);
+let currentPage = 1;
+let totalPages = 1;
+let totalRecords = 0;
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
@@ -334,16 +502,33 @@ function navigateWeek(direction) {
     loadTimesheetData();
 }
 
-function loadTimesheetData() {
+function loadTimesheetData(page = 1) {
     const start = new Date(currentWeekStart);
     const end = new Date(currentWeekStart);
     end.setDate(start.getDate() + 6);
     const startStr = start.toISOString().split('T')[0];
     const endStr = end.toISOString().split('T')[0];
 
-    console.log('Loading timesheet data for range:', startStr, 'to', endStr);
+    console.log('Loading timesheet data for range:', startStr, 'to', endStr, 'page:', page);
+    console.log('Current week start:', currentWeekStart);
+    console.log('API URL:', `{{ route('timesheet.summary') }}?start_date=${startStr}&end_date=${endStr}&page=${page}&per_page=10`);
 
-    fetch(`{{ route('timesheet.summary') }}?start_date=${startStr}&end_date=${endStr}`, {
+    // Show loading state
+    const tbody = document.getElementById('timesheetTableBody');
+    if (tbody) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="6" class="text-center py-5">
+                    <div class="employee-loading">
+                        <div class="employee-spinner"></div>
+                        <p>Loading timesheet data...</p>
+                    </div>
+                </td>
+            </tr>
+        `;
+    }
+
+    fetch(`{{ route('timesheet.summary') }}?start_date=${startStr}&end_date=${endStr}&page=${page}&per_page=10`, {
         method: 'GET',
         headers: { 
             'Accept': 'application/json',
@@ -353,6 +538,7 @@ function loadTimesheetData() {
     })
     .then(response => {
         console.log('Response status:', response.status);
+        console.log('Response headers:', response.headers);
         if (!response.ok) {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
@@ -363,7 +549,22 @@ function loadTimesheetData() {
         if (data.success) {
             updateCalendarEntries(data.records || []);
             updateTimesheetTable(data.records || []);
-            updateStats(data.records || []);
+            
+            // Update stats from backend data
+            if (data.stats) {
+                updateStatsFromBackend(data.stats);
+            } else {
+                // Fallback to calculating from current page records
+                updateStats(data.records || []);
+            }
+            
+            // Update pagination info
+            if (data.pagination) {
+                currentPage = data.pagination.current_page;
+                totalPages = data.pagination.last_page;
+                totalRecords = data.pagination.total;
+                updatePaginationControls(data.pagination);
+            }
         } else {
             console.error('Server returned error:', data.message);
             showNoDataMessage();
@@ -371,8 +572,33 @@ function loadTimesheetData() {
     })
     .catch(error => {
         console.error('Error loading timesheet data:', error);
-        showNoDataMessage();
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
+        
+        // Show error message instead of no data message
+        const tbody = document.getElementById('timesheetTableBody');
+        if (tbody) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <div class="text-danger">
+                            <i class="bi bi-exclamation-triangle mb-3" style="font-size: 3rem; opacity: 0.5;"></i>
+                            <h5 class="mb-2">Error loading timesheet data</h5>
+                            <p class="mb-1">${error.message}</p>
+                            <small>Please check the browser console for more details.</small>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
     });
+}
+
+function updateStatsFromBackend(stats) {
+    document.getElementById('todayHours').textContent = `${stats.today_hours}h`;
+    document.getElementById('weekHours').textContent = `${stats.week_hours}h`;
+    document.getElementById('monthHours').textContent = `${stats.month_hours}h`;
+    document.getElementById('totalEntries').textContent = stats.total_entries;
 }
 
 function updateStats(records) {
@@ -423,6 +649,12 @@ function showNoDataMessage() {
             </td>
         </tr>
     `;
+    
+    // Hide pagination controls
+    const paginationInfo = document.getElementById('paginationInfo');
+    const paginationControls = document.getElementById('paginationControls');
+    if (paginationInfo) paginationInfo.textContent = 'No entries found';
+    if (paginationControls) paginationControls.innerHTML = '';
     
     // Clear calendar entries
     for (let i = 0; i < 7; i++) {
@@ -500,18 +732,31 @@ function updateTimesheetTable(records) {
     tbody.innerHTML = records.map(record => {
         // Calculate duration from clock_in and clock_out
         let duration = '0.0h';
+        
+        console.log('Processing record:', record);
+        
         if (record.clock_in && record.clock_out) {
-            const start = new Date(`2000-01-01T${record.clock_in}:00`);
-            const end = new Date(`2000-01-01T${record.clock_out}:00`);
+            // Handle both HH:MM and HH:MM:SS formats
+            const startTime = record.clock_in.includes(':') ? record.clock_in : record.clock_in + ':00';
+            const endTime = record.clock_out.includes(':') ? record.clock_out : record.clock_out + ':00';
+            
+            console.log('Times:', { startTime, endTime });
+            
+            const start = new Date(`2000-01-01T${startTime}`);
+            const end = new Date(`2000-01-01T${endTime}`);
             const diffMs = end - start;
+            
+            console.log('Date calculation:', { start, end, diffMs });
             
             if (diffMs > 0) {
                 const hours = (diffMs / (1000 * 60 * 60)).toFixed(1);
                 duration = `${hours}h`;
+                console.log('Calculated duration:', duration);
             }
         } else if (record.duration) {
             // Fallback to provided duration if available
             duration = `${parseFloat(record.duration).toFixed(1)}h`;
+            console.log('Using provided duration:', duration);
         }
         
         return `
@@ -554,7 +799,7 @@ function editEntry(id, date, clockIn, clockOut, taskDescription) {
     document.getElementById('clockIn').value = clockIn;
     document.getElementById('clockOut').value = clockOut;
     document.getElementById('taskDescription').value = taskDescription;
-    document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil me-2"></i>Edit Timesheet Entry';
+    document.getElementById('modalTitle').innerHTML = '<i class="bi bi-pencil-square me-2"></i>Edit Timesheet Entry';
     document.getElementById('submitText').textContent = 'Update Entry';
     calculateDuration();
     new bootstrap.Modal(document.getElementById('timesheetModal')).show();
@@ -566,8 +811,12 @@ function calculateDuration() {
     const durationDisplay = document.getElementById('durationDisplay');
     
     if (clockIn && clockOut) {
-        const start = new Date(`2000-01-01T${clockIn}:00`);
-        const end = new Date(`2000-01-01T${clockOut}:00`);
+        // Handle time format properly
+        const startTime = clockIn.includes(':') ? clockIn : clockIn + ':00';
+        const endTime = clockOut.includes(':') ? clockOut : clockOut + ':00';
+        
+        const start = new Date(`2000-01-01T${startTime}`);
+        const end = new Date(`2000-01-01T${endTime}`);
         const diffMs = end - start;
         
         if (diffMs > 0) {
@@ -586,7 +835,8 @@ function handleFormSubmit(e) {
     
     const formData = new FormData(e.target);
     const submitBtn = e.target.querySelector('button[type="submit"]');
-    const spinner = submitBtn.querySelector('.employee-spinner');
+    const spinner = submitBtn.querySelector('.spinner-border');
+    const submitIcon = submitBtn.querySelector('#submitIcon');
     const alertEl = document.getElementById('formAlert');
     
     // Basic validation
@@ -595,9 +845,19 @@ function handleFormSubmit(e) {
     const clockOut = formData.get('clock_out');
     const taskDescription = formData.get('task_description');
     
+    console.log('Form validation check:', { date, clockIn, clockOut, taskDescription });
+    
     if (!date || !clockIn || !clockOut || !taskDescription) {
-        alertEl.className = 'alert-modern alert-danger';
+        alertEl.className = 'alert alert-danger';
         alertEl.textContent = 'Please fill in all required fields';
+        alertEl.classList.remove('d-none');
+        return;
+    }
+    
+    // Additional validation: check if clock out is after clock in
+    if (clockIn >= clockOut) {
+        alertEl.className = 'alert alert-danger';
+        alertEl.textContent = 'Clock out time must be after clock in time';
         alertEl.classList.remove('d-none');
         return;
     }
@@ -611,6 +871,7 @@ function handleFormSubmit(e) {
     // Show loading state
     submitBtn.disabled = true;
     spinner.classList.remove('d-none');
+    submitIcon.classList.add('d-none');
     alertEl.classList.add('d-none');
     
     const url = '{{ route("timesheet.storeOrUpdate") }}';
@@ -635,7 +896,7 @@ function handleFormSubmit(e) {
         if (data.success) {
             // Close modal and refresh data
             bootstrap.Modal.getInstance(document.getElementById('timesheetModal')).hide();
-            loadTimesheetData();
+            loadTimesheetData(1); // Reset to page 1 after adding new entry
             
             // Trigger dashboard refresh
             if (window.refreshDashboard) {
@@ -644,20 +905,21 @@ function handleFormSubmit(e) {
             
             showToast('Timesheet entry saved successfully!', 'success');
         } else {
-            alertEl.className = 'alert-modern alert-danger';
+            alertEl.className = 'alert alert-danger';
             alertEl.textContent = data.message || 'Failed to save entry';
             alertEl.classList.remove('d-none');
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alertEl.className = 'alert-modern alert-danger';
+        alertEl.className = 'alert alert-danger';
         alertEl.textContent = 'An error occurred while saving the entry: ' + error.message;
         alertEl.classList.remove('d-none');
     })
     .finally(() => {
         submitBtn.disabled = false;
         spinner.classList.add('d-none');
+        submitIcon.classList.remove('d-none');
     });
 }
 
@@ -674,7 +936,7 @@ function deleteEntry(id) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            loadTimesheetData();
+            loadTimesheetData(currentPage); // Stay on current page after deletion
             if (window.refreshDashboard) {
                 window.refreshDashboard();
             }
@@ -690,11 +952,36 @@ function deleteEntry(id) {
 }
 
 function resetForm() {
-    document.getElementById('timesheetForm').reset();
-    document.getElementById('entryId').value = '';
-    document.getElementById('durationDisplay').value = '';
-    document.getElementById('formAlert').classList.add('d-none');
-    document.getElementById('entryDate').value = new Date().toISOString().split('T')[0];
+    const form = document.getElementById('timesheetForm');
+    if (form) {
+        form.reset();
+    }
+    
+    // Clear hidden fields
+    const entryId = document.getElementById('entryId');
+    if (entryId) {
+        entryId.value = '';
+    }
+    
+    // Clear duration display
+    const durationDisplay = document.getElementById('durationDisplay');
+    if (durationDisplay) {
+        durationDisplay.value = '';
+    }
+    
+    // Hide any alerts
+    const formAlert = document.getElementById('formAlert');
+    if (formAlert) {
+        formAlert.classList.add('d-none');
+    }
+    
+    // Set default date to today
+    const entryDate = document.getElementById('entryDate');
+    if (entryDate) {
+        entryDate.value = new Date().toISOString().split('T')[0];
+    }
+    
+    console.log('Form reset completed');
 }
 
 function exportTimesheet() {
@@ -731,6 +1018,84 @@ function testForm() {
         }
     } else {
         console.error('Modal NOT found!');
+    }
+}
+
+function updatePaginationControls(pagination) {
+    const paginationInfo = document.getElementById('paginationInfo');
+    const paginationControls = document.getElementById('paginationControls');
+    
+    // Update pagination info
+    if (paginationInfo) {
+        const from = pagination.from || 0;
+        const to = pagination.to || 0;
+        const total = pagination.total || 0;
+        paginationInfo.textContent = `Showing ${from} to ${to} of ${total} entries`;
+    }
+    
+    // Update pagination controls
+    if (paginationControls) {
+        let paginationHTML = '';
+        
+        // Previous button
+        if (pagination.current_page > 1) {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="loadTimesheetData(${pagination.current_page - 1}); return false;">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            `;
+        } else {
+            paginationHTML += `
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="bi bi-chevron-left"></i>
+                    </span>
+                </li>
+            `;
+        }
+        
+        // Page numbers
+        const startPage = Math.max(1, pagination.current_page - 2);
+        const endPage = Math.min(pagination.last_page, pagination.current_page + 2);
+        
+        for (let i = startPage; i <= endPage; i++) {
+            if (i === pagination.current_page) {
+                paginationHTML += `
+                    <li class="page-item active">
+                        <span class="page-link">${i}</span>
+                    </li>
+                `;
+            } else {
+                paginationHTML += `
+                    <li class="page-item">
+                        <a class="page-link" href="#" onclick="loadTimesheetData(${i}); return false;">${i}</a>
+                    </li>
+                `;
+            }
+        }
+        
+        // Next button
+        if (pagination.has_more_pages) {
+            paginationHTML += `
+                <li class="page-item">
+                    <a class="page-link" href="#" onclick="loadTimesheetData(${pagination.current_page + 1}); return false;">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            `;
+        } else {
+            paginationHTML += `
+                <li class="page-item disabled">
+                    <span class="page-link">
+                        <i class="bi bi-chevron-right"></i>
+                    </span>
+                </li>
+            `;
+        }
+        
+        paginationControls.innerHTML = paginationHTML;
     }
 }
 
