@@ -77,6 +77,13 @@ class UserController extends Controller
                     $query->whereNull('email_verified_at');
                 }
             }
+            
+            // For the employee time view, we want to show all users (including those without roles)
+            // But for the admin users page, we might want to filter differently
+            if (!$request->get('include_all')) {
+                // Only include users with roles by default
+                $query->whereNotNull('role_id');
+            }
 
             $page = $request->get('page', 1);
             $perPage = 10;
@@ -754,24 +761,37 @@ class UserController extends Controller
         }
 
         try {
-            $timeLog = \App\Models\Timesheet::with('user')
-                ->findOrFail($id);
+            $user = User::with('role')->findOrFail($id);
+            
+            // Calculate hours for different periods
+            $now = now();
+            $todayHours = $this->getHoursForPeriod($id, $now->copy()->startOfDay(), $now->copy()->endOfDay());
+            $weekHours = $this->getHoursForPeriod($id, $now->copy()->startOfWeek(), $now->copy()->endOfWeek());
+            $monthHours = $this->getHoursForPeriod($id, $now->copy()->startOfMonth(), $now->copy()->endOfMonth());
+            $yearHours = $this->getHoursForPeriod($id, $now->copy()->startOfYear(), $now->copy()->endOfYear());
+
+            // Get recent activity (last 5 timesheet entries)
+            $recentActivity = \App\Models\Timesheet::where('user_id', $id)
+                ->orderBy('date', 'desc')
+                ->limit(5)
+                ->get()
+                ->map(function($timesheet) {
+                    return [
+                        'date' => $timesheet->date,
+                        'hours' => $timesheet->hours_worked ?? 0,
+                        'description' => $timesheet->task ?? $timesheet->description ?? 'No description'
+                    ];
+                });
 
             $details = [
-                'id' => $timeLog->id,
-                'employee_name' => $timeLog->user->name,
-                'employee_email' => $timeLog->user->email,
-                'date' => $timeLog->date,
-                'clock_in' => $timeLog->start_time ? \Carbon\Carbon::parse($timeLog->start_time)->format('H:i A') : null,
-                'clock_out' => $timeLog->end_time ? \Carbon\Carbon::parse($timeLog->end_time)->format('H:i A') : null,
-                'total_hours' => $timeLog->hours_worked ?? 0,
-                'tasks' => [
-                    [
-                        'title' => 'Daily tasks completed',
-                        'description' => $timeLog->description ?? 'No description available',
-                        'completed_at' => $timeLog->updated_at ? $timeLog->updated_at->format('H:i A') : 'N/A'
-                    ]
-                ]
+                'employee_name' => $user->name,
+                'employee_email' => $user->email,
+                'department' => $user->department ?? 'General',
+                'today_hours' => round($todayHours, 1),
+                'week_hours' => round($weekHours, 1),
+                'month_hours' => round($monthHours, 1),
+                'year_hours' => round($yearHours, 1),
+                'recent_activity' => $recentActivity
             ];
 
             return response()->json([
@@ -780,11 +800,162 @@ class UserController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error getting employee time details: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to load time details: ' . $e->getMessage()
+                'message' => 'Failed to load employee details: ' . $e->getMessage()
             ]);
         }
+    }
+
+    /**
+     * Debug endpoint to check timesheet data
+     */
+    public function debugTimesheetData(Request $request)
+    {
+        if (!Auth::user() || !Auth::user()->role || Auth::user()->role->name !== 'admin') {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+
+        $employeeId = $request->get('employee_id', 1); // Default to first employee
+        
+        // Get all timesheets for this employee
+        $timesheets = \App\Models\Timesheet::where('user_id', $employeeId)->get();
+        
+        // Get user info
+        $user = User::find($employeeId);
+        
+        return response()->json([
+            'employee' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email
+            ] : null,
+            'timesheets_count' => $timesheets->count(),
+            'timesheets' => $timesheets->map(function($t) {
+                return [
+                    'id' => $t->id,
+                    'date' => $t->date,
+                    'hours_worked' => $t->hours_worked,
+                    'hours' => $t->hours,
+                    'start_time' => $t->start_time,
+                    'end_time' => $t->end_time,
+                    'task' => $t->task,
+                    'description' => $t->description
+                ];
+            }),
+            'total_timesheets' => \App\Models\Timesheet::count(),
+            'all_employees' => User::whereHas('role', function($q) {
+                $q->where('name', '!=', 'admin');
+            })->get(['id', 'name', 'email'])
+        ]);
+    }
+
+    /**
+     * Debug endpoint to check employee data
+     */
+    public function debugEmployeeData(Request $request)
+    {
+        if (!Auth::user() || !Auth::user()->role || Auth::user()->role->name !== 'admin') {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+
+        // Get all users
+        $allUsers = User::with('role')->get();
+        
+        // Get users with roles
+        $usersWithRoles = User::with('role')->whereNotNull('role_id')->get();
+        
+        // Get non-admin users
+        $nonAdminUsers = User::with('role')->whereHas('role', function($q) {
+            $q->where('name', '!=', 'admin');
+        })->get();
+        
+        // Get all roles
+        $roles = \App\Models\Role::all();
+        
+        return response()->json([
+            'total_users' => $allUsers->count(),
+            'users_with_roles' => $usersWithRoles->count(),
+            'non_admin_users' => $nonAdminUsers->count(),
+            'roles' => $roles->toArray(),
+            'all_users' => $allUsers->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role_id' => $user->role_id,
+                    'role_name' => $user->role ? $user->role->name : 'No Role',
+                    'department' => $user->department,
+                    'created_at' => $user->created_at
+                ];
+            }),
+            'non_admin_users_detail' => $nonAdminUsers->map(function($user) {
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role_name' => $user->role->name,
+                    'department' => $user->department,
+                    'created_at' => $user->created_at
+                ];
+            })
+        ]);
+    }
+
+    /**
+     * Debug endpoint to check timesheet data for a specific employee
+     */
+    public function debugEmployeeTimesheets($id)
+    {
+        if (!Auth::user() || !Auth::user()->role || Auth::user()->role->name !== 'admin') {
+            return response()->json(['error' => 'Access denied'], 403);
+        }
+
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['error' => 'User not found'], 404);
+        }
+
+        // Get all timesheets for this user
+        $timesheets = \App\Models\Timesheet::where('user_id', $id)->orderBy('date', 'desc')->get();
+        
+        // Calculate hours for different periods
+        $now = now();
+        $todayHours = $this->getHoursForPeriod($id, $now->copy()->startOfDay(), $now->copy()->endOfDay());
+        $weekHours = $this->getHoursForPeriod($id, $now->copy()->startOfWeek(), $now->copy()->endOfWeek());
+        $monthHours = $this->getHoursForPeriod($id, $now->copy()->startOfMonth(), $now->copy()->endOfMonth());
+        $yearHours = $this->getHoursForPeriod($id, $now->copy()->startOfYear(), $now->copy()->endOfYear());
+        
+        return response()->json([
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role_name' => $user->role ? $user->role->name : 'No Role',
+                'department' => $user->department
+            ],
+            'timesheets_count' => $timesheets->count(),
+            'timesheets' => $timesheets->map(function($t) {
+                return [
+                    'id' => $t->id,
+                    'date' => $t->date,
+                    'hours_worked' => $t->hours_worked,
+                    'hours' => $t->hours,
+                    'start_time' => $t->start_time,
+                    'end_time' => $t->end_time,
+                    'task' => $t->task,
+                    'description' => $t->description,
+                    'created_at' => $t->created_at
+                ];
+            }),
+            'calculated_hours' => [
+                'today' => $todayHours,
+                'week' => $weekHours,
+                'month' => $monthHours,
+                'year' => $yearHours
+            ]
+        ]);
     }
 
     /**
@@ -798,6 +969,7 @@ class UserController extends Controller
         }
 
         try {
+            // Get all users with roles, excluding admins
             $query = User::with('role')->whereHas('role', function($q) {
                 $q->where('name', '!=', 'admin');
             });
@@ -810,6 +982,13 @@ class UserController extends Controller
             if ($request->get('department')) {
                 $query->where('department', $request->get('department'));
             }
+            
+            // Log the query for debugging
+            \Log::info('Employee records query', [
+                'filters' => $request->all(),
+                'sql' => $query->toSql(),
+                'bindings' => $query->getBindings()
+            ]);
 
             $page = $request->get('page', 1);
             $perPage = 10;
@@ -824,6 +1003,7 @@ class UserController extends Controller
                 // Calculate working hours for different periods
                 $hoursData = $this->calculateEmployeeHours($employee->id, $timePeriod, $startDate, $endDate);
 
+
                 return [
                     'id' => $employee->id,
                     'name' => $employee->name,
@@ -836,15 +1016,33 @@ class UserController extends Controller
                 ];
             });
 
+            \Log::info('Employee records response', [
+                'total_employees' => $employees->total(),
+                'current_page' => $employees->currentPage(),
+                'employees_count' => $formattedEmployees->count(),
+                'formatted_employees' => $formattedEmployees->toArray()
+            ]);
+
             return response()->json([
                 'success' => true,
                 'employees' => $formattedEmployees,
                 'current_page' => $employees->currentPage(),
                 'total_pages' => $employees->lastPage(),
-                'total' => $employees->total()
+                'total' => $employees->total(),
+                'debug' => [
+                    'timestamp' => now()->toISOString(),
+                    'cache_bust' => $request->get('_t'),
+                    'query_filters' => $request->all(),
+                    'total_found' => $employees->total()
+                ]
             ]);
 
         } catch (\Exception $e) {
+            \Log::error('Error in getEmployeeRecords', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to load employee records: ' . $e->getMessage(),
@@ -978,20 +1176,74 @@ class UserController extends Controller
             ->whereBetween('date', [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')])
             ->get();
 
+        \Log::info('Calculating hours for employee', [
+            'employee_id' => $employeeId,
+            'start_date' => $startDate->format('Y-m-d'),
+            'end_date' => $endDate->format('Y-m-d'),
+            'timesheets_count' => $timesheets->count()
+        ]);
+
         $totalHours = 0;
         foreach ($timesheets as $timesheet) {
+            \Log::info('Processing timesheet', [
+                'id' => $timesheet->id,
+                'date' => $timesheet->date,
+                'hours_worked' => $timesheet->hours_worked,
+                'hours' => $timesheet->hours,
+                'start_time' => $timesheet->start_time,
+                'end_time' => $timesheet->end_time
+            ]);
+
             if ($timesheet->hours_worked) {
                 $totalHours += (float)$timesheet->hours_worked;
+                \Log::info('Added hours_worked', ['hours' => $timesheet->hours_worked, 'total' => $totalHours]);
             } elseif ($timesheet->hours) {
                 // Convert HH:MM format to decimal hours
                 if (preg_match('/^(\d+):(\d+)$/', $timesheet->hours, $matches)) {
-                    $totalHours += intval($matches[1]) + (intval($matches[2]) / 60);
+                    $hours = intval($matches[1]) + (intval($matches[2]) / 60);
+                    $totalHours += $hours;
+                    \Log::info('Added hours (HH:MM format)', ['hours' => $hours, 'total' => $totalHours]);
                 } elseif (is_numeric($timesheet->hours)) {
                     $totalHours += (float)$timesheet->hours;
+                    \Log::info('Added hours (numeric)', ['hours' => $timesheet->hours, 'total' => $totalHours]);
                 }
+            } elseif ($timesheet->start_time && $timesheet->end_time) {
+                // Calculate from start and end times
+                $hours = $this->calculateHoursFromTimes($timesheet->start_time, $timesheet->end_time);
+                $totalHours += $hours;
+                \Log::info('Calculated from start/end times', ['start' => $timesheet->start_time, 'end' => $timesheet->end_time, 'hours' => $hours, 'total' => $totalHours]);
             }
         }
 
+        \Log::info('Final total hours calculated', ['total_hours' => $totalHours]);
         return $totalHours;
+    }
+
+    /**
+     * Calculate hours from start and end times
+     */
+    private function calculateHoursFromTimes($startTime, $endTime)
+    {
+        if (!$startTime || !$endTime) {
+            return 0.0;
+        }
+        
+        try {
+            // Handle both HH:MM and HH:MM:SS formats
+            $start = \Carbon\Carbon::createFromFormat('H:i:s', $startTime) ?? \Carbon\Carbon::createFromFormat('H:i', $startTime);
+            $end = \Carbon\Carbon::createFromFormat('H:i:s', $endTime) ?? \Carbon\Carbon::createFromFormat('H:i', $endTime);
+            
+            if ($end->lessThan($start)) {
+                $end->addDay(); // Handle overnight work
+            }
+            
+            return round($end->diffInMinutes($start) / 60, 2);
+        } catch (\Exception $e) {
+            \Log::error('Hours calculation error: ' . $e->getMessage(), [
+                'start_time' => $startTime,
+                'end_time' => $endTime
+            ]);
+            return 0.0;
+        }
     }
 }

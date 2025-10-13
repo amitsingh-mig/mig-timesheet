@@ -155,6 +155,9 @@ Route::prefix('admin')->middleware(['auth', 'can:admin'])->group(function () {
         Route::get('/chart', [AdminUserController::class, 'getTimeChartData'])->name('chart');
         Route::get('/{id}/details', [AdminUserController::class, 'getTimeDetails'])->name('details');
         Route::get('/export', [AdminUserController::class, 'exportTimeCsv'])->name('export');
+        Route::get('/debug', [AdminUserController::class, 'debugTimesheetData'])->name('debug');
+        Route::get('/debug/employees', [AdminUserController::class, 'debugEmployeeData'])->name('debug.employees');
+        Route::get('/debug/timesheets/{id}', [AdminUserController::class, 'debugEmployeeTimesheets'])->name('debug.timesheets');
     });
 
     // Admin Timesheets Management

@@ -174,6 +174,14 @@
                 Employee Records
             </h3>
             <div class="admin-actions">
+                <button id="refreshEmployeeBtn" class="btn-admin-secondary" onclick="refreshEmployeeRecords()" title="Refresh Employee Records">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Update
+                </button>
+                <button class="btn-admin-secondary" onclick="debugEmployeeData()" title="Debug Employee Data">
+                    <i class="bi bi-bug"></i>
+                    Debug
+                </button>
                 <button class="btn-admin-primary" onclick="exportData()">
                     <i class="bi bi-download"></i>
                     Export CSV
@@ -246,20 +254,48 @@ let currentPeriod = 'week';
 let currentSummaryPeriod = 'day';
 let hoursChart;
 
-function loadEmployees() {
-    fetch('/admin/users/data')
-        .then(r => r.json())
+function loadEmployees(forceRefresh = false) {
+    console.log('Loading employees for filter dropdown...', { forceRefresh });
+
+    const url = forceRefresh ? 
+        `/admin/users/data?include_all=1&_t=${Date.now()}` : 
+        '/admin/users/data?include_all=1';
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Cache-Control': forceRefresh ? 'no-cache' : 'default'
+        },
+        credentials: 'same-origin'
+    })
+    .then(response => {
+        console.log('Employees response status:', response.status);
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        return response.json();
+    })
         .then(data => {
+        console.log('Employees data received:', data);
             const select = document.getElementById('employeeFilter');
             select.innerHTML = '<option value="">All Employees</option>';
             
-            if (data.success && data.users) {
-                data.users.forEach(user => {
+        // Handle both 'users' and 'data' properties for backward compatibility
+        const users = data.users || data.data || [];
+        
+        if (data.success && users && users.length > 0) {
+            users.forEach(user => {
                     select.innerHTML += `<option value="${user.id}">${user.name}</option>`;
                 });
+            console.log(`Loaded ${users.length} employees into filter dropdown`);
+        } else {
+            console.log('No employees found in response');
             }
         })
-        .catch(() => {
+    .catch(error => {
+        console.error('Error loading employees:', error);
             // Demo data fallback
             const select = document.getElementById('employeeFilter');
             select.innerHTML = '<option value="">All Employees</option>';
@@ -269,7 +305,7 @@ function loadEmployees() {
         });
 }
 
-function loadEmployeeRecords(page = 1) {
+function loadEmployeeRecords(page = 1, forceRefresh = false) {
     currentPage = page;
     const employee = document.getElementById('employeeFilter').value;
     const department = document.getElementById('departmentFilter').value;
@@ -284,7 +320,7 @@ function loadEmployeeRecords(page = 1) {
         endDate = document.getElementById('endDateFilter').value;
     }
 
-    console.log('Loading employee records:', { page, employee, department, timePeriod, startDate, endDate });
+    console.log('Loading employee records:', { page, employee, department, timePeriod, startDate, endDate, forceRefresh });
 
     const params = new URLSearchParams({
         page,
@@ -292,7 +328,8 @@ function loadEmployeeRecords(page = 1) {
         department: department,
         time_period: timePeriod,
         start_date: startDate,
-        end_date: endDate
+        end_date: endDate,
+        _t: forceRefresh ? Date.now() : Date.now() // Always use cache busting
     });
 
     // Show loading state
@@ -303,7 +340,8 @@ function loadEmployeeRecords(page = 1) {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+            'Cache-Control': forceRefresh ? 'no-cache' : 'default'
         },
         credentials: 'same-origin'
     })
@@ -322,6 +360,7 @@ function loadEmployeeRecords(page = 1) {
         const pagination = document.getElementById('employeeRecordsPagination');
 
         if (data.success && data.employees && data.employees.length > 0) {
+            console.log(`Displaying ${data.employees.length} employee records`);
             tbody.innerHTML = data.employees.map(emp => `
                 <tr>
                     <td class="admin-table-name">${emp.name}</td>
@@ -350,47 +389,22 @@ function loadEmployeeRecords(page = 1) {
             count.textContent = data.total || data.employees.length;
             renderEmployeePagination(data.current_page || 1, data.total_pages || 1);
         } else {
+            console.log('No employee records found or error in response');
             tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-4">No employee records found</td></tr>';
             count.textContent = '0';
             pagination.innerHTML = '';
         }
     })
-    .catch(() => {
-        // Demo data fallback
-        const demo = [
-            {id:1, name:'Alice Johnson', department:'Web', email:'alice@example.com', days_hours:'8', weeks_hours:'42', months_hours:'168', years_hours:'2016'},
-            {id:2, name:'Bob Smith', department:'Graphic', email:'bob@example.com', days_hours:'7.5', weeks_hours:'37.5', months_hours:'150', years_hours:'1800'},
-            {id:3, name:'Carol Lee', department:'Editorial', email:'carol@example.com', days_hours:'8.5', weeks_hours:'42.5', months_hours:'170', years_hours:'2040'}
-        ];
+    .catch(error => {
+        console.error('Error loading employee records:', error);
         
         const tbody = document.getElementById('employeeRecordsTableBody');
-        tbody.innerHTML = demo.map(emp => `
-            <tr>
-                <td class="admin-table-name">${emp.name}</td>
-                <td><span class="admin-badge admin-badge-department">${emp.department.toUpperCase()}</span></td>
-                <td>${emp.email}</td>
-                <td class="text-center">
-                    <span class="admin-badge admin-badge-success">${emp.days_hours} hrs</span>
-                </td>
-                <td class="text-center">
-                    <span class="admin-badge admin-badge-success">${emp.weeks_hours} hrs</span>
-                </td>
-                <td class="text-center">
-                    <span class="admin-badge admin-badge-success">${emp.months_hours} hrs</span>
-                </td>
-                <td class="text-center">
-                    <span class="admin-badge admin-badge-success">${emp.years_hours} hrs</span>
-                </td>
-                <td class="text-center">
-                    <button class="btn-admin-table-action" onclick="viewEmployeeDetails(${emp.id})" title="View Details">
-                        <i class="bi bi-eye"></i>
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        const count = document.getElementById('employeeCount');
+        const pagination = document.getElementById('employeeRecordsPagination');
         
-        document.getElementById('employeeCount').textContent = demo.length;
-        renderEmployeePagination(1, 1);
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center text-danger py-4"><i class="bi bi-exclamation-triangle"></i> Error loading employee records. Please try again.</td></tr>';
+        count.textContent = '0';
+        pagination.innerHTML = '';
     });
 }
 
@@ -417,7 +431,8 @@ function updateSummary(period) {
         department: department,
         time_period: timePeriod,
         start_date: startDate,
-        end_date: endDate
+        end_date: endDate,
+        _t: Date.now() // Cache busting parameter
     });
 
     fetch(`/admin/employees/time/summary?${params.toString()}`)
@@ -518,6 +533,62 @@ function loadEmployeeTime(page = 1) {
     loadEmployeeRecords(page);
 }
 
+function refreshEmployeeRecords() {
+    // Disable the update button to prevent multiple clicks
+    const updateBtn = document.getElementById('refreshEmployeeBtn');
+    if (updateBtn) {
+        updateBtn.disabled = true;
+        updateBtn.innerHTML = '<i class="bi bi-arrow-clockwise animate-spin"></i> Updating...';
+    }
+    
+    // Show loading state
+    const tbody = document.getElementById('employeeRecordsTableBody');
+    if (tbody) {
+        tbody.innerHTML = '<tr><td colspan="8" class="text-center py-4"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div><br><small>Refreshing employee records...</small></td></tr>';
+    }
+    
+    // Reset to first page and reload employee records
+    currentPage = 1;
+    
+    // Force refresh with cache busting
+    const timestamp = Date.now();
+    
+    // Refresh both employee dropdown and records with force refresh
+    loadEmployees(true); // Force refresh
+    loadEmployeeRecords(1, true); // Force refresh
+    
+    // Also refresh the summary and chart data
+    updateSummary(currentSummaryPeriod);
+    updateChart(currentPeriod);
+    
+    // Show success message
+    setTimeout(() => {
+        const toast = document.createElement('div');
+        toast.className = 'toast align-items-center text-white bg-success border-0';
+        toast.innerHTML = `
+            <div class="d-flex">
+                <div class="toast-body">
+                    <i class="bi bi-check-circle me-2"></i>
+                    Employee records updated successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        `;
+        document.body.appendChild(toast);
+        new bootstrap.Toast(toast).show();
+        setTimeout(() => toast.remove(), 3000);
+    }, 1000);
+    
+    // Re-enable the button after a delay
+    setTimeout(() => {
+        if (updateBtn) {
+            updateBtn.disabled = false;
+            updateBtn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> Update';
+        }
+    }, 2000);
+}
+
+
 function updateChart(period) {
     currentPeriod = period;
     document.getElementById(`chart${period.charAt(0).toUpperCase() + period.slice(1)}`).checked = true;
@@ -530,7 +601,8 @@ function updateChart(period) {
         period,
         employee_id: employee,
         start_date: startDate,
-        end_date: endDate
+        end_date: endDate,
+        _t: Date.now() // Cache busting parameter
     });
 
     fetch(`/admin/employees/time/chart?${params.toString()}`)
@@ -829,6 +901,17 @@ function exportData() {
     window.open(`/admin/employees/time/export?${params.toString()}`, '_blank');
 }
 
+function debugEmployeeData() {
+    // Open debug endpoints in new tabs
+    window.open('/admin/employees/time/debug/employees', '_blank');
+    
+    // If an employee is selected, also open their timesheet debug
+    const selectedEmployee = document.getElementById('employeeFilter').value;
+    if (selectedEmployee) {
+        window.open(`/admin/employees/time/debug/timesheets/${selectedEmployee}`, '_blank');
+    }
+}
+
 // Toggle custom date range visibility
 function toggleCustomDateRange() {
     const checkbox = document.getElementById('useCustomDateRange');
@@ -850,6 +933,67 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Add event listener for custom date range checkbox
     document.getElementById('useCustomDateRange').addEventListener('change', toggleCustomDateRange);
+    
+    // Listen for new employee creation notifications
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'newEmployeeCreated') {
+            const newEmployee = JSON.parse(e.newValue);
+            console.log('New employee detected:', newEmployee);
+            
+            // Show notification
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center text-white bg-info border-0';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-person-plus me-2"></i>
+                        New employee "${newEmployee.name}" added! Refreshing data...
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            new bootstrap.Toast(toast).show();
+            setTimeout(() => toast.remove(), 5000);
+            
+            // Refresh data
+            loadEmployees();
+            loadEmployeeRecords();
+        } else if (e.key === 'newTimesheetEntry') {
+            const newEntry = JSON.parse(e.newValue);
+            console.log('New timesheet entry detected:', newEntry);
+            
+            // Show notification
+            const toast = document.createElement('div');
+            toast.className = 'toast align-items-center text-white bg-success border-0';
+            toast.innerHTML = `
+                <div class="d-flex">
+                    <div class="toast-body">
+                        <i class="bi bi-clock me-2"></i>
+                        New timesheet entry from "${newEntry.user_name}"! Refreshing data...
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            `;
+            document.body.appendChild(toast);
+            new bootstrap.Toast(toast).show();
+            setTimeout(() => toast.remove(), 5000);
+            
+            // Refresh data
+            loadEmployeeRecords();
+            updateSummary(currentSummaryPeriod);
+        }
+    });
+    
+    // Refresh employee data every 30 seconds to catch new employees
+    setInterval(() => {
+        loadEmployees();
+    }, 30000);
+    
+    // Auto-refresh employee records every 60 seconds
+    setInterval(() => {
+        loadEmployeeRecords(currentPage, true); // Force refresh
+    }, 60000);
 });
 </script>
 @endpush

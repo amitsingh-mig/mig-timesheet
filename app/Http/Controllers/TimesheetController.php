@@ -144,23 +144,11 @@ class TimesheetController extends Controller
                 $message = 'Timesheet entry updated successfully';
                 \Log::info('Updated existing timesheet entry', ['id' => $timesheet->id]);
             } else {
-                // Check if entry already exists for this date
-                $existing = Timesheet::where('user_id', $user->id)
-                    ->where('date', $validated['date'])
-                    ->first();
-                    
-                if ($existing) {
-                    // Update existing entry
-                    $existing->update($data);
-                    $message = 'Existing timesheet entry updated successfully';
-                    \Log::info('Updated existing timesheet entry for date', ['date' => $validated['date']]);
-                } else {
-                    // Create new entry
-                    $data['user_id'] = $user->id;
-                    $timesheet = Timesheet::create($data);
-                    $message = 'New timesheet entry created successfully';
-                    \Log::info('Created new timesheet entry', ['id' => $timesheet->id]);
-                }
+                // Always create new entry (allow multiple entries per day)
+                $data['user_id'] = $user->id;
+                $timesheet = Timesheet::create($data);
+                $message = 'New timesheet entry created successfully';
+                \Log::info('Created new timesheet entry', ['id' => $timesheet->id]);
             }
 
             return response()->json([

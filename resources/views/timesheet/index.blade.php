@@ -162,8 +162,12 @@
             <form id="timesheetForm" method="POST" action="{{ route('timesheet.storeOrUpdate') }}">
                 @csrf
                 <input type="hidden" id="entryId" name="id" value="">
-                <div class="modal-body p-4">
+                    <div class="modal-body p-4">
                     <div id="formAlert" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="alert alert-info" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <strong>Tip:</strong> You can add multiple entries for the same day to track different tasks or time periods.
+                    </div>
                     
                     <!-- Date and Time Row -->
                     <div class="row g-3 mb-4">
@@ -717,6 +721,7 @@ function updateCalendarEntries(records) {
                 <div class="small text-muted text-truncate" title="${mainTask}">
                     ${mainTask.length > 25 ? mainTask.substring(0, 25) + '...' : mainTask}
                 </div>
+                ${taskCount > 1 ? '<div class="small text-info mt-1"><i class="bi bi-plus-circle"></i> Multiple entries</div>' : ''}
             `;
         }
     });
@@ -901,6 +906,15 @@ function handleFormSubmit(e) {
             // Trigger dashboard refresh
             if (window.refreshDashboard) {
                 window.refreshDashboard();
+            }
+            
+            // Notify admin time view about new timesheet entry
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('newTimesheetEntry', JSON.stringify({
+                    user_id: {{ Auth::id() }},
+                    user_name: '{{ Auth::user()->name }}',
+                    timestamp: Date.now()
+                }));
             }
             
             showToast('Timesheet entry saved successfully!', 'success');

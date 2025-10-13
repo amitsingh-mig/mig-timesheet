@@ -402,18 +402,30 @@ function handleAddEmployee(e) {
             form.reset();
             loadDashboardStats();
             
-            // Show success message (optional)
+            // Show success message
             const toast = document.createElement('div');
             toast.className = 'toast align-items-center text-white bg-success border-0';
             toast.innerHTML = `
                 <div class="d-flex">
-                    <div class="toast-body">Employee created successfully!</div>
+                    <div class="toast-body">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Employee "${data.user.name}" created successfully!
+                    </div>
                     <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
                 </div>
             `;
             document.body.appendChild(toast);
             new bootstrap.Toast(toast).show();
             setTimeout(() => toast.remove(), 5000);
+            
+            // Notify other tabs/windows about the new employee
+            if (typeof(Storage) !== "undefined") {
+                localStorage.setItem('newEmployeeCreated', JSON.stringify({
+                    id: data.user.id,
+                    name: data.user.name,
+                    timestamp: Date.now()
+                }));
+            }
         } else {
             errorAlert.textContent = data.message || 'Failed to create employee';
             errorAlert.classList.remove('d-none');

@@ -68,9 +68,13 @@
                 @endif
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 btn-rounded py-2 fw-semibold">
+            <button type="submit" class="btn btn-primary w-100 btn-lg fw-semibold" id="loginBtn">
                 <i class="bi bi-box-arrow-in-right me-2"></i>
-                {{ __('Sign In') }}
+                <span class="btn-text">{{ __('Sign In') }}</span>
+                <span class="btn-loading d-none">
+                    <i class="bi bi-arrow-clockwise animate-spin me-2"></i>
+                    Signing In...
+                </span>
             </button>
         </form>
 
@@ -151,26 +155,28 @@
                 
                 // Form submission
                 form.addEventListener('submit', function(e) {
-                    e.preventDefault();
-                    
                     // Validate all fields
                     const isEmailValid = validateField(emailInput, validateEmail);
                     const isPasswordValid = validateField(passwordInput, (value) => value.length >= 6);
                     
                     if (isEmailValid && isPasswordValid) {
                         // Show loading state
-                        submitBtn.classList.add('btn-loading');
+                        const btnText = submitBtn.querySelector('.btn-text');
+                        const btnLoading = submitBtn.querySelector('.btn-loading');
+                        
+                        if (btnText && btnLoading) {
+                            btnText.classList.add('d-none');
+                            btnLoading.classList.remove('d-none');
+                        }
+                        
                         submitBtn.disabled = true;
                         
-                        // Add fade-in animation to card
-                        const card = document.querySelector('.auth-card');
-                        card.classList.add('fade-in');
-                        
-                        // Submit the form
-                        setTimeout(() => {
-                            form.submit();
-                        }, 500);
+                        // Let the form submit naturally
+                        return true;
                     } else {
+                        // Prevent submission if validation fails
+                        e.preventDefault();
+                        
                         // Show validation errors
                         if (!isEmailValid) {
                             emailInput.classList.add('is-invalid');
@@ -185,6 +191,8 @@
                         setTimeout(() => {
                             card.style.animation = '';
                         }, 500);
+                        
+                        return false;
                     }
                 });
             }
@@ -196,6 +204,35 @@
                     0%, 100% { transform: translateX(0); }
                     25% { transform: translateX(-5px); }
                     75% { transform: translateX(5px); }
+                }
+                
+                .animate-spin {
+                    animation: spin 1s linear infinite;
+                }
+                
+                @keyframes spin {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                
+                #loginBtn {
+                    background: linear-gradient(135deg, #667eea, #764ba2);
+                    border: none;
+                    color: white;
+                    transition: all 0.3s ease;
+                    border-radius: 8px;
+                }
+                
+                #loginBtn:hover {
+                    background: linear-gradient(135deg, #7c8ef0, #8a5bb8);
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+                }
+                
+                #loginBtn:disabled {
+                    opacity: 0.7;
+                    transform: none;
+                    box-shadow: none;
                 }
             `;
             document.head.appendChild(style);
