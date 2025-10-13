@@ -1,16 +1,17 @@
-# Employee Timesheet Management System
+# MIG-TimeSheet
 
-A comprehensive Laravel-based employee timesheet and attendance management system with role-based access control, modern UI, and robust security features.
+A comprehensive Laravel-based employee timesheet and attendance management system with role-based access control, modern UI, and robust security features. Built for efficient time tracking and employee management.
 
 ## Features
 
 ### Core Functionality
-- **User Management**: Role-based user system (Admin, Employee, Manager)
-- **Timesheet Management**: Create, edit, submit, and approve timesheets
-- **Attendance Tracking**: Clock in/out functionality with location tracking
-- **Daily Updates**: Work summary and progress tracking
-- **Calendar View**: Visual timesheet calendar for admins
-- **Reports & Analytics**: Comprehensive reporting and data export
+- **User Management**: Role-based user system (Admin, Employee)
+- **Timesheet Management**: Create, edit, and manage timesheets with multiple entries per day
+- **Real-time Updates**: Live synchronization between employee and admin views
+- **Employee Time Tracking**: Comprehensive time tracking with hours calculation
+- **Admin Dashboard**: Complete admin panel for employee management
+- **Multiple Entries**: Support for multiple timesheet entries per day
+- **Auto-refresh**: Automatic data refresh and cross-tab synchronization
 
 ### Security Features
 - **CSRF Protection**: All forms protected against CSRF attacks
@@ -81,12 +82,25 @@ A comprehensive Laravel-based employee timesheet and attendance management syste
    php artisan serve
    ```
 
+8. **Access the application**
+   - Open your browser and go to `http://127.0.0.1:8000`
+   - Login with admin credentials: `admin@example.com` / `admin123`
+   - Or register a new employee account
+
+## Quick Start
+
+1. **Login as Admin**: Use `admin@example.com` / `admin123`
+2. **Add Employee**: Go to Dashboard → Add Employee
+3. **Employee Login**: Employee can login and add timesheet entries
+4. **View Records**: Admin can view all employee records at `/admin/employees/time/view`
+5. **Real-time Updates**: Changes are automatically synchronized across views
+
 ## Default Credentials
 
 After running the migrations and seeders, you can log in with:
 
-- **Admin**: admin@example.com / Admin@9711#31$
-- **Employee**: amitrajput30205@gmail.com / User@12345!
+- **Admin**: admin@example.com / admin123
+- **Employee**: amitrajput30205@gmail.com / (password set during registration)
 
 ## Project Structure
 
@@ -122,23 +136,26 @@ This application implements multiple security layers:
 
 For detailed security information, see [SECURITY.md](SECURITY.md).
 
-## API Endpoints
+## Key Features
 
-### Authentication
-- `POST /login` - User login
-- `POST /logout` - User logout
-- `GET /user` - Get authenticated user
+### Employee Features
+- **Timesheet Management**: Add multiple entries per day
+- **Time Tracking**: Track work hours with start/end times
+- **Task Management**: Add task descriptions and details
+- **Real-time Updates**: Automatic synchronization with admin view
 
-### Timesheets
-- `GET /timesheet` - List user timesheets
-- `POST /timesheet` - Create timesheet
-- `PUT /timesheet/{id}` - Update timesheet
-- `DELETE /timesheet/{id}` - Delete timesheet
+### Admin Features
+- **Employee Management**: View and manage all employees
+- **Time Overview**: Comprehensive time tracking dashboard
+- **Employee Records**: Detailed employee time records
+- **Real-time Monitoring**: Live updates of employee activities
+- **Debug Tools**: Built-in debugging and monitoring tools
 
-### Attendance
-- `POST /attendance/clock-in` - Clock in
-- `POST /attendance/clock-out` - Clock out
-- `GET /attendance/status` - Get attendance status
+### System Features
+- **Cross-tab Sync**: Real-time updates across browser tabs
+- **Auto-refresh**: Automatic data refresh every 60 seconds
+- **Cache Management**: Intelligent caching with force refresh
+- **Error Handling**: Comprehensive error handling and user feedback
 
 ## Contributing
 
@@ -152,6 +169,28 @@ For detailed security information, see [SECURITY.md](SECURITY.md).
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+## Recent Updates
+
+### Version 2.0 - Current
+- ✅ **Branding Update**: Changed from MIG-HRM to MIG-TimeSheet
+- ✅ **Multiple Entries**: Support for multiple timesheet entries per day
+- ✅ **Real-time Sync**: Cross-tab synchronization and auto-refresh
+- ✅ **Admin Dashboard**: Enhanced admin panel with employee management
+- ✅ **Login Fix**: Resolved admin login issues
+- ✅ **Performance**: Optimized data loading and caching
+- ✅ **UI Improvements**: Enhanced user interface and user experience
+
+### Key Improvements
+- **Employee Records**: Real-time employee time tracking
+- **Debug Tools**: Built-in debugging and monitoring
+- **Cache Management**: Intelligent caching with force refresh
+- **Error Handling**: Comprehensive error handling and user feedback
+- **Mobile Responsive**: Fully responsive design for all devices
+
 ## Support
 
 For support and questions, please contact the development team or create an issue in the repository.
+
+---
+
+**MIG-TimeSheet** - Efficient Employee Time Management System
