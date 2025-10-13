@@ -114,15 +114,29 @@ class DashboardController extends Controller
             ->get();
         
         foreach ($timesheets as $timesheet) {
-            if ($timesheet->start_time && $timesheet->end_time) {
-                $startHour = (int)substr($timesheet->start_time, 0, 2);
-                $hours = $timesheet->hours_worked ?: 0;
-                $values[$startHour] += $hours;
-            } elseif ($timesheet->hours) {
+            $hours = 0;
+            
+            if ($timesheet->hours_worked && $timesheet->hours_worked > 0) {
+                // Use the calculated hours_worked field
+                $hours = $timesheet->hours_worked;
+            } elseif ($timesheet->start_time && $timesheet->end_time) {
+                // Calculate hours from start and end times
+                $start = Carbon::createFromFormat('H:i:s', $timesheet->start_time);
+                $end = Carbon::createFromFormat('H:i:s', $timesheet->end_time);
+                $hours = $end->diffInMinutes($start) / 60;
+            } elseif ($timesheet->hours && $timesheet->hours !== '00:00:00') {
                 // Fallback to legacy hours format (HH:MM)
                 $hoursParts = explode(':', $timesheet->hours);
                 $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
-                $values[9] += $hours; // Default to 9 AM if no specific time
+            }
+            
+            if ($hours > 0) {
+                if ($timesheet->start_time) {
+                    $startHour = (int)substr($timesheet->start_time, 0, 2);
+                    $values[$startHour] += $hours;
+                } else {
+                    $values[9] += $hours; // Default to 9 AM if no specific time
+                }
             }
         }
         
@@ -147,24 +161,29 @@ class DashboardController extends Controller
             $labels[] = $currentDay->format('D');
             
             // Get total hours for this day from timesheets
-            $dailyHours = Timesheet::where('user_id', $userId)
+            $timesheets = Timesheet::where('user_id', $userId)
                 ->whereDate('date', $currentDay->toDateString())
-                ->sum('hours_worked');
-            
-            // Fallback to legacy hours format if no hours_worked
-            if (!$dailyHours) {
-                $timesheets = Timesheet::where('user_id', $userId)
-                    ->whereDate('date', $currentDay->toDateString())
-                    ->whereNotNull('hours')
-                    ->get();
-                    
-                foreach ($timesheets as $timesheet) {
-                    if ($timesheet->hours) {
-                        $hoursParts = explode(':', $timesheet->hours);
-                        $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
-                        $dailyHours += $hours;
-                    }
+                ->get();
+                
+            $dailyHours = 0;
+            foreach ($timesheets as $timesheet) {
+                $hours = 0;
+                
+                if ($timesheet->hours_worked && $timesheet->hours_worked > 0) {
+                    // Use the calculated hours_worked field
+                    $hours = $timesheet->hours_worked;
+                } elseif ($timesheet->start_time && $timesheet->end_time) {
+                    // Calculate hours from start and end times
+                    $start = Carbon::createFromFormat('H:i:s', $timesheet->start_time);
+                    $end = Carbon::createFromFormat('H:i:s', $timesheet->end_time);
+                    $hours = $end->diffInMinutes($start) / 60;
+                } elseif ($timesheet->hours && $timesheet->hours !== '00:00:00') {
+                    // Fallback to legacy hours format (HH:MM)
+                    $hoursParts = explode(':', $timesheet->hours);
+                    $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
                 }
+                
+                $dailyHours += $hours;
             }
             
             $values[] = round($dailyHours ?: 0, 1);
@@ -198,24 +217,29 @@ class DashboardController extends Controller
             $labels[] = 'Week ' . $week;
             
             // Get total hours for this week from timesheets
-            $weeklyHours = Timesheet::where('user_id', $userId)
+            $timesheets = Timesheet::where('user_id', $userId)
                 ->whereBetween('date', [$weekStart->toDateString(), $weekEnd->toDateString()])
-                ->sum('hours_worked');
+                ->get();
                 
-            // Fallback to legacy format
-            if (!$weeklyHours) {
-                $timesheets = Timesheet::where('user_id', $userId)
-                    ->whereBetween('date', [$weekStart->toDateString(), $weekEnd->toDateString()])
-                    ->whereNotNull('hours')
-                    ->get();
-                    
-                foreach ($timesheets as $timesheet) {
-                    if ($timesheet->hours) {
-                        $hoursParts = explode(':', $timesheet->hours);
-                        $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
-                        $weeklyHours += $hours;
-                    }
+            $weeklyHours = 0;
+            foreach ($timesheets as $timesheet) {
+                $hours = 0;
+                
+                if ($timesheet->hours_worked && $timesheet->hours_worked > 0) {
+                    // Use the calculated hours_worked field
+                    $hours = $timesheet->hours_worked;
+                } elseif ($timesheet->start_time && $timesheet->end_time) {
+                    // Calculate hours from start and end times
+                    $start = Carbon::createFromFormat('H:i:s', $timesheet->start_time);
+                    $end = Carbon::createFromFormat('H:i:s', $timesheet->end_time);
+                    $hours = $end->diffInMinutes($start) / 60;
+                } elseif ($timesheet->hours && $timesheet->hours !== '00:00:00') {
+                    // Fallback to legacy hours format (HH:MM)
+                    $hoursParts = explode(':', $timesheet->hours);
+                    $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
                 }
+                
+                $weeklyHours += $hours;
             }
             
             $values[] = round($weeklyHours ?: 0, 1);
@@ -242,26 +266,30 @@ class DashboardController extends Controller
             $labels[] = $currentMonth->format('M');
             
             // Get total hours for this month from timesheets
-            $monthlyHours = Timesheet::where('user_id', $userId)
+            $timesheets = Timesheet::where('user_id', $userId)
                 ->whereMonth('date', $month)
                 ->whereYear('date', $date->year)
-                ->sum('hours_worked');
+                ->get();
                 
-            // Fallback to legacy format
-            if (!$monthlyHours) {
-                $timesheets = Timesheet::where('user_id', $userId)
-                    ->whereMonth('date', $month)
-                    ->whereYear('date', $date->year)
-                    ->whereNotNull('hours')
-                    ->get();
-                    
-                foreach ($timesheets as $timesheet) {
-                    if ($timesheet->hours) {
-                        $hoursParts = explode(':', $timesheet->hours);
-                        $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
-                        $monthlyHours += $hours;
-                    }
+            $monthlyHours = 0;
+            foreach ($timesheets as $timesheet) {
+                $hours = 0;
+                
+                if ($timesheet->hours_worked && $timesheet->hours_worked > 0) {
+                    // Use the calculated hours_worked field
+                    $hours = $timesheet->hours_worked;
+                } elseif ($timesheet->start_time && $timesheet->end_time) {
+                    // Calculate hours from start and end times
+                    $start = Carbon::createFromFormat('H:i:s', $timesheet->start_time);
+                    $end = Carbon::createFromFormat('H:i:s', $timesheet->end_time);
+                    $hours = $end->diffInMinutes($start) / 60;
+                } elseif ($timesheet->hours && $timesheet->hours !== '00:00:00') {
+                    // Fallback to legacy hours format (HH:MM)
+                    $hoursParts = explode(':', $timesheet->hours);
+                    $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
                 }
+                
+                $monthlyHours += $hours;
             }
             
             $values[] = round($monthlyHours ?: 0, 1);
@@ -285,45 +313,81 @@ class DashboardController extends Controller
         $monthEnd = $today->copy()->endOfMonth();
         
         // Today's hours from timesheets
-        $todayHours = Timesheet::where('user_id', $userId)
+        $timesheets = Timesheet::where('user_id', $userId)
             ->whereDate('date', $today->toDateString())
-            ->sum('hours_worked');
-        if (!$todayHours) {
-            $timesheets = Timesheet::where('user_id', $userId)
-                ->whereDate('date', $today->toDateString())
-                ->whereNotNull('hours')->get();
-            foreach ($timesheets as $t) {
-                $parts = explode(':', $t->hours);
-                $todayHours += (int)$parts[0] + ((int)($parts[1] ?? 0) / 60);
+            ->get();
+            
+        $todayHours = 0;
+        foreach ($timesheets as $timesheet) {
+            $hours = 0;
+            
+            if ($timesheet->hours_worked && $timesheet->hours_worked > 0) {
+                // Use the calculated hours_worked field
+                $hours = $timesheet->hours_worked;
+            } elseif ($timesheet->start_time && $timesheet->end_time) {
+                // Calculate hours from start and end times
+                $start = Carbon::createFromFormat('H:i:s', $timesheet->start_time);
+                $end = Carbon::createFromFormat('H:i:s', $timesheet->end_time);
+                $hours = $end->diffInMinutes($start) / 60;
+            } elseif ($timesheet->hours && $timesheet->hours !== '00:00:00') {
+                // Fallback to legacy hours format (HH:MM)
+                $hoursParts = explode(':', $timesheet->hours);
+                $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
             }
+            
+            $todayHours += $hours;
         }
         
         // Weekly hours from timesheets
-        $weeklyHours = Timesheet::where('user_id', $userId)
+        $timesheets = Timesheet::where('user_id', $userId)
             ->whereBetween('date', [$weekStart->toDateString(), $weekEnd->toDateString()])
-            ->sum('hours_worked');
-        if (!$weeklyHours) {
-            $timesheets = Timesheet::where('user_id', $userId)
-                ->whereBetween('date', [$weekStart->toDateString(), $weekEnd->toDateString()])
-                ->whereNotNull('hours')->get();
-            foreach ($timesheets as $t) {
-                $parts = explode(':', $t->hours);
-                $weeklyHours += (int)$parts[0] + ((int)($parts[1] ?? 0) / 60);
+            ->get();
+            
+        $weeklyHours = 0;
+        foreach ($timesheets as $timesheet) {
+            $hours = 0;
+            
+            if ($timesheet->hours_worked && $timesheet->hours_worked > 0) {
+                // Use the calculated hours_worked field
+                $hours = $timesheet->hours_worked;
+            } elseif ($timesheet->start_time && $timesheet->end_time) {
+                // Calculate hours from start and end times
+                $start = Carbon::createFromFormat('H:i:s', $timesheet->start_time);
+                $end = Carbon::createFromFormat('H:i:s', $timesheet->end_time);
+                $hours = $end->diffInMinutes($start) / 60;
+            } elseif ($timesheet->hours && $timesheet->hours !== '00:00:00') {
+                // Fallback to legacy hours format (HH:MM)
+                $hoursParts = explode(':', $timesheet->hours);
+                $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
             }
+            
+            $weeklyHours += $hours;
         }
         
         // Monthly hours from timesheets
-        $monthlyHours = Timesheet::where('user_id', $userId)
+        $timesheets = Timesheet::where('user_id', $userId)
             ->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()])
-            ->sum('hours_worked');
-        if (!$monthlyHours) {
-            $timesheets = Timesheet::where('user_id', $userId)
-                ->whereBetween('date', [$monthStart->toDateString(), $monthEnd->toDateString()])
-                ->whereNotNull('hours')->get();
-            foreach ($timesheets as $t) {
-                $parts = explode(':', $t->hours);
-                $monthlyHours += (int)$parts[0] + ((int)($parts[1] ?? 0) / 60);
+            ->get();
+            
+        $monthlyHours = 0;
+        foreach ($timesheets as $timesheet) {
+            $hours = 0;
+            
+            if ($timesheet->hours_worked && $timesheet->hours_worked > 0) {
+                // Use the calculated hours_worked field
+                $hours = $timesheet->hours_worked;
+            } elseif ($timesheet->start_time && $timesheet->end_time) {
+                // Calculate hours from start and end times
+                $start = Carbon::createFromFormat('H:i:s', $timesheet->start_time);
+                $end = Carbon::createFromFormat('H:i:s', $timesheet->end_time);
+                $hours = $end->diffInMinutes($start) / 60;
+            } elseif ($timesheet->hours && $timesheet->hours !== '00:00:00') {
+                // Fallback to legacy hours format (HH:MM)
+                $hoursParts = explode(':', $timesheet->hours);
+                $hours = (int)$hoursParts[0] + ((int)($hoursParts[1] ?? 0) / 60);
             }
+            
+            $monthlyHours += $hours;
         }
         
         // Tasks done (from timesheet entries)
