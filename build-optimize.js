@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * MIG-HRM Build Optimization Script
+ * MIG-TimeSheet Build Optimization Script
  * Combines and minifies CSS/JS files for production
  */
 
@@ -48,7 +48,7 @@ function minifyJS(js) {
 
 // Build function
 function build() {
-    console.log('🚀 Starting MIG-HRM build optimization...');
+    console.log('🚀 Starting MIG-TimeSheet build optimization...');
     
     try {
         // Check if input files exist

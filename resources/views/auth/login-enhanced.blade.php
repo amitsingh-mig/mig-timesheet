@@ -1,6 +1,6 @@
 @extends('layouts.app-ACCESSIBLE')
 
-@section('title', 'Login - MIG-HRM')
+@section('title', 'Login - MIG-TimeSheet')
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center bg-gradient-admin py-12 px-4 sm:px-6 lg:px-8">
@@ -14,7 +14,7 @@
                 Welcome Back
             </h2>
             <p class="mt-2 text-sm text-red-100">
-                Sign in to your MIG-HRM account
+                Sign in to your MIG-TimeSheet account
             </p>
         </div>
 

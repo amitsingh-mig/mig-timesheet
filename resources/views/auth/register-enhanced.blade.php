@@ -1,6 +1,6 @@
 @extends('layouts.app-ACCESSIBLE')
 
-@section('title', 'Register - MIG-HRM')
+@section('title', 'Register - MIG-TimeSheet')
 
 @section('content')
 <div class="min-h-screen flex items-center justify-center bg-gradient-admin-green py-12 px-4 sm:px-6 lg:px-8">
@@ -14,7 +14,7 @@
                 Create Your Account
             </h2>
             <p class="mt-2 text-sm text-green-100">
-                Join the MIG-HRM time tracking system
+                Join the MIG-TimeSheet time tracking system
             </p>
         </div>
 

@@ -153,7 +153,7 @@
     <div class="alaga-brand p-6 {{ $hasAdminRole ? 'border-b border-red-300/30' : 'border-b border-white/20' }}">
         <h1 class="text-xl font-bold tracking-wide">
             <i class="bi bi-building text-2xl mr-2" aria-hidden="true"></i>
-            MIG-HRM
+            MIG-TimeSheet
         </h1>
         <p class="{{ $hasAdminRole ? 'text-blue-100' : 'text-green-100' }} text-sm mt-1">
             {{ $hasAdminRole ? 'Admin Control Panel' : 'Employee Portal' }}
@@ -425,7 +425,7 @@
 <script>
 // Admin contact functionality
 window.contactAdmin = window.contactAdmin || function() {
-    alert('Please contact your system administrator at admin@mig-hrm.com or call ext. 100 for access.');
+    alert('Please contact your system administrator at admin@mig-timesheet.com or call ext. 100 for access.');
 };
 
 // Admin quick actions

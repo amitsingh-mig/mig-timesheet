@@ -5,7 +5,7 @@
                 <i class="bi bi-clock-fill text-white text-2_5xl"></i>
             </div>
             <h4 class="mb-2 fw-bold text-dark">Welcome Back</h4>
-            <p class="text-muted mb-0">Sign in to your MiG-HRM account</p>
+            <p class="text-muted mb-0">Sign in to your MIG-TimeSheet account</p>
         </div>
 
         <!-- Session Status -->

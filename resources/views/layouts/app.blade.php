@@ -6,7 +6,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="api-token" content="{{ config('app.api_token') }}">
     @stack('meta')
-    <title>{{ config('app.name', 'MIG-HRM') }}</title>
+    <title>{{ config('app.name', 'MIG-TimeSheet') }}</title>
     <link rel="shortcut icon" href="{{ asset('img/favicon.png') }}" type="image/x-icon">   <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
@@ -27,7 +27,7 @@
             <button class="navbar-toggler border-0" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas" aria-controls="sidebarOffcanvas">
                 <i class="fas fa-bars text-white fs-4"></i>
             </button>
-            <span class="navbar-brand ms-1 text-white fw-bold">MIG-HRM</span>
+            <span class="navbar-brand ms-1 text-white fw-bold">MIG-TimeSheet</span>
         </div>
     </nav>
 
@@ -43,7 +43,7 @@
             <!-- Fixed Header Section -->
             <div class="sidebar-header flex-shrink-0">
                 <div class="sidebar-brand text-white text-decoration-none">
-                    <div class="brand-text">MIG-HRM</div>
+                    <div class="brand-text">MIG-TimeSheet</div>
                 </div>
             </div>
 
@@ -103,7 +103,7 @@
         <!-- Offcanvas Sidebar (mobile) with Scrolling -->
         <div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
             <div class="offcanvas-header border-bottom border-white border-opacity-25">
-                <h5 class="offcanvas-title text-white fw-bold" id="sidebarOffcanvasLabel">MIG-HRM</h5>
+                <h5 class="offcanvas-title text-white fw-bold" id="sidebarOffcanvasLabel">MIG-TimeSheet</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body d-flex flex-column p-0">

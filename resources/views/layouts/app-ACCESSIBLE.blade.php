@@ -4,10 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="MIG-HRM Employee Time Management System">
+    <meta name="description" content="MIG-TimeSheet Employee Time Management System">
     <meta name="theme-color" content="{{ Auth::check() && Auth::user()->isAdmin() ? '#dc2626' : '#059669' }}">
     
-    <title>{{ config('app.name', 'MIG-HRM') }} - @yield('title', 'Dashboard')</title>
+    <title>{{ config('app.name', 'MIG-TimeSheet') }} - @yield('title', 'Dashboard')</title>
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -71,7 +71,7 @@
                             
                             <div class="flex items-center">
                                 <h1 class="text-lg font-semibold text-gray-900" id="page-title">
-                                    @yield('page-title', config('app.name', 'MIG-HRM'))
+                                    @yield('page-title', config('app.name', 'MIG-TimeSheet'))
                                 </h1>
                             </div>
                             
@@ -224,7 +224,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center text-sm text-gray-500">
                 <div>
-                    <p>&copy; {{ date('Y') }} {{ config('app.name', 'MIG-HRM') }}. All rights reserved.</p>
+                    <p>&copy; {{ date('Y') }} {{ config('app.name', 'MIG-TimeSheet') }}. All rights reserved.</p>
                 </div>
                 <div class="flex space-x-4">
                     <a href="#" class="hover:text-gray-700 focus:ring-enhanced">Privacy Policy</a>

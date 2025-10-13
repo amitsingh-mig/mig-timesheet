@@ -1,6 +1,6 @@
 # Role and Department Structure
 
-This document outlines the role and department structure implemented in the MIG-HRM system.
+This document outlines the role and department structure implemented in the MIG-TimeSheet system.
 
 ## 🏢 System Overview
 

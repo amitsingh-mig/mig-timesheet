@@ -1,6 +1,6 @@
-# MIG-HRM Performance Optimization
+# MIG-TimeSheet Performance Optimization
 
-This document outlines the performance optimizations implemented for the MIG-HRM Laravel project.
+This document outlines the performance optimizations implemented for the MIG-TimeSheet Laravel project.
 
 ## 🚀 Optimizations Implemented
 
